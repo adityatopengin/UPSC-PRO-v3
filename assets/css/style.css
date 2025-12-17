@@ -6,8 +6,7 @@
    1. THEME VARIABLES
    ============================ */
 :root {
-    /* iOS Glass Variables */
-    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-bg: rgba(255, 255, 255, 0.75);
     --glass-border: rgba(255, 255, 255, 0.5);
     --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
     --text-primary: #0f172a;
@@ -32,19 +31,50 @@ html.dark {
 body {
     font-family: 'Inter', sans-serif;
     -webkit-tap-highlight-color: transparent;
-    overscroll-behavior-y: none; /* Prevents bounce effect */
+    overscroll-behavior-y: none;
+    color: var(--text-primary);
 }
 
 /* Hide Scrollbar */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Safe Areas */
+/* iOS & Android Safe Areas */
 .pt-safe-top { padding-top: max(1.5rem, env(safe-area-inset-top)); }
 .pb-safe-bottom { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
 
 /* ============================
-   3. GLASS COMPONENTS
+   3. THE FOG FOOTER & NAVIGATION
+   ============================ */
+#app-nav {
+    background: linear-gradient(to top, var(--glass-bg) 60%, transparent);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1px solid var(--glass-border);
+    /* High elevation shadow */
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.05);
+}
+
+.nav-btn {
+    @apply flex flex-col items-center gap-1 transition-all duration-300 py-2;
+}
+
+.nav-btn.active {
+    @apply text-blue-600 dark:text-blue-400 scale-110;
+}
+
+.nav-btn.inactive {
+    @apply text-slate-400 hover:text-slate-600 dark:hover:text-slate-300;
+}
+
+/* Navigation Icon Indicator */
+.nav-btn.active::after {
+    content: '';
+    @apply absolute -bottom-1 w-1 h-1 bg-blue-600 rounded-full;
+}
+
+/* ============================
+   4. GLASS & EYE-CARDS
    ============================ */
 .glass-card {
     background: var(--glass-bg);
@@ -54,63 +84,46 @@ body {
     box-shadow: var(--glass-shadow);
 }
 
-/* Eyecatcher Card Base */
 .eye-card {
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    @apply relative overflow-hidden transition-all duration-300 active:scale-95;
 }
-.eye-card:active { transform: scale(0.98); }
 
-/* Gradient Overlays */
 .bg-grad-gold { background: var(--grad-gold); }
 .bg-grad-emerald { background: var(--grad-emerald); }
 .bg-grad-royal { background: var(--grad-royal); }
 .bg-grad-purple { background: var(--grad-purple); }
 
-/* Navigation Button Styling */
-.nav-btn {
-    @apply flex flex-col items-center gap-1 py-2 px-4 rounded-2xl transition-all duration-300 relative;
+/* Shimmer Animation for Diagram Placeholders */
+@keyframes shimmer {
+    0% { transform: translateX(-100%) skewX(-12deg); }
+    100% { transform: translateX(200%) skewX(-12deg); }
 }
-.nav-btn.active {
-    @apply text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 scale-105;
-}
-.nav-btn.inactive {
-    @apply text-slate-400 hover:text-slate-600 dark:hover:text-slate-200;
-}
+.shimmer { animation: shimmer 2.5s infinite linear; }
 
 /* ============================
-   4. ANIMATIONS
-   ============================ */
-@keyframes slideUp {
-    from { transform: translateY(30px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+   5. VIEW ANIMATIONS
+   =========================== */
+@keyframes viewEnter {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
 }
-.animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-view-enter { animation: viewEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-@keyframes pulse-ring {
-    0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-    100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-}
-.animate-pulse-ring { animation: pulse-ring 2s infinite; }
-
-/* Background Mesh Animation */
+/* Background Animated Mesh */
 #bg-mesh::before, #bg-mesh::after {
     content: ''; position: absolute; border-radius: 50%; filter: blur(90px);
-    animation: float 10s infinite ease-in-out;
+    animation: float 12s infinite ease-in-out;
 }
 #bg-mesh::before {
-    top: -10%; left: -10%; width: 70vw; height: 70vw;
-    background: rgba(59, 130, 246, 0.15);
+    top: -5%; left: -5%; width: 70vw; height: 70vw;
+    background: rgba(59, 130, 246, 0.12);
 }
 #bg-mesh::after {
-    bottom: -10%; right: -10%; width: 80vw; height: 80vw;
-    background: rgba(236, 72, 153, 0.15); animation-delay: -5s;
+    bottom: -5%; right: -5%; width: 80vw; height: 80vw;
+    background: rgba(236, 72, 153, 0.1); animation-delay: -6s;
 }
 @keyframes float {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(15px, -15px); }
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(20px, -20px) scale(1.05); }
 }
 
