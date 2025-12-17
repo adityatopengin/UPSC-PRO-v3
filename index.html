@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="description" content="Premium UPSC Preparation PWA">
+    <meta name="description" content="UPSC Pro Preparation App">
     
     <title>UPSC Pro</title>
     
@@ -26,14 +26,6 @@
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         display: ['Space Grotesk', 'sans-serif'],
-                    },
-                    colors: {
-                        glass: {
-                            light: 'rgba(255, 255, 255, 0.7)',
-                            dark: 'rgba(15, 23, 42, 0.8)',
-                            border: 'rgba(255, 255, 255, 0.5)',
-                            darkBorder: 'rgba(255, 255, 255, 0.1)'
-                        }
                     }
                 }
             }
@@ -49,15 +41,12 @@
 
     <div id="app" class="relative z-10 flex flex-col h-[100dvh] max-w-md mx-auto bg-white/0">
         
-        <header id="app-header" class="flex-none px-6 pt-safe-top pb-2 transition-all duration-300 z-50">
+        <header id="app-header" class="flex-none px-6 pt-safe-top pb-2 z-50 transition-all duration-300">
             </header>
 
-        <main id="main-view" class="flex-1 overflow-y-auto overflow-x-hidden px-5 py-4 scroll-smooth no-scrollbar relative pb-32">
+        <main id="main-view" class="flex-1 overflow-y-auto overflow-x-hidden px-5 py-4 scroll-smooth no-scrollbar relative">
             <div id="loader" class="hidden absolute inset-0 z-[60] flex items-center justify-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm transition-opacity">
-                <div class="flex flex-col items-center gap-3">
-                    <i class="fa-solid fa-circle-notch fa-spin text-4xl text-blue-600"></i>
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Loading Resources...</p>
-                </div>
+                <i class="fa-solid fa-circle-notch fa-spin text-4xl text-blue-600"></i>
             </div>
             
             </main>
@@ -73,7 +62,12 @@
     
     <script src="assets/js/config.js"></script>
     
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/store.js"></script>
+    <script src="assets/js/adapter.js"></script>
+    <script src="assets/js/engine.js"></script>
+    <script src="assets/js/ui.js"></script>
+    
+    <script src="assets/js/main.js"></script>
 </body>
 </html>
 
