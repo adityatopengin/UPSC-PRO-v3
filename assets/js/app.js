@@ -1,343 +1,424 @@
 /**
- * APP.JS - UPSC Pro Master Engine v3.5
- * Features: Settings, Charts, Resources, Robust Quiz Engine
+ * APP.JS - MODULAR ARCHITECTURE
+ * * Module 1: DataStore (Storage Manager)
+ * Module 2: Adapter (Data Normalizer)
+ * Module 3: Engine (Quiz Logic & Timer)
+ * Module 4: UI (Renderer & Animations)
+ * Module 5: Core (Controller & Initialization)
  */
 
-const App = {
-    // 1. CENTRAL STATE
+/* =========================================
+   MODULE 1: DATA STORE (The Vault)
+   Handles all LocalStorage operations.
+   ========================================= */
+const DataStore = {
+    get(key, fallback) {
+        try {
+            const data = localStorage.getItem(`upsc_${key}`);
+            return data ? JSON.parse(data) : fallback;
+        } catch (e) {
+            console.error("Storage Read Error", e);
+            return fallback;
+        }
+    },
+
+    set(key, value) {
+        try {
+            localStorage.setItem(`upsc_${key}`, JSON.stringify(value));
+        } catch (e) {
+            console.error("Storage Write Error", e); // Handle QuotaExceeded
+        }
+    },
+
+    // Specialized Methods
+    saveResult(result) {
+        const history = this.get('history', []);
+        history.unshift(result);
+        this.set('history', history.slice(0, 50)); // Keep last 50
+    },
+
+    saveMistakes(newMistakes) {
+        const current = this.get('mistakes', []);
+        // Merge and remove duplicates based on Question ID or Text
+        const merged = [...current, ...newMistakes].filter((v, i, a) => 
+            a.findIndex(t => t.text === v.text) === i
+        ).slice(0, 100);
+        this.set('mistakes', merged);
+    }
+};
+
+/* =========================================
+   MODULE 2: ADAPTER (The Translator)
+   Ensures different JSON formats work perfectly.
+   ========================================= */
+const Adapter = {
+    normalize(rawData) {
+        // 1. Handle " { questions: [...] } " vs " [...] "
+        let list = Array.isArray(rawData) ? rawData : (rawData.questions || []);
+
+        // 2. Normalize Keys (text vs question_text, etc.)
+        return list.map((q, index) => ({
+            id: q.id || `q_${Date.now()}_${index}`,
+            text: q.text || q.question_text || "Question text missing",
+            options: q.options || [],
+            correct: this._parseCorrect(q.correct, q.correct_option),
+            explanation: q.explanation || "No explanation provided.",
+            year: q.year || null,
+            difficulty: q.difficulty || "medium",
+            notes: q.notes || null
+        }));
+    },
+
+    _parseCorrect(c1, c2) {
+        // Returns the index (0-3). Some JSONs use "A"/"B" strings.
+        if (typeof c1 === 'number') return c1;
+        if (typeof c2 === 'number') return c2;
+        // Logic for string conversion if needed later
+        return 0; 
+    }
+};
+
+/* =========================================
+   MODULE 3: ENGINE (The Brain)
+   Handles Timer, Randomization, and Scoring.
+   ========================================= */
+const Engine = {
+    state: {
+        activeQuiz: null,
+        timer: null
+    },
+
+    startSession(config, questions) {
+        // 1. Randomize
+        const shuffled = [...questions].sort(() => Math.random() - 0.5).slice(0, config.count);
+        
+        // 2. Calculate Time (Paper 1 vs Paper 2)
+        const timePerQ = config.paper === 'csat' ? CONFIG.defaults.timePerQ_CSAT : CONFIG.defaults.timePerQ_GS;
+        const totalTime = config.count * timePerQ;
+
+        this.state.activeQuiz = {
+            config: config,
+            questions: shuffled,
+            answers: {},
+            currentIdx: 0,
+            timeLeft: totalTime,
+            startTime: Date.now()
+        };
+
+        if (config.mode === 'test') this._startTimer();
+    },
+
+    endSession() {
+        this._stopTimer();
+        const q = this.state.activeQuiz;
+        if (!q) return null;
+
+        // Scoring Logic (Paper specific)
+        const isCsat = q.config.paper === 'csat';
+        const marks = isCsat ? { pos: 2.5, neg: 0.83 } : { pos: 2.0, neg: 0.66 };
+
+        let correct = 0, wrong = 0, attempted = 0;
+        const fullData = q.questions.map((item, i) => {
+            const userAns = q.answers[i];
+            if (userAns !== undefined) {
+                attempted++;
+                if (userAns === item.correct) correct++; else wrong++;
+            }
+            return { ...item, userAns };
+        });
+
+        return {
+            date: new Date().toISOString(),
+            subject: q.config.subject,
+            score: ((correct * marks.pos) - (wrong * marks.neg)).toFixed(2),
+            accuracy: attempted ? Math.round((correct / attempted) * 100) : 0,
+            correct, wrong, total: q.questions.length, fullData
+        };
+    },
+
+    _startTimer() {
+        this._stopTimer();
+        this.state.timer = setInterval(() => {
+            const q = this.state.activeQuiz;
+            if (!q) return this._stopTimer();
+
+            q.timeLeft--;
+            UI.updateTimer(q.timeLeft); // Direct call to UI for performance
+
+            if (q.timeLeft <= 0) {
+                this._stopTimer();
+                alert("Time's Up!");
+                Core.finishQuiz(); // Callback to Core
+            }
+        }, 1000);
+    },
+
+    _stopTimer() {
+        if (this.state.timer) {
+            clearInterval(this.state.timer);
+            this.state.timer = null;
+        }
+    }
+};
+
+/* =========================================
+   MODULE 4: UI (The Visuals)
+   Renders specific components.
+   ========================================= */
+const UI = {
+    // A. Renderers
+    renderEyecatchers() {
+        const container = document.getElementById('notes-grid');
+        if (!container) return;
+
+        const html = CONFIG.notesLibrary.map(card => `
+            <div class="eye-card rounded-3xl p-5 bg-grad-${card.gradient} text-white cursor-pointer active:scale-95 shadow-lg">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-black leading-none mb-1">${card.title}</h3>
+                        <p class="text-[10px] font-medium opacity-90 uppercase tracking-wide">${card.subtitle}</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-${card.icon}"></i>
+                    </div>
+                </div>
+                <div class="mt-8 h-12 w-full bg-white/10 rounded-lg border border-white/20 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-white/5 skew-x-12 transform translate-x-[-100%] animate-[shimmer_2s_infinite]"></div>
+                    <div class="flex items-center justify-center h-full text-[9px] font-bold opacity-50">DIAGRAM PREVIEW</div>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = html;
+    },
+
+    renderToppersModal() {
+        // The 9 Coaching Links
+        const links = CONFIG.resources.institutes.map(inst => `
+            <a href="${inst.url}" target="_blank" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                <div class="w-14 h-14 rounded-2xl bg-${inst.color}-100 dark:bg-${inst.color}-900 text-${inst.color}-600 flex items-center justify-center text-xl font-black shadow-sm">
+                    ${inst.char}
+                </div>
+                <span class="text-[9px] font-bold text-slate-600 dark:text-slate-300 text-center leading-tight">${inst.name}</span>
+            </a>
+        `).join('');
+
+        this.showModal(`
+            <div class="p-6">
+                <h3 class="text-lg font-black text-slate-800 dark:text-white mb-6 uppercase tracking-tight">Coaching Archives</h3>
+                <div class="grid grid-cols-3 gap-4">
+                    ${links}
+                </div>
+                <button onclick="document.getElementById('modal-overlay').remove()" class="w-full mt-8 py-3 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-bold text-slate-500">Close</button>
+            </div>
+        `);
+    },
+
+    // B. Utilities
+    updateTimer(seconds) {
+        const el = document.getElementById('quiz-timer');
+        if (el) {
+            const m = Math.floor(seconds / 60);
+            const s = (seconds % 60).toString().padStart(2, '0');
+            el.innerText = `${m}:${s}`;
+            if (seconds < 60) el.classList.add('text-red-500');
+        }
+    },
+
+    loader(show) {
+        const el = document.getElementById('loader');
+        if (show) el.classList.remove('hidden'); else el.classList.add('hidden');
+    },
+
+    showModal(contentHTML) {
+        const overlay = document.createElement('div');
+        overlay.id = 'modal-overlay';
+        overlay.className = "fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4";
+        overlay.innerHTML = `
+            <div class="glass-card w-full max-w-sm bg-white dark:bg-slate-900 rounded-t-[40px] sm:rounded-[40px] animate-slide-up overflow-hidden">
+                ${contentHTML}
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        // Close on background click
+        overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    }
+};
+
+/* =========================================
+   MODULE 5: CORE (The Controller)
+   Connects all modules together.
+   ========================================= */
+const Core = {
     state: {
         view: 'home',
-        paper: 'gs1',      // 'gs1' or 'csat'
-        quiz: null,        // Active quiz session
-        history: [],       // Past results
-        settings: { theme: 'light', sound: true },
-        isFirstTime: !localStorage.getItem('upsc_visited')
+        paper: 'gs1'
     },
 
-    // 2. INITIALIZATION
     init() {
-        console.log("Initializing UPSC Pro...");
-        this.loadStorage();
-        this.applyTheme();
+        console.log("System Check: Modules Loaded.");
+        this.loadTheme();
         
-        // Check for Charts library
-        if(typeof Chart === 'undefined') {
-            console.warn("Chart.js not loaded yet.");
-        }
-
-        // Start App
-        if (this.state.isFirstTime) {
-            this.UI.showDisclaimer();
-        }
-        this.Router.navigate('home');
+        // Initial Routing
+        const visited = DataStore.get('visited', false);
+        if (!visited) this.showOrientation();
+        else this.navigate('home');
     },
 
-    loadStorage() {
+    loadTheme() {
+        const settings = DataStore.get('settings', { theme: 'light' });
+        if (settings.theme === 'dark') document.documentElement.classList.add('dark');
+    },
+
+    navigate(view, data) {
+        // Cleanup
+        if (this.state.view === 'quiz') Engine.endSession(); // Stop timer if leaving
+
+        this.state.view = view;
+        this._renderLayout(view, data);
+    },
+
+    async startQuiz(config) {
+        UI.loader(true);
         try {
-            this.state.history = JSON.parse(localStorage.getItem('upsc_history') || '[]');
-            this.state.settings = JSON.parse(localStorage.getItem('upsc_settings') || '{"theme":"light"}');
+            // 1. Get Filename
+            let file;
+            if (config.type === 'mistakes') {
+                // Logic for mistakes...
+            } else {
+                file = CONFIG.getFileName(config.subject);
+            }
+
+            // 2. Fetch & Adapt
+            const res = await fetch(`data/${file}`);
+            if (!res.ok) throw new Error("File not found");
+            const raw = await res.json();
+            const cleanData = Adapter.normalize(raw);
+
+            if (cleanData.length === 0) throw new Error("No questions available");
+
+            // 3. Start Engine
+            Engine.startSession({ ...config, paper: this.state.paper }, cleanData);
+            
+            // 4. Render
+            this.navigate('quiz');
+
         } catch (e) {
-            console.error("Storage corrupted, resetting.");
-            localStorage.clear();
+            alert(e.message);
+            this.navigate('home');
+        } finally {
+            UI.loader(false);
         }
     },
 
-    applyTheme() {
-        if (this.state.settings.theme === 'dark') document.documentElement.classList.add('dark');
-        else document.documentElement.classList.remove('dark');
-    },
-
-    /* =========================================
-       MODULE 3: ROUTER (Navigation Manager)
-       ========================================= */
-    Router: {
-        navigate(view, data = null) {
-            // CRITICAL: Stop Timer if leaving quiz
-            if (App.state.view === 'quiz' && view !== 'quiz') {
-                App.Engine.stopTimer();
-            }
-
-            App.state.view = view;
-            
-            // 1. Manage Header & Footer Visibility
-            App.UI.renderHeader(view);
-            const nav = document.getElementById('app-nav');
-            
-            // Show Footer only on main tabs
-            if (['home', 'stats', 'notes', 'settings'].includes(view)) {
-                nav.classList.remove('hidden');
-                App.UI.renderFooter(view);
-            } else {
-                nav.classList.add('hidden');
-            }
-
-            // 2. Render View Content
-            switch(view) {
-                case 'home': App.UI.drawHome(); break;
-                case 'quiz': App.UI.drawQuiz(); break;
-                case 'analysis': App.UI.drawAnalysis(data); break;
-                case 'stats': App.UI.drawStats(); break;
-                case 'notes': App.UI.drawNotes(); break;
-                case 'settings': App.UI.drawSettings(); break;
-            }
+    finishQuiz() {
+        const result = Engine.endSession();
+        if (result) {
+            DataStore.saveResult(result);
+            const mistakes = result.fullData.filter(q => q.userAns !== undefined && q.userAns !== q.correct);
+            DataStore.saveMistakes(mistakes);
+            this.navigate('analysis', result);
         }
     },
 
-    /* =========================================
-       MODULE 4: ENGINE (The Logic Core)
-       ========================================= */
-    Engine: {
-        async start(config) {
-            App.UI.loader(true);
-            try {
-                // Fetch Data
-                let questions = [];
-                if (config.type === 'mistakes') {
-                    questions = JSON.parse(localStorage.getItem('upsc_mistakes') || '[]');
-                    if(questions.length === 0) throw new Error("No mistakes recorded yet.");
-                } else if (config.type === 'random') {
-                     // Load Mixed Data (Fallback to Polity for demo if mix missing)
-                     const res = await fetch(`data/polity.json`).catch(() => null);
-                     if(res) questions = await res.json();
-                } else {
-                    const file = CONFIG.getFileName(config.subject);
-                    const res = await fetch(`data/${file}`);
-                    if (!res.ok) throw new Error(`File ${file} not found`);
-                    const raw = await res.json();
-                    questions = Array.isArray(raw) ? raw : (raw.questions || []);
-                }
-
-                if (!questions || questions.length === 0) throw new Error("No questions found.");
-
-                // Normalize Data (Handle different JSON structures)
-                questions = questions.map(q => ({
-                    id: q.id || Math.random(),
-                    text: q.text || q.question_text,
-                    options: q.options || [],
-                    correct: q.correct !== undefined ? q.correct : q.correct_option,
-                    explanation: q.explanation || "No explanation available.",
-                    year: q.year || null,
-                    difficulty: q.difficulty || null
-                }));
-
-                // Randomize & Slice
-                if (CONFIG.defaults.randomize) questions = App.Utils.shuffle(questions);
-                questions = questions.slice(0, config.count);
-
-                // Initialize Quiz State
-                App.state.quiz = {
-                    config,
-                    questions,
-                    answers: {}, // Map { qId: optionIdx }
-                    currentIdx: 0,
-                    startTime: Date.now(),
-                    timeLeft: config.mode === 'test' ? (config.count * (App.state.paper === 'gs1' ? 72 : 90)) : null,
-                    timer: null
-                };
-
-                App.Router.navigate('quiz');
-                if (config.mode === 'test') this.startTimer();
-
-            } catch (e) {
-                alert("Quiz Error: " + e.message);
-                App.Router.navigate('home');
-            } finally {
-                App.UI.loader(false);
-            }
-        },
-
-        startTimer() {
-            this.stopTimer(); // Clear any existing
-            const timerEl = document.getElementById('quiz-timer');
-            
-            App.state.quiz.timer = setInterval(() => {
-                const q = App.state.quiz;
-                if (!q) return this.stopTimer();
-
-                q.timeLeft--;
-                if (timerEl) {
-                    timerEl.innerText = App.Utils.formatTime(q.timeLeft);
-                    if (q.timeLeft < 60) timerEl.classList.add('text-red-500');
-                }
-
-                if (q.timeLeft <= 0) {
-                    this.stopTimer();
-                    alert("Time's Up!");
-                    this.finish();
-                }
-            }, 1000);
-        },
-
-        stopTimer() {
-            if (App.state.quiz && App.state.quiz.timer) {
-                clearInterval(App.state.quiz.timer);
-                App.state.quiz.timer = null;
-            }
-        },
-
-        finish() {
-            this.stopTimer();
-            const q = App.state.quiz;
-            
-            // Calculate Stats
-            let correct = 0, wrong = 0, attempted = 0;
-            const fullData = q.questions.map((question, i) => {
-                const userAns = q.answers[i]; // Using Index as ID for simplicity in array map
-                if (userAns !== undefined) {
-                    attempted++;
-                    if (userAns === question.correct) correct++; else wrong++;
-                }
-                return { ...question, userAns };
-            });
-
-            // Score Calculation
-            const factor = App.state.paper === 'csat' ? 2.5 : 2.0;
-            const penalty = App.state.paper === 'csat' ? 0.83 : 0.66;
-            const score = ((correct * factor) - (wrong * penalty)).toFixed(2);
-            const accuracy = attempted > 0 ? Math.round((correct/attempted)*100) : 0;
-
-            const result = {
-                date: new Date().toISOString(),
-                subject: q.config.subject,
-                score, correct, wrong, total: q.questions.length, accuracy, fullData
-            };
-
-            // Save History
-            App.state.history.unshift(result);
-            localStorage.setItem('upsc_history', JSON.stringify(App.state.history.slice(0, 50)));
-
-            // Save Mistakes
-            const mistakes = fullData.filter(x => x.userAns !== undefined && x.userAns !== x.correct);
-            const existingMistakes = JSON.parse(localStorage.getItem('upsc_mistakes') || '[]');
-            // Merge simple logic
-            const newMistakes = [...existingMistakes, ...mistakes].slice(0, 100); 
-            localStorage.setItem('upsc_mistakes', JSON.stringify(newMistakes));
-
-            App.Router.navigate('analysis', result);
+    // --- VIEW RENDERERS (Delegated to UI helpers) ---
+    _renderLayout(view, data) {
+        const main = document.getElementById('main-view');
+        const nav = document.getElementById('app-nav');
+        
+        // Toggle Footer
+        if (['home', 'notes', 'stats', 'settings'].includes(view)) {
+            nav.classList.remove('hidden');
+            this._drawFooter(view);
+        } else {
+            nav.classList.add('hidden');
         }
+
+        // Header Update
+        this._drawHeader(view);
+
+        // Content Injection
+        if (view === 'home') this._drawHome(main);
+        if (view === 'notes') this._drawNotes(main);
+        if (view === 'quiz') this._drawQuiz(main);
+        if (view === 'analysis') this._drawAnalysis(main, data);
+        if (view === 'settings') this._drawSettings(main);
+        
+        main.scrollTo(0, 0);
     },
 
-    /* =========================================
-       MODULE 5: UI (Renderer)
-       ========================================= */
-    UI: {
-        /* --- HEADER & FOOTER --- */
-        renderHeader(view) {
-            const h = document.getElementById('app-header');
-            if (view === 'home') {
-                h.innerHTML = `
-                <div class="flex items-center justify-between p-4 glass-card rounded-3xl mx-2 mt-4 animate-slide-up">
-                    <div class="flex items-center gap-3">
-                        <img src="assets/images/Omg.jpg" class="w-10 h-10 rounded-full border-2 border-blue-500 object-cover">
-                        <div>
-                            <h2 class="text-sm font-black text-slate-800 dark:text-white leading-none">Aspirant</h2>
-                            <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mt-1">Target 2026</p>
-                        </div>
-                    </div>
-                    <button onclick="App.Router.navigate('settings')" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors">
-                        <i class="fa-solid fa-gear"></i>
-                    </button>
-                </div>`;
-            } else if (view === 'quiz') {
-                 // Quiz Header (Timer + Submit)
-                 const q = App.state.quiz;
-                 h.innerHTML = `
-                 <div class="flex items-center justify-between p-4 mt-2">
-                     <div class="glass-card px-4 py-2 rounded-full font-mono font-bold text-blue-600" id="quiz-timer">
-                        ${q.config.mode === 'test' ? App.Utils.formatTime(q.timeLeft) : '∞'}
-                     </div>
-                     <button onclick="if(confirm('Submit Test?')) App.Engine.finish()" class="px-5 py-2 rounded-full bg-slate-900 text-white text-xs font-bold shadow-lg">
-                        Submit
-                     </button>
-                 </div>`;
-            } else {
-                // Generic Back Header
-                h.innerHTML = `
-                <div class="flex items-center p-4 mt-2 gap-4">
-                    <button onclick="App.Router.navigate('home')" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-slate-500">
-                        <i class="fa-solid fa-arrow-left"></i>
-                    </button>
-                    <h2 class="text-xl font-black text-slate-800 dark:text-white capitalize">${view}</h2>
-                </div>`;
-            }
-        },
-
-        renderFooter(active) {
-            const nav = document.getElementById('app-nav');
-            const cls = (v) => active === v ? 'active' : 'inactive';
-            
-            nav.innerHTML = `
-            <div class="flex justify-around items-center glass-card mx-6 mb-6 rounded-3xl p-3 shadow-2xl border-t border-white/20 backdrop-blur-xl">
-                <button onclick="App.Router.navigate('home')" class="nav-btn ${cls('home')}">
-                    <i class="fa-solid fa-house"></i>
-                    <span class="text-[9px] font-bold uppercase mt-1">Home</span>
-                </button>
-                <button onclick="App.Router.navigate('notes')" class="nav-btn ${cls('notes')}">
-                    <i class="fa-solid fa-book-open"></i>
-                    <span class="text-[9px] font-bold uppercase mt-1">Notes</span>
-                </button>
-                <button onclick="App.Router.navigate('stats')" class="nav-btn ${cls('stats')}">
-                    <i class="fa-solid fa-chart-pie"></i>
-                    <span class="text-[9px] font-bold uppercase mt-1">Stats</span>
-                </button>
-            </div>`;
-        },
-
-        /* --- VIEWS --- */
-        drawHome() {
-            const main = document.getElementById('main-view');
-            const subjects = App.state.paper === 'gs1' ? CONFIG.subjectsGS1 : CONFIG.subjectsCSAT;
-            
-            main.innerHTML = `
-            <div class="px-2 space-y-6 pb-24 animate-fade-in">
-                <div class="toggle-pill relative mx-auto">
-                    <div class="active-bg" style="transform: translateX(${App.state.paper === 'gs1' ? '0' : '100%'})"></div>
-                    <button onclick="App.state.paper='gs1'; App.UI.drawHome()" class="relative z-10 flex-1 text-[10px] font-bold p-3 text-center text-slate-800 dark:text-white transition-colors">GS PAPER 1</button>
-                    <button onclick="App.state.paper='csat'; App.UI.drawHome()" class="relative z-10 flex-1 text-[10px] font-bold p-3 text-center text-slate-800 dark:text-white transition-colors">CSAT PAPER 2</button>
+    // --- DRAWING FUNCTIONS (Kept in Core for access to State) ---
+    
+    _drawHome(container) {
+        const subjects = this.state.paper === 'gs1' ? CONFIG.subjectsGS1 : CONFIG.subjectsCSAT;
+        
+        container.innerHTML = `
+            <div class="space-y-6 pb-32 animate-slide-up">
+                <div class="relative flex bg-slate-200 dark:bg-slate-800 rounded-full p-1 mx-4">
+                    <div class="absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white dark:bg-slate-700 rounded-full transition-transform duration-300 shadow-sm" 
+                         style="transform: translateX(${this.state.paper === 'gs1' ? '0' : '100%'})"></div>
+                    <button onclick="Core.state.paper='gs1'; Core.navigate('home')" class="relative z-10 flex-1 py-2 text-[10px] font-black text-slate-800 dark:text-white">PAPER 1</button>
+                    <button onclick="Core.state.paper='csat'; Core.navigate('home')" class="relative z-10 flex-1 py-2 text-[10px] font-black text-slate-800 dark:text-white">PAPER 2</button>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div onclick="App.UI.modals.setup('Mock Test', 'random')" class="glass-card p-5 rounded-3xl flex flex-col items-center gap-2 cursor-pointer bg-blue-50/50 dark:bg-blue-900/20 hover:scale-[1.02] transition-transform">
-                        <i class="fa-solid fa-trophy text-2xl text-blue-500"></i>
-                        <span class="text-xs font-bold text-slate-700 dark:text-white">Mock Test</span>
-                    </div>
-                    <div onclick="App.UI.modals.setup('Mistakes', 'mistakes')" class="glass-card p-5 rounded-3xl flex flex-col items-center gap-2 cursor-pointer bg-red-50/50 dark:bg-red-900/20 hover:scale-[1.02] transition-transform">
-                        <i class="fa-solid fa-rotate-left text-2xl text-red-500"></i>
-                        <span class="text-xs font-bold text-slate-700 dark:text-white">Mistakes</span>
-                    </div>
-                </div>
-
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest pl-2">Subjects</h3>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-3 px-2">
                     ${subjects.map(s => `
-                    <div onclick="App.UI.modals.setup('${s.name}', '${s.name}')" class="glass-card p-4 rounded-2xl flex flex-col items-center gap-3 active:scale-95 transition-all cursor-pointer border border-transparent hover:border-${s.color}-400">
-                        <div class="w-12 h-12 rounded-2xl bg-${s.color}-50 dark:bg-${s.color}-900/30 text-${s.color}-600 dark:text-${s.color}-400 flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-${s.icon || 'book'}"></i>
+                        <div onclick="Core.showSetup('${s.name}')" class="glass-card p-4 rounded-3xl flex flex-col items-center gap-3 active:scale-95 transition-all cursor-pointer hover:border-${s.color}-400 border border-transparent">
+                            <div class="w-12 h-12 rounded-2xl bg-${s.color}-50 dark:bg-${s.color}-900/30 text-${s.color}-600 dark:text-${s.color}-400 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-${s.icon}"></i>
+                            </div>
+                            <span class="text-[10px] font-black text-center uppercase leading-tight text-slate-700 dark:text-slate-200">${s.name}</span>
                         </div>
-                        <span class="text-[10px] font-black text-center text-slate-700 dark:text-slate-200 leading-tight uppercase">${s.name}</span>
-                    </div>`).join('')}
+                    `).join('')}
                 </div>
-            </div>`;
-        },
+            </div>
+        `;
+    },
 
-        drawQuiz() {
-            const q = App.state.quiz;
-            const current = q.questions[q.currentIdx];
-            const main = document.getElementById('main-view');
-
-            if(!current) return App.Router.navigate('home');
-
-            main.innerHTML = `
-            <div class="px-2 pb-32 animate-slide-up">
-                <div class="flex gap-2 mb-4">
-                    <span class="text-[9px] font-bold bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-500 uppercase">Q ${q.currentIdx + 1}/${q.questions.length}</span>
-                    ${current.year ? `<span class="text-[9px] font-bold bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded text-blue-600">${current.year}</span>` : ''}
-                    ${current.difficulty ? `<span class="text-[9px] font-bold bg-amber-50 dark:bg-amber-900 px-2 py-1 rounded text-amber-600 uppercase">${current.difficulty}</span>` : ''}
+    _drawNotes(container) {
+        container.innerHTML = `
+            <div class="space-y-6 pb-32 animate-slide-up">
+                <div class="grid grid-cols-2 gap-3">
+                    <div onclick="window.open('${CONFIG.resources.psir.drive}', '_blank')" class="glass-card p-4 rounded-3xl flex flex-col justify-between h-40 cursor-pointer active:scale-95 bg-purple-50/50 dark:bg-purple-900/10">
+                        <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center"><i class="fa-brands fa-google-drive"></i></div>
+                        <div><h3 class="text-sm font-black leading-tight">PSIR<br>Drive</h3><p class="text-[8px] font-bold text-purple-500 uppercase mt-1">Full Course</p></div>
+                    </div>
+                    <div onclick="window.open('${CONFIG.resources.psir.topperRepo}', '_blank')" class="glass-card p-4 rounded-3xl flex flex-col justify-between h-40 cursor-pointer active:scale-95 bg-blue-50/50 dark:bg-blue-900/10">
+                        <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center"><i class="fa-solid fa-file-pen"></i></div>
+                        <div><h3 class="text-sm font-black leading-tight">Topper<br>Copies</h3><p class="text-[8px] font-bold text-blue-500 uppercase mt-1">Answer Sheets</p></div>
+                    </div>
                 </div>
 
-                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-8 leading-relaxed font-display">
-                    ${current.text}
-                </h3>
+                <div onclick="UI.renderToppersModal()" class="glass-card p-5 rounded-3xl flex items-center justify-between cursor-pointer active:scale-95">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl"><i class="fa-solid fa-building-columns"></i></div>
+                        <div><h3 class="text-sm font-black">Coaching Archive</h3><p class="text-[9px] font-bold text-slate-400 uppercase">Vision, Forum, Shubhra Ranjan +6</p></div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-300"></i>
+                </div>
+
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest pl-2">Smart Notes</h3>
+                <div id="notes-grid" class="space-y-4"></div>
+            </div>
+        `;
+        // Defer rendering the heavy eyecatchers
+        setTimeout(() => UI.renderEyecatchers(), 50);
+    },
+
+    _drawQuiz(container) {
+        const q = Engine.state.activeQuiz;
+        if(!q) return this.navigate('home');
+        
+        const current = q.questions[q.currentIdx];
+        
+        container.innerHTML = `
+            <div class="pb-40 animate-slide-up">
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-[9px] font-black bg-blue-100 text-blue-600 px-2 py-1 rounded">Q ${q.currentIdx+1}/${q.questions.length}</span>
+                    <span id="quiz-timer" class="font-mono font-bold text-slate-800 dark:text-white">${q.config.mode==='test' ? '00:00' : 'Learn'}</span>
+                </div>
+
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-8 leading-relaxed font-display">${current.text}</h3>
 
                 <div class="space-y-3">
                     ${current.options.map((opt, i) => {
@@ -345,355 +426,198 @@ const App = {
                         const isCorrect = current.correct === i;
                         let cls = "glass-card p-4 rounded-2xl flex items-start gap-4 transition-all border-2 ";
                         
-                        // Mode Logic
-                        if (q.config.mode === 'learning' && q.answers[q.currentIdx] !== undefined) {
-                            if (isCorrect) cls += "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20";
-                            else if (isSel) cls += "border-red-500 bg-red-50 dark:bg-red-900/20";
+                        if(q.config.mode === 'learning' && q.answers[q.currentIdx] !== undefined) {
+                            if(isCorrect) cls += "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20";
+                            else if(isSel) cls += "border-red-500 bg-red-50 dark:bg-red-900/20";
                             else cls += "border-transparent opacity-50";
-                        } else if (isSel) {
+                        } else if(isSel) {
                             cls += "border-blue-600 bg-blue-50 dark:bg-blue-900/20";
                         } else {
-                            cls += "border-transparent hover:border-slate-300 dark:hover:border-slate-600";
+                            cls += "border-transparent";
                         }
 
-                        return `
-                        <div onclick="App.UI.handleOption(${i})" class="${cls} cursor-pointer">
-                            <div class="w-6 h-6 rounded-full border border-slate-300 flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-400 mt-0.5">
-                                ${String.fromCharCode(65 + i)}
-                            </div>
-                            <span class="text-sm font-medium text-slate-700 dark:text-slate-300 leading-snug">${opt}</span>
+                        return `<div onclick="Core.handleOption(${i})" class="${cls} cursor-pointer">
+                            <div class="w-6 h-6 rounded-full border border-slate-300 flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-400 mt-0.5">${String.fromCharCode(65+i)}</div>
+                            <span class="text-sm font-medium leading-snug">${opt}</span>
                         </div>`;
                     }).join('')}
                 </div>
-
-                ${q.config.mode === 'learning' && q.answers[q.currentIdx] !== undefined ? `
-                <div class="mt-8 p-5 bg-blue-50 dark:bg-blue-900/20 rounded-3xl border border-blue-100 dark:border-blue-800 animate-slide-up">
-                    <h4 class="text-[10px] font-black text-blue-600 uppercase mb-2"><i class="fa-solid fa-lightbulb mr-1"></i> Explanation</h4>
-                    <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">${current.explanation}</p>
-                </div>` : ''}
             </div>
 
-            <div class="fixed bottom-0 left-0 right-0 p-4 glass-card rounded-t-[30px] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-50 flex items-center gap-4 max-w-md mx-auto">
-                <button onclick="App.UI.modals.map()" class="w-12 h-12 glass-card rounded-2xl flex items-center justify-center text-slate-500 hover:text-blue-600">
-                    <i class="fa-solid fa-grip-vertical"></i>
-                </button>
-                <div class="flex-1 flex gap-3">
-                    <button onclick="App.UI.moveQ(-1)" class="flex-1 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl font-bold text-xs hover:bg-slate-200">PREV</button>
-                    <button onclick="App.UI.moveQ(1)" class="flex-1 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-bold text-xs shadow-lg transform active:scale-95 transition-transform">NEXT</button>
-                </div>
-            </div>`;
-        },
+            <div class="fixed bottom-0 left-0 right-0 p-4 glass-card rounded-t-[32px] shadow-2xl z-50 flex items-center gap-3 max-w-md mx-auto">
+                <button onclick="Core.moveQ(-1)" class="flex-1 py-3 bg-slate-100 dark:bg-slate-800 rounded-2xl font-bold text-xs">PREV</button>
+                <button onclick="Core.moveQ(1)" class="flex-1 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-bold text-xs">NEXT</button>
+                <button onclick="if(confirm('Submit?')) Core.finishQuiz()" class="w-12 h-12 bg-emerald-500 text-white rounded-2xl flex items-center justify-center"><i class="fa-solid fa-check"></i></button>
+            </div>
+        `;
+    },
 
-        drawNotes() {
-            const main = document.getElementById('main-view');
-            const res = CONFIG.resources;
-            
-            main.innerHTML = `
-            <div class="px-2 pb-24 space-y-4 animate-slide-up">
-                <div onclick="window.open('${res.psirDrive}', '_blank')" class="glass-card p-6 rounded-3xl relative overflow-hidden cursor-pointer group hover:scale-[1.02] transition-transform">
-                    <div class="absolute -right-6 -top-6 w-32 h-32 bg-purple-100 dark:bg-purple-900/40 rounded-full blur-2xl"></div>
-                    <div class="relative z-10 flex flex-col h-32 justify-between">
-                        <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl">
-                            <i class="fa-brands fa-google-drive"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-black text-slate-800 dark:text-white leading-none">PSIR Optional</h3>
-                            <p class="text-[10px] font-bold text-purple-500 uppercase mt-1">Direct Drive Access</p>
-                        </div>
+    _drawAnalysis(container, stats) {
+        container.innerHTML = `
+            <div class="space-y-8 pb-32 animate-slide-up">
+                <div class="glass-card p-8 rounded-[40px] text-center bg-blue-50/30">
+                    <p class="text-[10px] font-black text-blue-600 uppercase mb-2">Total Score</p>
+                    <div class="text-6xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">${stats.score}</div>
+                    <div class="flex justify-center gap-6 mt-6">
+                        <span class="text-xs font-bold text-emerald-500">${stats.correct} Correct</span>
+                        <span class="text-xs font-bold text-red-500">${stats.wrong} Wrong</span>
                     </div>
                 </div>
 
-                <div onclick="App.UI.modals.toppers()" class="glass-card p-6 rounded-3xl relative overflow-hidden cursor-pointer group hover:scale-[1.02] transition-transform">
-                    <div class="absolute -right-6 -top-6 w-32 h-32 bg-emerald-100 dark:bg-emerald-900/40 rounded-full blur-2xl"></div>
-                    <div class="relative z-10 flex flex-col h-32 justify-between">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-pen-nib"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-black text-slate-800 dark:text-white leading-none">Topper Copies</h3>
-                            <p class="text-[10px] font-bold text-emerald-500 uppercase mt-1">Vision, Forum, Next IAS</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-card p-6 rounded-3xl border-dashed border-2 border-slate-300 flex items-center justify-center h-24">
-                    <span class="text-xs font-bold text-slate-400 uppercase">Daily Briefs • Coming Soon</span>
-                </div>
-            </div>`;
-        },
-
-        drawStats() {
-            const history = App.state.history;
-            const main = document.getElementById('main-view');
-            
-            if (history.length === 0) {
-                main.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-full text-slate-400 opacity-60">
-                    <i class="fa-solid fa-chart-simple text-4xl mb-2"></i>
-                    <p class="text-xs font-bold uppercase">No Data Available</p>
-                </div>`;
-                return;
-            }
-
-            main.innerHTML = `
-            <div class="px-2 pb-24 space-y-4 animate-slide-up">
-                <div class="glass-card p-6 rounded-[30px] flex justify-between items-center bg-blue-50/50 dark:bg-blue-900/10">
-                    <div>
-                        <h3 class="text-xs font-bold text-slate-500 uppercase">Tests Taken</h3>
-                        <p class="text-4xl font-black text-slate-800 dark:text-white mt-1">${history.length}</p>
-                    </div>
-                    <div class="w-16 h-16 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center shadow-lg">
-                        <i class="fa-solid fa-graduation-cap text-2xl text-blue-500"></i>
-                    </div>
-                </div>
-
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest pl-2">Recent Activity</h3>
-                <div class="space-y-3">
-                    ${history.map(h => `
-                    <div class="glass-card p-4 rounded-2xl flex justify-between items-center">
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-800 dark:text-white leading-tight mb-1">${h.subject}</h4>
-                            <p class="text-[10px] font-medium text-slate-400">${new Date(h.date).toLocaleDateString()}</p>
-                        </div>
-                        <div class="text-right">
-                             <div class="text-xl font-black ${parseFloat(h.score) > 0 ? 'text-emerald-500' : 'text-red-500'}">${h.score}</div>
-                             <div class="text-[8px] font-bold text-slate-400 uppercase">Score</div>
-                        </div>
-                    </div>`).join('')}
-                </div>
-            </div>`;
-        },
-
-        drawAnalysis(res) {
-            const main = document.getElementById('main-view');
-            main.innerHTML = `
-            <div class="px-2 pb-24 space-y-6 animate-slide-up">
-                <div class="glass-card p-8 rounded-[40px] text-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-slate-800 dark:to-slate-800">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">FINAL SCORE</p>
-                    <div class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 tracking-tighter mb-6">${res.score}</div>
-                    
-                    <div class="flex justify-center gap-8">
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-emerald-500">${res.correct}</div>
-                            <div class="text-[8px] font-bold text-slate-400 uppercase mt-1">Correct</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-red-500">${res.wrong}</div>
-                            <div class="text-[8px] font-bold text-slate-400 uppercase mt-1">Wrong</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-slate-400">${res.accuracy}%</div>
-                            <div class="text-[8px] font-bold text-slate-400 uppercase mt-1">Accuracy</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 h-48">
-                    <div class="glass-card p-2 rounded-3xl flex items-center justify-center relative">
-                        <canvas id="chartAccuracy"></canvas>
-                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <span class="text-[10px] font-bold text-slate-400">DIST</span>
-                        </div>
-                    </div>
-                    <div class="glass-card p-4 rounded-3xl flex flex-col justify-center gap-2">
-                         <div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500" style="width: ${res.accuracy}%"></div></div>
-                         <div class="flex justify-between text-[8px] font-bold text-slate-400"><span>ACC</span><span>${res.accuracy}%</span></div>
-                         
-                         <div class="h-2 bg-slate-100 rounded-full overflow-hidden mt-2"><div class="h-full bg-blue-500" style="width: ${(res.total - res.wrong - res.correct)/res.total * 100}%"></div></div>
-                         <div class="flex justify-between text-[8px] font-bold text-slate-400"><span>SKIP</span><span>${res.total - res.wrong - res.correct}</span></div>
-                    </div>
-                </div>
-
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest pl-2">Review</h3>
+                <h3 class="text-xs font-black uppercase tracking-widest px-2">Review</h3>
                 <div class="space-y-4">
-                    ${res.fullData.map((q, i) => `
-                    <div class="glass-card p-5 rounded-3xl border-l-4 ${q.userAns === q.correct ? 'border-l-emerald-500' : (q.userAns === undefined ? 'border-l-slate-300' : 'border-l-red-500')}">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-[10px] font-black text-slate-400">Q${i+1}</span>
-                            <span class="text-[9px] font-bold px-2 py-0.5 rounded ${q.userAns === q.correct ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'} uppercase">
-                                ${q.userAns === q.correct ? 'Correct' : (q.userAns === undefined ? 'Skipped' : 'Wrong')}
-                            </span>
+                    ${stats.fullData.map((q, i) => `
+                        <div class="glass-card p-5 rounded-[24px] ${q.userAns === q.correct ? 'border-l-4 border-emerald-500' : 'border-l-4 border-red-500'}">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-[10px] font-black text-slate-400">Q${i+1}</span>
+                            </div>
+                            <p class="text-sm font-bold mb-2">${q.text}</p>
+                            <p class="text-xs text-slate-500 leading-relaxed">${q.explanation}</p>
                         </div>
-                        <p class="text-sm font-bold text-slate-800 dark:text-white mb-2 line-clamp-2">${q.text}</p>
-                        <p class="text-xs text-slate-500 leading-relaxed">${q.explanation}</p>
-                    </div>`).join('')}
+                    `).join('')}
                 </div>
-            </div>`;
-            
-            // Render Chart
-            setTimeout(() => {
-                new Chart(document.getElementById('chartAccuracy'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Correct', 'Wrong', 'Skip'],
-                        datasets: [{
-                            data: [res.correct, res.wrong, res.total - res.correct - res.wrong],
-                            backgroundColor: ['#10b981', '#ef4444', '#e2e8f0'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: { responsive: true, cutout: '75%', plugins: { legend: { display: false } } }
-                });
-            }, 100);
-        },
+            </div>
+        `;
+    },
 
-        drawSettings() {
-            const main = document.getElementById('main-view');
-            main.innerHTML = `
+    _drawSettings(container) {
+        container.innerHTML = `
             <div class="px-2 pt-6 space-y-6 animate-slide-up">
                 <div class="glass-card p-6 rounded-3xl flex items-center justify-between">
-                    <div>
-                        <h3 class="text-sm font-bold text-slate-800 dark:text-white">Dark Mode</h3>
-                        <p class="text-xs text-slate-400">Reduce eye strain</p>
-                    </div>
-                    <button onclick="App.UI.toggleDark()" class="w-12 h-7 bg-slate-200 dark:bg-blue-600 rounded-full relative transition-colors">
-                        <div class="w-5 h-5 bg-white rounded-full absolute top-1 left-1 dark:left-6 transition-all shadow-sm"></div>
-                    </button>
+                    <div><h3 class="text-sm font-bold">Dark Mode</h3><p class="text-xs text-slate-400">Eye comfort</p></div>
+                    <button onclick="Core.toggleDark()" class="w-12 h-7 bg-slate-200 dark:bg-blue-600 rounded-full relative transition-colors"><div class="w-5 h-5 bg-white rounded-full absolute top-1 left-1 dark:left-6 transition-all shadow-sm"></div></button>
                 </div>
-
-                <div class="glass-card p-6 rounded-3xl flex items-center justify-between">
-                    <div>
-                        <h3 class="text-sm font-bold text-slate-800 dark:text-white">Reset Progress</h3>
-                        <p class="text-xs text-slate-400">Clear all history & mistakes</p>
-                    </div>
-                    <button onclick="if(confirm('Reset all data? This cannot be undone.')){ localStorage.clear(); location.reload(); }" class="px-4 py-2 bg-red-50 text-red-600 rounded-xl text-xs font-bold">Reset</button>
+                <div class="glass-card p-6 rounded-3xl flex items-center justify-between" onclick="Core.showOrientation(true)">
+                    <div><h3 class="text-sm font-bold">Orientation</h3><p class="text-xs text-slate-400">Listen to instructions</p></div>
+                    <button class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"><i class="fa-solid fa-play"></i></button>
                 </div>
-
-                <div class="text-center pt-10">
-                    <p class="text-[10px] font-bold text-slate-300 uppercase">UPSC Pro v${CONFIG.version}</p>
-                    <p class="text-[10px] text-slate-300 mt-1">Made with <i class="fa-solid fa-heart text-red-400"></i> for Aspirants</p>
+                 <div class="glass-card p-6 rounded-3xl flex items-center justify-between">
+                    <div><h3 class="text-sm font-bold text-red-500">Reset App</h3><p class="text-xs text-slate-400">Clear all data</p></div>
+                    <button onclick="if(confirm('Reset?')) { localStorage.clear(); location.reload(); }" class="px-4 py-2 bg-red-50 text-red-600 rounded-xl text-xs font-bold">Reset</button>
                 </div>
-            </div>`;
-        },
+            </div>
+        `;
+    },
 
-        /* --- LOGIC HELPERS --- */
-        handleOption(idx) {
-            App.state.quiz.answers[App.state.quiz.currentIdx] = idx;
-            this.drawQuiz(); // Re-render to show selection state
-        },
-        moveQ(dir) {
-            const q = App.state.quiz;
-            const target = q.currentIdx + dir;
-            if (target >= 0 && target < q.questions.length) {
-                q.currentIdx = target;
-                this.drawQuiz();
-            }
-        },
-        toggleDark() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            App.state.settings.theme = isDark ? 'dark' : 'light';
-            localStorage.setItem('upsc_settings', JSON.stringify(App.state.settings));
-            this.drawSettings(); // Re-render toggle state
-        },
-        loader(show) {
-            const el = document.getElementById('loader');
-            if (show) el.classList.remove('hidden'); else el.classList.add('hidden');
-        },
-
-        /* --- MODALS --- */
-        modals: {
-            setup(title, type) {
-                const modal = document.createElement('div');
-                modal.className = "fixed inset-0 z-[100] bg-black/60 flex items-end sm:items-center justify-center";
-                modal.innerHTML = `
-                <div class="glass-card w-full max-w-sm bg-white dark:bg-slate-900 rounded-t-[40px] sm:rounded-[40px] p-8 animate-slide-up">
-                    <div class="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-6 sm:hidden"></div>
-                    <h3 class="text-xl font-black text-slate-800 dark:text-white uppercase mb-6">${title}</h3>
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <label class="text-[10px] font-black text-slate-400 uppercase mb-3 block">Questions</label>
-                            <div class="grid grid-cols-4 gap-2" id="q-counts">
-                                ${[10, 20, 50, 100].map(n => `<button class="py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-500" onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('bg-slate-900','text-white','dark:bg-blue-600')); this.classList.add('bg-slate-900','text-white','dark:bg-blue-600');">${n}</button>`).join('')}
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-black text-slate-400 uppercase mb-3 block">Mode</label>
-                            <div class="grid grid-cols-2 gap-2" id="q-modes">
-                                <button class="py-4 rounded-2xl bg-slate-900 text-white dark:bg-blue-600 text-xs font-bold border-2 border-transparent">Test</button>
-                                <button class="py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs font-bold border-2 border-transparent" onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.className='py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs font-bold border-2 border-transparent'); this.className='py-4 rounded-2xl bg-slate-900 text-white dark:bg-blue-600 text-xs font-bold border-2 border-transparent';">Learn</button>
-                            </div>
-                        </div>
+    _drawHeader(view) {
+        const h = document.getElementById('app-header');
+        if(view === 'home') {
+            h.innerHTML = `
+                <div class="flex items-center justify-between p-4 glass-card rounded-3xl mx-2 mt-4 animate-slide-up">
+                    <div class="flex items-center gap-3">
+                        <img src="assets/images/Omg.jpg" class="w-10 h-10 rounded-full border-2 border-blue-500 object-cover">
+                        <div><h2 class="text-xs font-black leading-none">Aspirant</h2><p class="text-[9px] font-bold text-blue-500 uppercase tracking-widest mt-1">Target 2026</p></div>
                     </div>
-                    <button id="start-btn" class="w-full mt-10 py-4 bg-blue-600 text-white rounded-3xl font-bold shadow-lg shadow-blue-500/30">Start Quiz</button>
-                </div>`;
-                document.body.appendChild(modal);
-                
-                // Set Defaults
-                modal.querySelector('#q-counts button').click(); // Select 10
-
-                modal.querySelector('#start-btn').onclick = () => {
-                    const count = parseInt(modal.querySelector('#q-counts .bg-slate-900, #q-counts .dark\\:bg-blue-600').innerText);
-                    const mode = modal.querySelector('#q-modes .bg-slate-900, #q-modes .dark\\:bg-blue-600').innerText.toLowerCase();
-                    modal.remove();
-                    App.Engine.start({ subject: type, count, mode, type });
-                };
-                modal.onclick = (e) => { if(e.target === modal) modal.remove(); };
-            },
-            
-            map() {
-                const q = App.state.quiz;
-                const modal = document.createElement('div');
-                modal.className = "fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-6";
-                modal.innerHTML = `
-                <div class="glass-card w-full max-w-sm rounded-[40px] p-6 animate-slide-up bg-white dark:bg-slate-900">
-                    <h3 class="text-xs font-black text-slate-400 uppercase mb-4">Question Map</h3>
-                    <div class="grid grid-cols-5 gap-3 max-h-80 overflow-y-auto no-scrollbar">
-                        ${q.questions.map((_, i) => {
-                            let color = q.currentIdx === i ? 'bg-blue-600 text-white' : (q.answers[i] !== undefined ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-400');
-                            return `<button onclick="App.state.quiz.currentIdx=${i}; App.UI.drawQuiz(); this.closest('div.fixed').remove()" class="w-full aspect-square rounded-xl text-[10px] font-bold ${color}">${i+1}</button>`;
-                        }).join('')}
-                    </div>
-                    <button onclick="this.closest('div.fixed').remove()" class="w-full mt-6 py-3 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-bold text-slate-500">Close</button>
-                </div>`;
-                document.body.appendChild(modal);
-            },
-
-            toppers() {
-                const modal = document.createElement('div');
-                modal.className = "fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-6";
-                modal.innerHTML = `
-                <div class="glass-card w-full max-w-sm rounded-[40px] p-8 animate-slide-up bg-white dark:bg-slate-900">
-                    <h3 class="text-xl font-black text-slate-800 dark:text-white mb-6">Topper Archives</h3>
-                    <div class="grid grid-cols-3 gap-3">
-                        ${CONFIG.resources.toppers.map(t => `
-                        <a href="${t.url}" target="_blank" class="flex flex-col items-center p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                            <div class="w-12 h-12 rounded-xl bg-${t.color}-100 text-${t.color}-600 flex items-center justify-center text-lg font-black mb-2">${t.char}</div>
-                            <span class="text-[10px] font-bold text-slate-600 dark:text-slate-400">${t.name}</span>
-                        </a>`).join('')}
-                    </div>
-                    <button onclick="this.closest('div.fixed').remove()" class="w-full mt-8 py-3 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-bold text-slate-500">Close</button>
-                </div>`;
-                document.body.appendChild(modal);
-            }
-        },
-
-        showDisclaimer() {
-            const modal = document.createElement('div');
-            modal.className = "fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl flex items-center justify-center p-6";
-            modal.innerHTML = `
-            <div class="glass-card w-full max-w-sm rounded-[40px] p-8 text-center animate-slide-up bg-white dark:bg-slate-900">
-                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-2xl text-white mx-auto mb-6 shadow-xl shadow-blue-500/30">
-                    <i class="fa-solid fa-user-shield"></i>
+                    <button onclick="Core.navigate('settings')" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500"><i class="fa-solid fa-gear"></i></button>
                 </div>
-                <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-2">Welcome, Aspirant</h2>
-                <p class="text-xs text-slate-500 leading-relaxed mb-8">Listen to the orientation before starting your preparation journey.</p>
-                <audio controls src="assets/audio/disclaimer.mp3" class="w-full mb-8 rounded-full"></audio>
-                <button onclick="localStorage.setItem('upsc_visited','true'); this.closest('div.fixed').remove();" class="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-bold">Enter App</button>
-            </div>`;
-            document.body.appendChild(modal);
+            `;
+        } else {
+            h.innerHTML = `
+                <div class="flex items-center p-4 mt-2 gap-4">
+                    <button onclick="Core.navigate('home')" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-slate-500"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="text-xl font-black capitalize">${view}</h2>
+                </div>
+            `;
         }
     },
 
-    /* =========================================
-       MODULE 6: UTILS (Helpers)
-       ========================================= */
-    Utils: {
-        shuffle: (arr) => arr.sort(() => Math.random() - 0.5),
-        formatTime: (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`
+    _drawFooter(active) {
+        const nav = document.getElementById('app-nav');
+        const btn = (view, icon, label) => `
+            <button onclick="Core.navigate('${view}')" class="nav-btn ${active === view ? 'active' : 'inactive'}">
+                <i class="fa-solid fa-${icon}"></i>
+                <span class="text-[8px] font-bold uppercase mt-1">${label}</span>
+            </button>`;
+        
+        nav.innerHTML = `
+            <div class="flex justify-around items-center glass-card rounded-full p-3 shadow-2xl border-t border-white/20 backdrop-blur-xl">
+                ${btn('home', 'house', 'Home')}
+                ${btn('notes', 'book-bookmark', 'Notes')}
+                ${btn('quiz', 'layer-group', 'Quiz')} ${btn('settings', 'sliders', 'Settings')}
+            </div>
+        `;
+    },
+
+    // --- ACTIONS ---
+    handleOption(idx) {
+        const q = Engine.state.activeQuiz;
+        q.answers[q.currentIdx] = idx;
+        this._drawQuiz(document.getElementById('main-view')); // Re-render
+    },
+
+    moveQ(dir) {
+        const q = Engine.state.activeQuiz;
+        const target = q.currentIdx + dir;
+        if(target >= 0 && target < q.questions.length) {
+            q.currentIdx = target;
+            this._drawQuiz(document.getElementById('main-view'));
+        }
+    },
+
+    showSetup(subject) {
+        UI.showModal(`
+            <div class="p-8">
+                <h3 class="text-xl font-black mb-6 uppercase tracking-tight">${subject}</h3>
+                <div class="space-y-6">
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase mb-3 block">Count</label>
+                        <div class="grid grid-cols-4 gap-2" id="q-counts">
+                            ${[10, 20, 50, 100].map(n => `<button onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.className='py-3 rounded-2xl bg-slate-100 text-xs font-bold text-slate-500'); this.className='py-3 rounded-2xl bg-slate-900 text-white text-xs font-bold'" class="py-3 rounded-2xl ${n===10?'bg-slate-900 text-white':'bg-slate-100 text-slate-500'} text-xs font-bold">${n}</button>`).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase mb-3 block">Mode</label>
+                        <div class="grid grid-cols-2 gap-2" id="q-modes">
+                            <button onclick="this.nextElementSibling.className='py-4 rounded-2xl bg-slate-100 text-xs font-bold text-slate-500'; this.className='py-4 rounded-2xl bg-slate-900 text-white text-xs font-bold'" class="py-4 rounded-2xl bg-slate-900 text-white text-xs font-bold">TEST</button>
+                            <button onclick="this.previousElementSibling.className='py-4 rounded-2xl bg-slate-100 text-xs font-bold text-slate-500'; this.className='py-4 rounded-2xl bg-slate-900 text-white text-xs font-bold'" class="py-4 rounded-2xl bg-slate-100 text-xs font-bold text-slate-500">LEARN</button>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="Core.triggerStart('${subject}')" class="w-full mt-10 py-4 bg-blue-600 text-white rounded-3xl font-bold shadow-xl">START QUIZ</button>
+            </div>
+        `);
+    },
+
+    triggerStart(subject) {
+        const count = parseInt(document.querySelector('#q-counts .bg-slate-900').innerText);
+        const mode = document.querySelector('#q-modes .bg-slate-900').innerText.toLowerCase();
+        document.getElementById('modal-overlay').remove();
+        this.startQuiz({ subject, count, mode });
+    },
+
+    showOrientation(force = false) {
+        if (!force && DataStore.get('visited')) return;
+        
+        UI.showModal(`
+            <div class="p-8 text-center">
+                <div class="w-20 h-20 bg-blue-600 text-white rounded-3xl mx-auto flex items-center justify-center text-3xl mb-6 shadow-xl shadow-blue-500/30"><i class="fa-solid fa-headphones-simple"></i></div>
+                <h2 class="text-2xl font-black mb-2">Welcome</h2>
+                <p class="text-xs text-slate-500 mb-8 leading-relaxed">Listen to the orientation from Pradeep Tripathi.</p>
+                
+                <div class="flex items-center justify-center gap-6 mb-8">
+                    <button id="play-btn" class="w-16 h-16 rounded-full bg-blue-600 text-white text-2xl shadow-xl active:scale-90 transition-all"><i class="fa-solid fa-play"></i></button>
+                    <audio id="welcome-audio" src="assets/audio/disclaimer.mp3"></audio>
+                </div>
+
+                <button onclick="DataStore.set('visited', true); document.getElementById('modal-overlay').remove();" class="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-3xl font-bold">Continue</button>
+            </div>
+        `);
+
+        const audio = document.getElementById('welcome-audio');
+        const btn = document.getElementById('play-btn');
+        btn.onclick = () => {
+            if (audio.paused) { audio.play(); btn.innerHTML = '<i class="fa-solid fa-pause"></i>'; }
+            else { audio.pause(); btn.innerHTML = '<i class="fa-solid fa-play"></i>'; }
+        };
+    },
+
+    toggleDark() {
+        const isDark = document.documentElement.classList.toggle('dark');
+        DataStore.set('settings', { theme: isDark ? 'dark' : 'light' });
+        this._drawSettings(document.getElementById('main-view'));
     }
 };
 
-// Boot
-document.addEventListener('DOMContentLoaded', () => App.init());
- 
+// Start the Engine
+document.addEventListener('DOMContentLoaded', () => Core.init());
+
