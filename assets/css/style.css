@@ -1,0 +1,166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================
+   1. THEME VARIABLES (The Engine)
+   ========================================= */
+:root {
+    /* LIGHT MODE DEFAULTS */
+    --bg-mesh-1: rgba(59, 130, 246, 0.15); /* Blue */
+    --bg-mesh-2: rgba(236, 72, 153, 0.15); /* Pink */
+    
+    /* Glass Surface: White with transparency */
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --glass-shadow: 0 8px 32px rgba(30, 41, 59, 0.05);
+    
+    /* Text Colors for Contrast */
+    --text-primary: #0f172a;  /* Slate 900 */
+    --text-secondary: #64748b; /* Slate 500 */
+    --text-accent: #2563eb;    /* Blue 600 */
+    
+    /* Nav & Header specific */
+    --nav-bg: rgba(255, 255, 255, 0.85);
+}
+
+/* DARK MODE OVERRIDES */
+html[class="dark"] {
+    /* Darker Mesh */
+    --bg-mesh-1: rgba(59, 130, 246, 0.1);
+    --bg-mesh-2: rgba(236, 72, 153, 0.08);
+
+    /* Glass Surface: Dark Slate with transparency */
+    --glass-bg: rgba(30, 41, 59, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+    /* Text Colors for Dark Mode Readability */
+    --text-primary: #f1f5f9;   /* Slate 100 */
+    --text-secondary: #94a3b8; /* Slate 400 */
+    --text-accent: #60a5fa;    /* Blue 400 */
+
+    --nav-bg: rgba(15, 23, 42, 0.85);
+}
+
+/* =========================================
+   2. GLOBAL RESETS & SAFARI FIXES
+   ========================================= */
+body {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    color: var(--text-primary);
+}
+
+/* Hide Scrollbar but allow scrolling */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Safe Area Spacing for Notched iPhones */
+.pt-safe-top { padding-top: max(1.5rem, env(safe-area-inset-top)); }
+.pb-safe-bottom { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+
+/* =========================================
+   3. BACKGROUND MESH ANIMATION
+   ========================================= */
+#bg-mesh::before, #bg-mesh::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: float 10s infinite ease-in-out;
+}
+
+#bg-mesh::before {
+    top: -10%; left: -10%; width: 70vw; height: 70vw;
+    background: var(--bg-mesh-1);
+    animation-delay: 0s;
+}
+
+#bg-mesh::after {
+    bottom: -10%; right: -10%; width: 80vw; height: 80vw;
+    background: var(--bg-mesh-2);
+    animation-delay: -5s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(20px, -20px) scale(1.1); }
+}
+
+/* =========================================
+   4. COMPONENT CLASSES (Used in JS)
+   ========================================= */
+
+/* The Standard iOS Card */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    /* Colors inherit from parent or Tailwind classes */
+}
+
+/* High-Blur Navigation & Header */
+.glass-nav {
+    background: var(--nav-bg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1px solid var(--glass-border);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+}
+
+.glass-header {
+    background: var(--nav-bg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+/* Interactive Elements */
+.btn-primary {
+    background: #2563eb; /* Blue 600 */
+    color: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+html[class="dark"] .btn-primary {
+    background: #3b82f6; /* Blue 500 */
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+/* =========================================
+   5. VIEW TRANSITIONS
+   ========================================= */
+.view-enter {
+    animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.view-exit {
+    animation: fadeOut 0.2s ease-in forwards;
+}
+
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; transform: scale(0.98); }
+}
+
+/* Checkbox Toggle Switch (Dark Mode) */
+.toggle-checkbox:checked {
+    right: 0;
+    border-color: #2563eb;
+}
+.toggle-checkbox:checked + .toggle-label {
+    background-color: #2563eb;
+}
+
