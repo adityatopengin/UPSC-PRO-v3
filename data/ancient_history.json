@@ -1,0 +1,759 @@
+[
+  {
+    "id": "ANCIENT_2013_001",
+    "year": 2013,
+    "subject": "Ancient India",
+    "topic": "Indus Valley Civilization",
+    "subtopic": "Characteristics and Features",
+    "difficulty": "Easy",
+    "question_type": "MCQ_multiple",
+    "question_text": "Which of the following characterises/characterise the people of the Indus Valley Civilization?",
+    "options": [
+      "They possessed great palaces and temples",
+      "They worshipped both male and female deities",
+      "They employed horse-drawn chariots in warfare"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "Statement 2 is correct. Archaeological evidence shows figurines resembling a female deity (Mother Goddess) have been unearthed at multiple Indus Valley sites like Mohenjo-daro and Harappa. The famous 'Pashupati seal' depicts a male figure surrounded by animals, resembling proto-Shiva. However, statements 1 and 3 are inaccurate: no definitive temple or palace structures have been found in Indus Valley sites; they had granaries and residential structures instead. Horse-drawn chariots show no evidence in IVC (horses were rare; found only at Surkotada). The Indus civilization was predominantly secular with limited evidence of large-scale religious structures compared to later civilizations.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2013,
+      "question_number": 1
+    },
+    "tags": ["static", "IVC", "archaeology"],
+    "notes": "High frequency topic in Prelims. Focus on distinctive features of IVC versus Vedic Aryans and other ancient civilizations",
+    "linked_concepts": ["Indus Script", "Mohenjo-daro", "Harappa", "Proto-Shiva", "Seals", "Great Bath"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2013_002",
+    "year": 2013,
+    "subject": "Ancient India",
+    "topic": "Buddhist Architecture",
+    "subtopic": "Rock-cut Caves",
+    "difficulty": "Easy",
+    "question_type": "MCQ_single",
+    "question_text": "Some Buddhist rock-cut caves are called Chaityas, while the others are called Viharas. What is the difference between the two?",
+    "options": [
+      "Vihara is a place of worship, while Chaitya is the dwelling place of the monks",
+      "Chaitya is a place of worship, while Vihara is the dwelling place of the monks",
+      "Chaitya is the stupa at the far end of the cave, while Vihara is the hall axial to it",
+      "There is no material difference between the two"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "Chaitya-grihas (prayer halls) were places of worship with a stupa (shrine) at the far end, featuring elaborate architectural elements like columns, ribs on the vaulted roof resembling wooden construction, and ornamental facade. Viharas were monastic residences consisting of a central courtyard surrounded by cells (rooms) where monks lived, studied, and performed daily activities. This fundamental distinction is evident at sites like Ajanta (both types present) and Ellora (predominantly viharas and chaityas). Chaityas are larger, more elaborate structures used for congregational worship, while viharas are residential complexes for monks.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2013,
+      "question_number": 2
+    },
+    "tags": ["static", "architecture", "Buddhism"],
+    "notes": "Frequently asked in various forms. Key difference: chaitya = worship/prayer hall, vihara = monastic living quarters",
+    "linked_concepts": ["Ajanta Caves", "Ellora Caves", "Buddhist Monastic System", "Stupa", "Rock-cut Architecture"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2013_003",
+    "year": 2013,
+    "subject": "Ancient India",
+    "topic": "Indian Rock-cut Architecture",
+    "subtopic": "Cave Structures",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "With reference to the history of Indian rock-cut architecture, consider the following statements: 1. The caves at Badami are the oldest surviving rock-cut caves in India. 2. The Barabar rock-cut caves were originally made for Ajivikas by Emperor Chandragupta Maurya. 3. At Ellora, caves were made for different faiths.",
+    "options": [
+      "1 only",
+      "2 and 3 only",
+      "3 only",
+      "1, 2 and 3"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Statement 3 is correct. Ellora is a multi-faith site (UNESCO World Heritage Site) with caves dedicated to Buddhist, Hindu, and Jain traditions, representing the coexistence of religions during medieval India. The site has 34 rock-cut caves in total: 12 Buddhist caves (5th-7th century), 17 Hindu caves (6th-9th century), and 5 Jain caves (7th-9th century). Statement 1 is incorrect: Barabar caves (dated to 3rd century BCE) are older than Badami caves (6th century CE). The Barabar caves are the oldest surviving rock-cut caves in India, featuring simple monolithic caves patronized during the Mauryan period, particularly by Emperor Ashoka for Ajivikas. Statement 2 is partially misleading—Barabar caves do show Mauryan patronage, but the attribution to Chandragupta Maurya is debated by historians; Ashoka's association is more firmly established.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2013,
+      "question_number": 3
+    },
+    "tags": ["static", "architecture", "religious_history", "chronology"],
+    "notes": "Tests chronological understanding of rock-cut architecture and dating of ancient monuments. Critical to understand Mauryan vs later period caves",
+    "linked_concepts": ["Barabar Caves", "Badami Caves", "Ellora Caves", "Ajivika Sect", "Mauryan Patronage", "Ashoka Edicts"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2014_001",
+    "year": 2014,
+    "subject": "Ancient India",
+    "topic": "Ancient Indian Dynasties",
+    "subtopic": "Mauryan Period and Later",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "Consider the following dynasties: 1. Satavahana 2. Shunga 3. Chola. Which of the above dynasties were ruling over South India during the Mauryan period?",
+    "options": [
+      "1 only",
+      "1 and 2 only",
+      "2 and 3 only",
+      "None of the above"
+    ],
+    "correct_option_index": 3,
+    "correct_option_label": "D",
+    "explanation": "None of the dynasties listed were contemporaneous with the Mauryan period (322-185 BCE). The Satavahanas rose to prominence after the decline of Mauryan power, around 2nd century BCE onwards, ruling the Deccan region with capitals at Pratishthan and Nashik. The Shunga dynasty (185-73 BCE) was a northern power that succeeded the Mauryas in North India after Brihadratha's assassination by Pushyamitra Shunga. The Chola dynasty's significant and powerful period came much later (9th-13th century CE), though they existed in smaller form during earlier periods. During the actual Mauryan period under Ashoka, the empire directly controlled South India or exercised indirect control through provincial administration and edicts, as evidenced by Ashoka's edicts found in the Deccan.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2014,
+      "question_number": 1
+    },
+    "tags": ["static", "dynasties", "chronology"],
+    "notes": "Tests understanding of chronological sequence and geographical extent of dynasties. Requires clear periodization of ancient India",
+    "linked_concepts": ["Mauryan Empire", "Chandragupta Maurya", "Ashoka", "Satavahana Dynasty", "Shunga Dynasty", "Chola Dynasty"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2014_002",
+    "year": 2014,
+    "subject": "Ancient India",
+    "topic": "Ancient Indian Culture",
+    "subtopic": "Literature and Performing Arts",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_single",
+    "question_text": "With reference to the cultural history of ancient India, the memorizing of chronicles, dynastic histories, and epic tales was the profession of which of the following?",
+    "options": [
+      "Shramana",
+      "Magadha",
+      "Suta",
+      "Bhata"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Sutas (also spelled Suta) were a professional class of bards and storytellers in ancient India who specialized in memorizing and reciting chronicles, royal genealogies (vamshas), dynastic histories, and epic narratives like the Mahabharata and Ramayana. They served in royal courts and were patronized by kings. This professional tradition was particularly important before written records became widespread and continued through various dynasties. Sutas were trained from childhood to memorize vast amounts of material and had specialized knowledge of genealogies and histories. Shramana referred to wandering ascetics (particularly in Buddhism and Jainism), Magadha was a region/empire, and Bhata were professional warriors or mercenaries.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2014,
+      "question_number": 2
+    },
+    "tags": ["static", "society", "culture", "occupational_classes"],
+    "notes": "Tests knowledge of ancient Indian social classes and their specialized occupational functions. Important for understanding oral tradition in ancient India",
+    "linked_concepts": ["Varna System", "Occupational Classes", "Oral Tradition", "Epic Literature", "Court Poets"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2015_001",
+    "year": 2015,
+    "subject": "Ancient India",
+    "topic": "Ancient Indian Architecture",
+    "subtopic": "Chronology of Rock-cut Monuments",
+    "difficulty": "Easy",
+    "question_type": "MCQ_single",
+    "question_text": "With reference to art and archaeological history of India, which one among the following was made earliest?",
+    "options": [
+      "Lingaraja Temple at Bhubaneswar",
+      "Rock-cut Elephant at Dhauli",
+      "Rock-cut Monuments at Mahabalipuram",
+      "Varaha Image at Udayagiri"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "The Rock-cut Elephant at Dhauli (Odisha), carved from a natural rock outcrop, dates to the 3rd century BCE during the Mauryan period under Emperor Ashoka. It is among the earliest surviving rock-cut monuments in India. The elephant is partially carved, and the site is famous for Ashoka's Major Rock Edict XIII (also called the Kalinga Edict), which discusses Ashoka's remorse after the Kalinga War. The Lingaraja Temple at Bhubaneswar dates to the 11th century CE, belonging to the Odisha School of Architecture. Mahabalipuram monuments (Pallava period) date to the 7th century CE, featuring cave temples, rock-cut rathas (chariot-shaped temples), and the Shore Temple. Udayagiri Varaha image dates to the 5th century CE during the Gupta period. Therefore, Dhauli's elephant is chronologically the earliest.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2015,
+      "question_number": 1
+    },
+    "tags": ["static", "chronology", "archaeology", "Ashoka"],
+    "notes": "Requires knowledge of chronological dating of monuments. Dhauli is famous for Ashoka edicts and early rock-cut art",
+    "linked_concepts": ["Ashoka", "Mauryan Art", "Rock-cut Monuments", "Odisha", "Kalinga War", "Pallava Architecture"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2015_002",
+    "year": 2015,
+    "subject": "Ancient India",
+    "topic": "Ancient Indian History",
+    "subtopic": "Kingdoms Associated with Buddha",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "Which of the following kingdoms were associated with the life of the Buddha?",
+    "options": [
+      "Avanti, Gandhara, Kosala, Magadha",
+      "Gandhara and Magadha only",
+      "Kosala and Magadha only",
+      "Avanti, Kosala, Magadha"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Kosala and Magadha were the two most directly associated with Buddha's life. Kosala (modern Uttar Pradesh) was the kingdom where Buddha was born in Lumbini (now in Nepal), where his father King Suddhodana ruled. Magadha (modern Bihar) was where Buddha spent much of his life after enlightenment, preaching and establishing monasteries. King Bimbisara and later King Ajatashatru of Magadha were important patrons of Buddha. While Gandhara (northwest region) became important for Buddhism later during the Kushan period, it was not directly associated with Buddha's lifetime. Avanti was a kingdom in central India that came into prominence later; it was not directly connected to Buddha's lifetime activities. Therefore, only Kosala and Magadha are correct.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2015,
+      "question_number": 2
+    },
+    "tags": ["static", "Buddhism", "kingdoms"],
+    "notes": "Tests understanding of geographical context of Buddha's life and teachings. Important kingdoms during 6th century BCE",
+    "linked_concepts": ["Buddha", "Lumbini", "Bodh Gaya", "Sarnath", "Magadha Empire", "Mahajanapadas"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2016_001",
+    "year": 2016,
+    "subject": "Ancient India",
+    "topic": "Indus Valley Civilization",
+    "subtopic": "Features and Economy",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "Regarding the Indus Valley Civilization, consider the following statements: 1. It was predominantly a secular civilization and the religious element, though present, did not dominate the scene. 2. During this period, cotton was used for manufacturing textiles in India.",
+    "options": [
+      "1 only",
+      "2 only",
+      "Both 1 and 2",
+      "Neither 1 nor 2"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Both statements are correct. Statement 1: The Indus Valley Civilization was predominantly secular with limited evidence of elaborate religious temples or organized priesthood like seen in later civilizations. Religious practices were simple, centered on worship of male and female deities based on seal evidence, animal worship, and nature worship. There is no evidence of large temples or priestly class dominating the society as in Vedic or medieval India. Statement 2: Textile manufacturing was a major industry in IVC. Evidence shows cotton (Gossypium) was cultivated, spun into threads, and woven into textiles. Fragments of cotton textiles and spindle whorls have been found at multiple IVC sites like Mohenjo-daro and Harappa, making India one of the earliest centers of cotton textile production in the world.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2016,
+      "question_number": 1
+    },
+    "tags": ["static", "IVC", "economy", "religion"],
+    "notes": "Combines features of IVC economy and religious characteristics. Frequently asked in combination",
+    "linked_concepts": ["Indus Valley Seals", "Textile Industry", "Religious Beliefs", "IVC Economy", "Indus Trade"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2016_002",
+    "year": 2016,
+    "subject": "Ancient India",
+    "topic": "Ancient Indian Literature",
+    "subtopic": "Dramatic Literature",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_single",
+    "question_text": "Which one of the following books of Ancient India has the love story of the son of the founder of the Sunga Dynasty?",
+    "options": [
+      "Swapnavasavadatta",
+      "Malavikagnimitra",
+      "Meghadoota",
+      "Ratnavali"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "Malavikagnimitra (also spelled Malvikagnimitra) is a Sanskrit drama written by Kalidasa that depicts the love story of Agnimitra, son of Pushyamitra Shunga (founder of the Shunga Dynasty), and Malavika, a princess. The play is set in the court of Agnimitra during the Shunga period (2nd century BCE). Swapnavasavadatta is another famous drama by Bhasa. Meghadoota (Cloud Messenger) is a famous lyric poem by Kalidasa describing the journey of a cloud. Ratnavali is a play by Shudraka. Among the options, only Malavikagnimitra directly features the son of the founder of the Shunga Dynasty.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2016,
+      "question_number": 2
+    },
+    "tags": ["static", "literature", "Sunga Dynasty"],
+    "notes": "Tests knowledge of Sanskrit dramatic literature and its historical context. Kalidasa and Shunga period connection",
+    "linked_concepts": ["Kalidasa", "Sunga Dynasty", "Pushyamitra Shunga", "Sanskrit Drama", "Classical Literature"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2016_003",
+    "year": 2016,
+    "subject": "Ancient India",
+    "topic": "Medieval Indian Administration",
+    "subtopic": "Terms and Systems",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "In the context of the history of India, consider the following pairs: 1. Eripatti - Land, revenue from which was set apart for the maintenance of the village tank. 2. Taniyurs - Villages donated to a single Brahmin or a group of Brahmins. 3. Ghatikas - Colleges generally attached to the temples.",
+    "options": [
+      "1 and 2",
+      "3 only",
+      "2 and 3",
+      "1 and 3"
+    ],
+    "correct_option_index": 3,
+    "correct_option_label": "D",
+    "explanation": "Statements 1 and 3 are correctly matched. Eripatti (Tamil: 'eri' = tank, 'patti' = portion) was land whose revenue was set apart for the maintenance and upkeep of village tanks (artificial reservoirs/ponds) in South Indian kingdoms, particularly during the Chola period. This was part of the administrative system to ensure irrigation infrastructure was maintained. Ghatikas were educational institutions, often called 'Agrahara' in some regions, which were colleges or schools generally attached to temples and funded through land grants. They were centers of learning for Sanskrit and Vedic studies. Statement 2 is partially incorrect: Taniyurs were indeed villages donated to Brahmins, but the term specifically refers to grants given to individuals or groups, particularly during the Cola period. The description 'villages donated to a single Brahmin or a group of Brahmins' is accurate for Taniyurs, so statement 2 is correct. Therefore, all three should be correct.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2016,
+      "question_number": 3
+    },
+    "tags": ["static", "administration", "Chola", "land_grants"],
+    "notes": "Tests knowledge of medieval South Indian administrative terms and economic systems, particularly from Chola period",
+    "linked_concepts": ["Chola Administration", "Land Grants", "Temple Economy", "Village Administration", "Agrarian System"],
+    "created_at": "2025-12-15"
+  },
+
+  {
+    "id": "ANCIENT_2017_001",
+    "year": 2017,
+    "subject": "Ancient India",
+    "topic": "Vedic Period",
+    "subtopic": "Rigvedic Aryans vs Indus Valley People",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "With reference to the difference between the culture of Rigvedic Aryans and Indus Valley people, which of the following statements is/are correct?",
+    "options": [
+      "Rigvedic Aryans used the coat of mail and helmet in warfare whereas the people of Indus Valley Civilization did not leave any evidence of using them.",
+      "Rigvedic Aryans knew gold, silver and copper whereas Indus Valley people knew only copper and iron.",
+      "Rigvedic Aryans had domesticated the horse whereas there is no evidence of Indus Valley people having been aware of this animal."
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Statement 1 and 3 are correct. Statement 1: Archaeological evidence from Indus Valley sites shows no weapons of war like coats of mail or helmets, indicating they were not a war-like people. Rigvedic texts and archaeological finds show Rigvedic Aryans had advanced weaponry. Statement 2 is incorrect: Indus Valley people were familiar with copper and used both copper and bronze (not iron—iron was scarce in that period). Rigvedic Aryans knew gold, silver, and copper. Statement 3: Horse remains are found in Rigvedic contexts and Vedic literature extensively mentions horses (ashva), but Indus Valley sites show very limited or no evidence of horse domestication (horse remains found only at Surkotada and that too uncertain). Horses were central to Vedic warfare and rituals, which is absent in IVC.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2017,
+      "question_number": 1
+    },
+    "tags": ["static", "comparative_cultures", "vedic_period"],
+    "notes": "Contrasts two major ancient Indian civilizations. Requires detailed knowledge of both cultures' archaeological and textual evidence",
+    "linked_concepts": ["Rigveda", "Vedic Civilization", "Indus Valley Civilization", "Aryans", "Archaeological Evidence"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2018_001",
+    "year": 2018,
+    "subject": "Ancient India",
+    "topic": "Buddhism",
+    "subtopic": "Buddhist Concepts and Bodhisattvas",
+    "difficulty": "Easy",
+    "question_type": "MCQ_single",
+    "question_text": "With reference to Indian history, who among the following is a future Buddha, yet to come to save the world?",
+    "options": [
+      "Avalokiteshvara",
+      "Lokesvara",
+      "Maitreya",
+      "Padmapani"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Maitreya (also spelled Metteyya in Pali) is the Buddhist concept of a future Buddha who is yet to come to save the world. Maitreya is the fifth Buddha in the current kalpa (cosmic cycle) and is awaited as the savior figure in Mahayana Buddhism. Maitreya is currently residing in the Tusita heavens waiting for the right time to descend to earth. Avalokiteshvara and Lokesvara are Bodhisattvas (enlightened beings) associated with compassion who help others achieve enlightenment but are not future Buddhas. Padmapani is a form of Avalokiteshvara. The concept of Maitreya is central to Mahayana Buddhism.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2018,
+      "question_number": 1
+    },
+    "tags": ["static", "Buddhism", "concepts"],
+    "notes": "Tests understanding of Buddhist concepts and Bodhisattva figures. Maitreya is important in Mahayana Buddhism",
+    "linked_concepts": ["Mahayana Buddhism", "Bodhisattvas", "Avalokiteshvara", "Buddhist Cosmology"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2019_001",
+    "year": 2019,
+    "subject": "Ancient India",
+    "topic": "Indus Valley Civilization",
+    "subtopic": "Harappan Sites",
+    "difficulty": "Easy",
+    "question_type": "MCQ_single",
+    "question_text": "Which one of the following is not a Harappan site?",
+    "options": [
+      "Chanhudaro",
+      "Kot Diji",
+      "Sohgaura",
+      "Desalpur"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Sohgaura is not a Harappan site. Sohgaura is located in Bihar and belongs to the post-Mauryan period (around 2nd century BCE), not the Indus Valley Civilization (3300-1300 BCE). It is known for a stone railing deposit with historical inscriptions. Chanhudaro (also Chanhu-daro) is a well-known Harappan site in Sindh, Pakistan, famous for bead-making workshops and advanced pottery techniques. Kot Diji is a pre-Harappan and Harappan settlement site in Sindh, showing the transition from pre-Harappan to Harappan culture. Desalpur is a Harappan site in Gujarat known for evidence of agricultural settlement. Therefore, Sohgaura is the non-Harappan site among the options.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2019,
+      "question_number": 1
+    },
+    "tags": ["static", "IVC", "sites"],
+    "notes": "Tests knowledge of major Harappan archaeological sites. Sohgaura belongs to post-Mauryan period, not IVC",
+    "linked_concepts": ["Harappan Sites", "Indus Valley Civilization", "Chanhudaro", "Kot Diji", "Archaeological Sites"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2019_002",
+    "year": 2019,
+    "subject": "Ancient India",
+    "topic": "Gupta Administration",
+    "subtopic": "Forced Labour System",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_single",
+    "question_text": "With reference to forced labour (Vishti) in India during the Gupta period, which one of the following statements is correct?",
+    "options": [
+      "It was considered a source of income for the State, a sort of tax paid by the people.",
+      "It was totally absent in the Madhya Pradesh and Kathiawar regions of the Gupta Empire.",
+      "The forced labourer was entitled to weekly wages.",
+      "The eldest son of the labourer was sent as the forced labourer."
+    ],
+    "correct_option_index": 0,
+    "correct_option_label": "A",
+    "explanation": "Statement A is correct. Vishti (or Bisti) was a system of forced labour or unpaid public labour during the Gupta period, which was considered a source of income for the state as it functioned like a tax paid by people in the form of labour. It was used for state projects like road construction, irrigation, and public works. This system is documented in contemporary sources including inscriptions and administrative texts. Vishti was prevalent across the Gupta Empire, including Madhya Pradesh and Kathiawar regions (making statement B incorrect). There is no historical evidence that forced labourers received weekly wages (statement C is incorrect). Statement D is also incorrect—the system did not specifically require the eldest son; rather, it was a general obligation on subjects.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2019,
+      "question_number": 2
+    },
+    "tags": ["static", "Gupta administration", "labor_system"],
+    "notes": "Tests knowledge of Gupta administrative systems and labor policies. Vishti was an important taxation system",
+    "linked_concepts": ["Gupta Empire", "Gupta Administration", "Tax Systems", "Public Works", "Labor Taxation"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2020_001",
+    "year": 2020,
+    "subject": "Ancient India",
+    "topic": "Medieval Indian Economy",
+    "subtopic": "Financial Instruments",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_single",
+    "question_text": "Which of the following phrases defines the nature of the 'Hundi' generally referred to in the sources of the post-Harsha period?",
+    "options": [
+      "An advisory issued by the king to his subordinates",
+      "A diary to be maintained for daily accounts",
+      "A bill of exchange",
+      "An order from the feudal lord to his subordinates"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Hundi (also spelled Hundi or Hundee) was a bill of exchange used in medieval India, particularly during the post-Harsha period (after 7th century CE). It functioned as a financial instrument for conducting long-distance trade without physically transporting large quantities of cash. Merchants and traders used hundis to transfer money across regions, making them precursors to modern checks or promissory notes. The system enabled credit transactions and was essential for Indian commercial networks. Historical sources from the medieval period document the extensive use of hundis in trade and commerce. This is not an advisory from the king (A), a diary (B), or a feudal order (D), but a sophisticated financial instrument used by merchants.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2020,
+      "question_number": 1
+    },
+    "tags": ["static", "economy", "medieval_period"],
+    "notes": "Tests understanding of medieval Indian economic systems and financial instruments. Hundi shows sophistication of ancient Indian commerce",
+    "linked_concepts": ["Medieval Indian Economy", "Trade Systems", "Financial Instruments", "Post-Harsha Period"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2020_002",
+    "year": 2020,
+    "subject": "Ancient India",
+    "topic": "Ancient Indian Edicts",
+    "subtopic": "Rulers and Their Policies",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_single",
+    "question_text": "Who among the following rulers advised his subjects through this inscription? 'Whosoever praises his religious sect or blames other sects out of excessive devotion to his own sect, with the view of glorifying his own sect, he rather injures his own sect very severely.'",
+    "options": [
+      "Ashoka",
+      "Samudragupta",
+      "Harshavardhana",
+      "Krishnadeva Raya"
+    ],
+    "correct_option_index": 0,
+    "correct_option_label": "A",
+    "explanation": "Emperor Ashoka issued this inscription. This quote reflects Ashoka's philosophy of religious tolerance and his concept of Dhamma (Dharma), which he promoted after his conversion to Buddhism following the bloody Kalinga War. This particular statement appears in Ashoka's Rock Edicts, specifically addressing the importance of respecting all religious sects and discouraging religious bigotry. Ashoka's edicts were a revolutionary approach to governance, emphasizing tolerance, non-violence (ahimsa), moral conduct, and respect for different faiths. This policy of religious pluralism was unique for its time and became a defining feature of Ashoka's rule. The other rulers (Samudragupta, Harshavardhana, and Krishnadeva Raya) did not emphasize this particular philosophy of religious tolerance in their edicts or inscriptions.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2020,
+      "question_number": 2
+    },
+    "tags": ["static", "Ashoka", "dhamma", "edicts"],
+    "notes": "Tests knowledge of Ashoka's religious philosophy and inscriptions. Key concept: Ashoka's Dhamma emphasized religious tolerance",
+    "linked_concepts": ["Ashoka", "Ashoka Edicts", "Dhamma", "Religious Tolerance", "Mauryan Empire"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2020_003",
+    "year": 2020,
+    "subject": "Ancient India",
+    "topic": "Gupta Economy",
+    "subtopic": "Trade Ports",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_single",
+    "question_text": "With reference to the period of the Gupta dynasty in ancient India, the towns Ghantasala, Kadura and Chaul were well known as",
+    "options": [
+      "ports handling foreign trade",
+      "capitals of powerful kingdoms",
+      "places of exquisite stone art and architecture",
+      "important Buddhist pilgrimage centres"
+    ],
+    "correct_option_index": 0,
+    "correct_option_label": "A",
+    "explanation": "Ghantasala, Kadura, and Chaul were well-known coastal ports during the Gupta period (4th-6th century CE) that handled foreign trade, particularly maritime commerce with Southeast Asia, China, and the Middle East. These ports were crucial nodes in Indian Ocean trade networks. Archaeological evidence including coins, artifacts, and inscriptions confirm their importance as trading centers. Ghantasala is located in Andhra Pradesh and was a major port for exporting Indian goods. Kadura (also called Calicut region) and Chaul (in Maharashtra) were significant ports for western maritime trade. The Gupta period saw extensive maritime commerce, and these ports facilitated the export of Indian textiles, spices, and other goods. While these ports later became important in Buddhist contexts, they were primarily significant as trade ports during the Gupta period.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2020,
+      "question_number": 3
+    },
+    "tags": ["static", "Gupta economy", "trade"],
+    "notes": "Tests knowledge of Gupta economic systems and maritime trade. These ports show Gupta commercial sophistication",
+    "linked_concepts": ["Gupta Empire", "Maritime Trade", "Indian Ocean Trade", "Ports", "Ancient Commerce"],
+    "created_at": "2025-12-15"
+  },
+   
+  {
+    "id": "ANCIENT_2021_001",
+    "year": 2021,
+    "subject": "Ancient India",
+    "topic": "Indus Valley Civilization",
+    "subtopic": "Water Management Systems",
+    "difficulty": "Easy",
+    "question_type": "MCQ_single",
+    "question_text": "Which one of the following ancient towns is well-known for its elaborate system of water harvesting and management by building a series of dams and channeling water into connected reservoirs?",
+    "options": [
+      "Dholavira",
+      "Kalibangan",
+      "Rakhigarhi",
+      "Ropar"
+    ],
+    "correct_option_index": 0,
+    "correct_option_label": "A",
+    "explanation": "Dholavira, located in the Kutch district of Gujarat, is renowned for its sophisticated water harvesting and management system dating to the Indus Valley Civilization (circa 2650-1550 BCE). Archaeological excavations have revealed an elaborate network of dams, reservoirs, and channels that directed rainwater into connected water storage systems. This demonstrates the engineering prowess and sophisticated urban planning of the Harappan civilization. The town has two dams visible on opposite sides, and the water management system indicates knowledge of hydraulics and urban infrastructure. This feature distinguishes Dholavira as uniquely advanced in water management compared to other contemporary Harappan sites. Kalibangan, Rakhigarhi, and Ropar, while important IVC sites, are not specifically known for such elaborate water management systems on the scale seen at Dholavira.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2021,
+      "question_number": 1
+    },
+    "tags": ["static", "IVC", "technology"],
+    "notes": "Dholavira is a standout site for demonstrating IVC engineering capabilities. Shows urban planning and water management sophistication",
+    "linked_concepts": ["Indus Valley Civilization", "Harappan Cities", "Water Management", "Urban Planning", "Dams and Reservoirs"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2021_002",
+    "year": 2021,
+    "subject": "Ancient India",
+    "topic": "Post-Gupta Period",
+    "subtopic": "Dynasties and Political History",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "From the decline of Guptas until the rise of Harshavardhana in the early seventh century, which of the following kingdoms were holding power in Northern India?",
+    "options": [
+      "Pushyabhuti dynasty",
+      "Maukhari dynasty",
+      "Parihar dynasty",
+      "Chalukya dynasty",
+      "Kalachuri dynasty",
+      "Hunas"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "1, 3, 4, and 6 only",
+    "explanation": "The period between the decline of Guptas (around 550 CE) and rise of Harshavardhana (606 CE) saw political fragmentation in Northern India. Pushyabhuti dynasty (option 1) ruled parts of Northern India in the late 6th century. Maukhari dynasty (option 2) ruled the Doab region (between Ganga and Yamuna) and was contemporary with early Pushyabhuti rule. Parihar/Pratihar dynasty (option 3) was emerging in the post-Gupta period as a significant power. Chalukya dynasty (option 4) of Badami ruled the Deccan and parts of northern regions. Kalachuri dynasty (option 5) emerged in central India, not primarily in Northern India during this period. Hunas/Hephthalites (option 6) invaded and controlled parts of Northwestern India in the 5th-6th centuries. Therefore, 1, 3, 4, and 6 held power in Northern India during this transition period. Note: Options may vary by source; key kingdoms were Pushyabhuti, Maukhari, and Hunas in the north.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2021,
+      "question_number": 2
+    },
+    "tags": ["static", "dynasties", "political_history"],
+    "notes": "Tests knowledge of post-Gupta period fragmentation. This was a transitional period with multiple small kingdoms before Harsha unified much of North India",
+    "linked_concepts": ["Gupta Empire Decline", "Harshavardhana", "Pushyabhuti Dynasty", "Maukhari Dynasty", "Northern India Politics"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2022_001",
+    "year": 2022,
+    "subject": "Ancient India",
+    "topic": "Sangam Literature",
+    "subtopic": "Sangam Poems and Society",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_single",
+    "question_text": "Which one of the following statements about Sangam literature in ancient South India is correct?",
+    "options": [
+      "Sangam poems are devoid of any reference to material culture",
+      "The social classification of Varna was known to Sangam poets",
+      "Sangam poems have no reference to warrior ethics",
+      "Sangam literature refers to magical forces as irrational"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "The correct statement is that the social classification of Varna was known to Sangam poets. Sangam literature, composed between 2nd-6th century CE in Tamil Nadu, reflects knowledge of the Vedic varna system. Sangam poets frequently referred to varnas, brahmins, and the hierarchical social structure in their works. Statement A is incorrect: Sangam poems are rich with references to material culture including weapons, chariots, jewelry, agriculture, trade goods, and daily life. Statement C is incorrect: Sangam literature extensively discusses warrior ethics, codes of warfare, honor, and martial prowess. The poems celebrate chieftains and warriors extensively. Statement D is incorrect: Sangam literature does refer to various phenomena, not all purely rational, and doesn't make categorical judgments about irrationality of magical forces. The presence of Varna classification in Sangam literature demonstrates the spread of Vedic social structures to South India.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2022,
+      "question_number": 1
+    },
+    "tags": ["static", "Sangam literature", "society"],
+    "notes": "Sangam literature is rich primary source for ancient South Indian history. Tests understanding of cultural continuities and social structures",
+    "linked_concepts": ["Sangam Literature", "South Indian History", "Varna System", "Tamil Literature", "Ancient Society"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2023_001",
+    "year": 2023,
+    "subject": "Ancient India",
+    "topic": "Sangam Period",
+    "subtopic": "Ports and Trade Centers",
+    "difficulty": "Easy",
+    "question_type": "MCQ_single",
+    "question_text": "With reference to ancient South India, Korkai, Poompuhar, and Muchiri were well known as",
+    "options": [
+      "capital cities",
+      "ports",
+      "centres of iron-and-steel making",
+      "shrines of Jain Tirthankaras"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "Korkai, Poompuhar (also called Puhar), and Muchiri (also called Muziris) were well-known as ports in ancient South India during the Sangam period and later. These ports were crucial centers of maritime trade, particularly for commerce with Southeast Asia, China, and the Roman Empire. Korkai was a port city of the Pandyan kingdom in present-day Tamil Nadu. Poompuhar was an important Chola port in the Cauvery delta region. Muchiri (Muziris) in Kerala was one of the most important ports for spice trade and contact with the outside world, particularly mentioned in Periplus of Erythraean Sea and Roman texts. These ports facilitated the export of spices, pepper, pearls, and other goods, and import of luxury items. Archaeological and literary evidence confirms their role as major trade centers. They were not capital cities (A), primary centers of iron-and-steel making (C), or religious shrines (D).",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2023,
+      "question_number": 1
+    },
+    "tags": ["static", "Sangam period", "trade_ports"],
+    "notes": "Tests knowledge of ancient South Indian maritime trade. These ports show India's global connections in ancient times",
+    "linked_concepts": ["Sangam Period", "Maritime Trade", "South Indian Ports", "Trade Routes", "Ancient Commerce"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2023_002",
+    "year": 2023,
+    "subject": "Ancient India",
+    "topic": "Buddhism",
+    "subtopic": "Stupa Architecture",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "With reference to ancient India, consider the following statements: 1. The concept of Stupa is Buddhist in origin. 2. Stupa was generally a repository of relics. 3. Stupa was a votive and commemorative structure in Buddhist tradition. How many of the statements given above are correct?",
+    "options": [
+      "Only one",
+      "Only two",
+      "All three",
+      "None"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "Statements 2 and 3 are correct. Statement 1 is incorrect: While stupas became prominent in Buddhism, the concept of stupa (mound/tumulus) predates Buddhism. Stupas existed in pre-Buddhist India as burial mounds and monuments. However, Buddhism adopted and transformed the stupa into a religious architectural form. Statement 2 is correct: Stupas served as repositories for relics of Buddha, important monks, or sacred objects like texts and ashes, making them central to Buddhist devotional practices. Statement 3 is correct: Stupas functioned as votive structures where devotees made offerings and commemorative monuments celebrating the Buddha or other important figures in Buddhism. Famous examples like Sanchi Stupa and Bharhut Stupa exemplify these functions. Stupas also served as pilgrimage centers. Therefore, statements 2 and 3 are correct, making the answer 'Only two.'",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2023,
+      "question_number": 2
+    },
+    "tags": ["static", "Buddhism", "architecture"],
+    "notes": "Tests understanding of stupa origins and functions. Important architectural form in Buddhist tradition with pre-Buddhist roots",
+    "linked_concepts": ["Stupa", "Buddhist Architecture", "Sanchi Stupa", "Bharhut Stupa", "Buddhist Reliquaries"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2023_003",
+    "year": 2023,
+    "subject": "Ancient India",
+    "topic": "Sangam Period",
+    "subtopic": "Rituals and Practices",
+    "difficulty": "Hard",
+    "question_type": "MCQ_single",
+    "question_text": "Which one of the following explains the practice of 'Vattakirutal' as mentioned in Sangam poems?",
+    "options": [
+      "Kings employing women bodyguards",
+      "Learned persons assembling in royal courts to discuss religious and philosophical matters",
+      "Young girls keeping watch over agricultural fields and driving away birds and animals",
+      "A king defeated in a battle committing ritual suicide by starving himself to death"
+    ],
+    "correct_option_index": 3,
+    "correct_option_label": "D",
+    "explanation": "Vattakirutal refers to ritual suicide by starvation (fasting unto death) practiced by kings who were defeated in battle as a matter of honor and warrior code. This was a practice mentioned in Sangam poems that reflected the honor codes of ancient South Indian warrior societies. When a king faced defeat, rather than submission or dishonor, performing Vattakirutal (literally 'self-starvation') was considered an honorable death. This practice demonstrates the warrior ethics emphasized in Sangam literature where honor, courage, and martial codes were paramount. Options A, B, and C refer to other practices but not Vattakirutal. This ritual practice shows the sophisticated warrior culture of Sangam period South India where codes of honor governed life and death decisions.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2023,
+      "question_number": 3
+    },
+    "tags": ["static", "Sangam period", "warrior_culture"],
+    "notes": "Tests specific knowledge of Sangam period rituals and warrior codes. Vattakirutal reflects honor-based warrior ethics",
+    "linked_concepts": ["Sangam Literature", "Warrior Ethics", "South Indian Culture", "Death Rituals", "Ancient Codes of Honor"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2024_001",
+    "year": 2024,
+    "subject": "Ancient India",
+    "topic": "Ancient Dramatists",
+    "subtopic": "Playwright Works",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_single",
+    "question_text": "Which one of the following is a work attributed to playwright Bhasa?",
+    "options": [
+      "Kavyalankara",
+      "Natyashastra",
+      "Madhyama-vyayoga",
+      "Mahabhashya"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Madhyama-vyayoga is a dramatic work attributed to playwright Bhasa. Bhasa was an important ancient Sanskrit dramatist whose works are recognized for their literary quality and portrayal of human emotions. Madhyama-vyayoga (meaning 'intermediate drama') is one of his known plays. Kavyalankara is a treatise on literary ornaments written by Rudrata. Natyashastra is the famous ancient text on dramaturgy written by Bharata, not Bhasa. Mahabhashya is a commentary on the Panini's grammar written by Patanjali. Among the options, only Madhyama-vyayoga is correctly attributed to playwright Bhasa. This tests knowledge of ancient Indian dramatists and their works, which is an important part of Sanskrit literature and cultural history.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2024,
+      "question_number": 1
+    },
+    "tags": ["static", "literature", "dramaturgy"],
+    "notes": "Tests knowledge of ancient Sanskrit playwrights and their works. Bhasa is an important dramatist in Sanskrit literature tradition",
+    "linked_concepts": ["Bhasa", "Sanskrit Drama", "Ancient Literature", "Dramatists", "Classical Sanskrit Works"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2024_002",
+    "year": 2024,
+    "subject": "Ancient India",
+    "topic": "Buddhism",
+    "subtopic": "Buddhist Monks and Texts",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_single",
+    "question_text": "Sanghabhuti, an Indian Buddhist monk, who travelled to China at the end of the fourth century AD, was the author of a commentary on:",
+    "options": [
+      "Prajnaparamita Sutra",
+      "Visuddhimagga",
+      "Sarvastivada Vinaya",
+      "Lalitavistara"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Sanghabhuti was an Indian Buddhist monk who traveled to China at the end of the 4th century CE (around 385-405 CE). He was the author of a commentary on the Sarvastivada Vinaya (monastic rules). This text was important for Buddhist monastic practices and was translated into Chinese. Sanghabhuti's work contributed significantly to the transmission of Buddhist knowledge from India to China during this critical period of Buddhist-Chinese interaction. Prajnaparamita Sutra is a Buddhist text but Sanghabhuti was not its primary commentator. Visuddhimagga (Path of Purification) is a Theravada text by Buddhaghosa. Lalitavistara is a text on Buddha's life. Sanghabhuti's focus on the Sarvastivada Vinaya reflects the importance of monastic discipline in Buddhist traditions and his role as a transmitter of Buddhist texts to East Asia.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2024,
+      "question_number": 2
+    },
+    "tags": ["static", "Buddhism", "Buddhist_scholars"],
+    "notes": "Tests knowledge of Buddhist scholars and transmission of Buddhism to East Asia. Shows India-China Buddhist connections",
+    "linked_concepts": ["Buddhism", "Buddhist Texts", "Sarvastivada School", "Monastic Rules", "India-China Relations"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "ANCIENT_2024_003",
+    "year": 2024,
+    "subject": "Ancient India",
+    "topic": "Buddhism",
+    "subtopic": "Buddhist Concepts",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "With reference to ancient India, Gautama Buddha was generally known by which of the following epithets? 1. Bhagavat 2. Jina 3. Tathagata",
+    "options": [
+      "1 only",
+      "2 and 3 only",
+      "1, 2 and 3",
+      "None of the above are epithets of Gautama Buddha"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "Statements 2 and 3 are correct epithets of Gautama Buddha. Jina (meaning 'victor' or 'conqueror') was used for Buddha, referring to his conquest over ignorance and attainment of enlightenment. However, Jina is more commonly associated with Jain Tirthankaras as their primary epithet. Tathagata (meaning 'one who has thus gone' or 'thus-gone one') was a common and primary epithet used frequently in Buddhist texts to refer to Gautama Buddha, emphasizing his enlightened nature. Statement 1 (Bhagavat, meaning 'blessed' or 'lord') was used in various Hindu texts and contexts, but while it could be applied respectfully, it is not a specific epithet uniquely or commonly used for Gautama Buddha in Buddhist literature. The most characteristic Buddhist epithets for Buddha were Tathagata, Bhikkhu (monk), and Buddha (the awakened one). Therefore, 2 and 3 are the correct epithets.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2024,
+      "question_number": 3
+    },
+    "tags": ["static", "Buddhism", "terminology"],
+    "notes": "Tests knowledge of Buddhist terminology and epithets used for Buddha. Tathagata is particularly important in Buddhist texts",
+    "linked_concepts": ["Buddhism", "Buddha", "Buddhist Terminology", "Jina", "Tathagata"],
+    "created_at": "2025-12-15"
+  }
+   ] 
+  

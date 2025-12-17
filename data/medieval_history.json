@@ -1,0 +1,700 @@
+[
+  {
+    "id": "MEDIEVAL_2013_001",
+    "year": 2013,
+    "subject": "Medieval India",
+    "topic": "Bhakti Saints",
+    "subtopic": "Saints and Rulers",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "Consider the following Bhakti Saints: 1. Dadu Dayal 2. Guru Nanak 3. Tyagaraja Who among the above was/were preaching when the Lodi dynasty fell and Babur took over?",
+    "options": [
+      "1 and 3",
+      "2 only",
+      "2 and 3",
+      "1 and 2"
+    ],
+    "correct_option_index": 3,
+    "correct_option_label": "D",
+    "explanation": "Guru Nanak (1469-1539) was the founder of Sikhism and was actively preaching when the Lodi dynasty fell (1526) and Babur took over Delhi Sultanate. Dadu Dayal (1544-1603) was a saint who lived after the Lodi period. Tyagaraja (1767-1847) was a later Bhakti saint from South India who lived in the 18th-19th century, well after the Lodi dynasty's fall. Therefore, statements 1 and 2 are correct - both Dadu Dayal and Guru Nanak were preaching around the time of Lodi dynasty's fall, though Dadu Dayal's prominence came later. However, the most accurate answer focuses on those actively preaching during this exact period. Guru Nanak's activities during Lodi's fall are historically documented.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2013,
+      "question_number": 1
+    },
+    "tags": ["static", "Bhakti movement", "saints"],
+    "notes": "Tests knowledge of Bhakti saints' chronology relative to major political events. Requires understanding of contemporary figures and periods",
+    "linked_concepts": ["Bhakti Movement", "Guru Nanak", "Dadu Dayal", "Tyagaraja", "Lodi Dynasty", "Babur"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2014_001",
+    "year": 2014,
+    "subject": "Medieval India",
+    "topic": "Medieval Administration",
+    "subtopic": "Village Officers",
+    "difficulty": "Easy",
+    "question_type": "MCQ_single",
+    "question_text": "In medieval India, the designations 'Mahattara' and 'Pattakila' were used for",
+    "options": [
+      "military officers",
+      "village headmen",
+      "specialists in Vedic rituals",
+      "chiefs of craft guilds"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "Mahattara and Pattakila were designations for village headmen in medieval India. They were local administrative officials responsible for village governance and revenue collection. These officials acted as intermediaries between the central authority and village communities. Mahattara was typically the chief headman, while Pattakila refers to subsidiary headmen or officers assisting in village administration. Historical records and inscriptions from various medieval dynasties document these administrative roles at the grassroots level. These were not military officers (A), Vedic specialists (C), or craft guild chiefs (D).",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2014,
+      "question_number": 1
+    },
+    "tags": ["static", "administration", "village_governance"],
+    "notes": "Tests knowledge of medieval administrative terminology and village-level officials. Important for understanding local governance structures",
+    "linked_concepts": ["Medieval Administration", "Village Governance", "Administrative Officials", "Revenue System"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2014_002",
+    "year": 2014,
+    "subject": "Medieval India",
+    "topic": "Mughal Architecture",
+    "subtopic": "Fatehpur Sikri",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_single",
+    "question_text": "Ibadat Khana at Fatehpur Sikri was",
+    "options": [
+      "the mosque for the use of Royal Family",
+      "Akbar's private chamber prayer",
+      "the hall in which Akbar held discussions with scholars of various religions",
+      "the room in which the nobles belonging to different religions gathered to discuss religious affairs"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Ibadat Khana (House of Worship) at Fatehpur Sikri was the hall where Akbar conducted interfaith discussions and philosophical debates with scholars from different religions including Islam, Hinduism, Christianity, Zoroastrianism, and Jainism. This reflected Akbar's policy of religious tolerance and intellectual curiosity. The Ibadat Khana was a manifestation of Akbar's syncretic approach to governance and his desire to understand various religious philosophies. It was not a royal mosque (A), private prayer chamber (B), or a nobles' gathering space (D), but specifically a hall designed for scholarly and philosophical discussions. This institution became famous under Akbar's reign as a center of intellectual exchange.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2014,
+      "question_number": 2
+    },
+    "tags": ["static", "Mughal architecture", "Akbar's policies"],
+    "notes": "Reflects Akbar's religious tolerance policy. Tests understanding of Mughal architecture and Akbar's syncretic approach",
+    "linked_concepts": ["Fatehpur Sikri", "Akbar", "Religious Tolerance", "Mughal Architecture", "Interfaith Dialogue"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2015_001",
+    "year": 2015,
+    "subject": "Medieval India",
+    "topic": "Medieval States and Regions",
+    "subtopic": "Geographical Distribution",
+    "difficulty": "Easy",
+    "question_type": "MCQ_multiple",
+    "question_text": "Consider the following pairs: Medieval Indian State - Present Region 1. Champaka - Central India 2. Durgura - Jammu 3. Kuluta - Malabar Which of the above pairs is/are correctly matched?",
+    "options": [
+      "1 and 2",
+      "2 only",
+      "1 and 3",
+      "1 and 3 Only"
+    ],
+    "correct_option_index": 0,
+    "correct_option_label": "A",
+    "explanation": "Statements 1 and 2 are correctly matched. Champaka was a medieval state located in Central India. Durgura corresponds to the Jammu region in the north. Kuluta, however, was a medieval state corresponding to the Kullu region in present-day Himachal Pradesh, not Malabar (which is in Kerala). Malabar region was associated with different medieval polities like the Zamorin's kingdom. Therefore, only pairs 1 and 2 are correctly matched.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2015,
+      "question_number": 1
+    },
+    "tags": ["static", "geography", "medieval_states"],
+    "notes": "Tests geographical knowledge of medieval Indian states. Requires understanding of regional correspondences between medieval and modern geography",
+    "linked_concepts": ["Medieval Geography", "Medieval States", "Regional History", "Medieval Kingdoms"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2015_002",
+    "year": 2015,
+    "subject": "Medieval India",
+    "topic": "Mughal Empire",
+    "subtopic": "Babur and Early Mughals",
+    "difficulty": "Easy",
+    "question_type": "MCQ_multiple",
+    "question_text": "The arrival of Babur into India led to the 1. introduction of gunpowder in the subcontinent 2. introduction of the arch and dome in the region's architecture 3. establishment of Timurid dynasty in the region",
+    "options": [
+      "1 and 2 only",
+      "3 only",
+      "1 and 3 only",
+      "1, 2 and 3"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "Only statement 3 is correct. Babur established the Timurid (Mughal) dynasty in India (1526 onwards). Statement 1 is incorrect: gunpowder was introduced to India much earlier, before Babur's arrival, during the Delhi Sultanate period. Statement 2 is incorrect: arch and dome architecture were also introduced earlier by the Delhi Sultanate, not by Babur. The arch and dome became defining features of Islamic architecture in India under the Delhi Sultans. Babur's main contribution was establishing the Mughal dynasty, which would later synthesize and further develop these architectural forms under emperors like Akbar and Shah Jahan.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2015,
+      "question_number": 2
+    },
+    "tags": ["static", "Mughal Empire", "technological_diffusion"],
+    "notes": "Tests understanding of historical causation and the accurate attribution of technological/architectural introductions to specific rulers and periods",
+    "linked_concepts": ["Babur", "Mughal Empire", "Gunpowder", "Islamic Architecture", "Delhi Sultanate"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2015_003",
+    "year": 2015,
+    "subject": "Medieval India",
+    "topic": "Feudalism",
+    "subtopic": "Essential Elements",
+    "difficulty": "Hard",
+    "question_type": "MCQ_multiple",
+    "question_text": "With reference to Indian history, which of the following is/are the essential elements of the feudal system? 1. A very strong centralized political authority and a very weak provincial or local political authority 2. Emergence of administrative structure based on control and possession of land 3. Creation of lord-vassal relationship between the feudal lord and his overlord",
+    "options": [
+      "1 and 2 only",
+      "2 and 3 only",
+      "3 only",
+      "1, 2 and 3"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "Statements 2 and 3 are essential elements of feudalism. Statement 1 is incorrect because feudalism is characterized by decentralized political authority and strong provincial/local powers—the opposite of what statement 1 describes. Feudalism inherently involves weak central authority and powerful local lords. Statement 2 is correct: the feudal system was fundamentally based on land control and possession as the basis of power and administrative structure. Statement 3 is correct: the lord-vassal relationship (vasalage) was central to feudalism, where vassals pledged loyalty to overlords in exchange for land grants and protection. This hierarchical relationship was the defining feature of feudal society.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2015,
+      "question_number": 3
+    },
+    "tags": ["static", "feudalism", "political_structure"],
+    "notes": "Tests conceptual understanding of feudalism as a political and economic system. Requires distinguishing essential from non-essential features",
+    "linked_concepts": ["Feudalism", "Medieval Political Structure", "Lord-Vassal Relationship", "Land Control", "Decentralized Authority"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2016_001",
+    "year": 2016,
+    "subject": "Medieval India",
+    "topic": "Vijayanagar Empire",
+    "subtopic": "Economic and Administrative System",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "Regarding the taxation system of Krishna Deva, the ruler of Vijayanagar, consider the following statements: 1. The tax rate on land was fixed depending on the quality of the land. 2. Private owners of workshops paid an industry tax.",
+    "options": [
+      "1 only",
+      "2 only",
+      "Both 1 and 2",
+      "Neither 1 nor 2"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Both statements 1 and 2 are correct regarding Krishna Deva Raya's taxation system at Vijayanagar. Statement 1: The Vijayanagar taxation system was sophisticated, with land tax (Bhaga) rates varying based on land quality and productivity. Different categories of land (wet land, dry land, garden land) had different tax rates. This reflected an advanced understanding of agricultural economics. Statement 2: Private workshop owners were indeed subject to industry/craft taxes, reflecting the commercial economy of Vijayanagar. The empire had a comprehensive tax system that covered both agricultural and non-agricultural sectors. Krishna Deva Raya's reign (1509-1529) was marked by administrative efficiency and economic prosperity, partly due to well-organized taxation.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2016,
+      "question_number": 1
+    },
+    "tags": ["static", "Vijayanagar", "taxation_system"],
+    "notes": "Tests knowledge of Vijayanagar's economic systems. Reflects the administrative sophistication of South Indian medieval empires",
+    "linked_concepts": ["Vijayanagar Empire", "Krishna Deva Raya", "Taxation System", "Land Revenue", "Medieval Economy"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2016_002",
+    "year": 2016,
+    "subject": "Medieval India",
+    "topic": "Medieval Trade",
+    "subtopic": "Merchants and Trading Classes",
+    "difficulty": "Easy",
+    "question_type": "MCQ_single",
+    "question_text": "Banjaras during the medieval period of Indian history were generally",
+    "options": [
+      "agriculturists",
+      "warriors",
+      "weavers",
+      "traders"
+    ],
+    "correct_option_index": 3,
+    "correct_option_label": "D",
+    "explanation": "Banjaras were a merchant community in medieval India who were primarily traders and merchants. They were itinerant traders who traveled across vast distances, trading goods and facilitating commerce between different regions. Banjaras were known for their long-distance trade networks and were particularly important in grain trade. They used bullock carts for transportation and maintained established trade routes. The Banjara community played a crucial role in medieval Indian commerce and were organized in guilds with their own leadership structure. They were not agriculturists (A), warriors (B), or weavers (C), but exclusively focused on trade and commerce.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2016,
+      "question_number": 2
+    },
+    "tags": ["static", "trade", "merchant_classes"],
+    "notes": "Tests knowledge of medieval trading communities and economic organization. Banjaras were crucial for connecting distant markets",
+    "linked_concepts": ["Medieval Trade", "Merchant Communities", "Long-distance Commerce", "Medieval Economy"],
+    "created_at": "2025-12-15"
+  },
+  
+  {
+    "id": "MEDIEVAL_2017_001",
+    "year": 2017,
+    "subject": "Medieval India",
+    "topic": "Medieval Ports and Trade",
+    "subtopic": "Kakatiya Kingdom Ports",
+    "difficulty": "Easy",
+    "question_type": "MCQ_single",
+    "question_text": "Which one of the following was a very important seaport in the Kakatiya kingdom?",
+    "options": [
+      "Kakinada",
+      "Motupalli",
+      "Machilipatnam (Masulipatnam)",
+      "Nelluru"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "Motupalli was a very important seaport in the Kakatiya kingdom, particularly during the reign of the Kakatiya rulers (12th-14th centuries). The Kakatiya kingdom, centered in present-day Telangana and Andhra Pradesh, had significant maritime trade through ports like Motupalli. This port facilitated trade with Southeast Asian countries and merchant activities. Kakinada, Machilipatnam (Masulipatnam), and Nelluru were other important ports in the Coromandel Coast region, but Motupalli specifically was the major port of the Kakatiya kingdom. The port's strategic location made it crucial for the Kakatiya's commercial and military activities during the medieval period.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2017,
+      "question_number": 1
+    },
+    "tags": ["static", "medieval_trade", "ports"],
+    "notes": "Tests knowledge of medieval maritime trade and specific ports associated with kingdoms. Motupalli was crucial for Kakatiya commerce",
+    "linked_concepts": ["Kakatiya Kingdom", "Medieval Ports", "Maritime Trade", "Coromandel Coast", "Medieval Commerce"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2018_001",
+    "year": 2018,
+    "subject": "Medieval India",
+    "topic": "Mughal Architecture",
+    "subtopic": "Building Materials and Construction",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "With reference to the cultural history of India, consider the following statements: 1. White marble was used in making Buland Darwaza and Khankah at Fatehpur Sikri. 2. Red sandstone and marble were used in making Bara Imambara and Rumi Darwaza at Lucknow.",
+    "options": [
+      "1 only",
+      "2 only",
+      "Both 1 and 2",
+      "Neither 1 nor 2"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "Only statement 2 is correct. Statement 1 is incorrect: The Buland Darwaza (Gateway of Magnificence) at Fatehpur Sikri was constructed using red sandstone, not white marble. It stands at 54 meters height and is a magnificent example of Mughal architecture built to commemorate Akbar's victory at Gujarat. The Khankah (rest house for Sufis) at Fatehpur Sikri was also primarily built with red sandstone. Statement 2 is correct: Bara Imambara and Rumi Darwaza at Lucknow were constructed using red sandstone and marble, reflecting the 18th century architecture of the Nawabs of Lucknow. This distinction between red sandstone structures at Fatehpur Sikri versus the marble-red sandstone combination at Lucknow is historically accurate.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2018,
+      "question_number": 1
+    },
+    "tags": ["static", "Mughal architecture", "construction_materials"],
+    "notes": "Tests specific knowledge of building materials used in different monuments. Requires understanding of architectural details and their regional variations",
+    "linked_concepts": ["Mughal Architecture", "Fatehpur Sikri", "Buland Darwaza", "Bara Imambara", "Red Sandstone", "White Marble"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2019_001",
+    "year": 2019,
+    "subject": "Medieval India",
+    "topic": "Mughal Administration",
+    "subtopic": "Revenue Systems",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "With reference to Mughal India, what is/are the difference/differences between Jagirdar and Zamindar? 1. Jagirdars were holders of land assignments in lieu of judicial and police duties, whereas Zamindars were holders of revenue rights without obligation to perform any duty other than revenue collection. 2. Land assignments to Jagirdars were hereditary and revenue rights of Zamindars were not hereditary.",
+    "options": [
+      "1 only",
+      "2 only",
+      "Both 1 and 2",
+      "Neither 1 nor 2"
+    ],
+    "correct_option_index": 0,
+    "correct_option_label": "A",
+    "explanation": "Only statement 1 is correct. Jagirdars were granted land assignments (jagirs) in return for providing military service, maintaining order, and performing judicial and administrative duties. This was a feudal arrangement where the jagirdar's primary obligation was military/administrative service. Zamindars, on the other hand, were hereditary landholders who collected revenue from peasants and remitted taxes to the central authority without necessarily performing military or judicial duties—their primary responsibility was revenue collection. Statement 2 is incorrect: Jagir assignments were generally non-hereditary (revocable and transferable by the emperor), while Zamindari rights were often hereditary, especially in places like Bengal where zamindaris were established as hereditary estates. This represents a fundamental difference in the nature and inheritance of these landholding systems.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2019,
+      "question_number": 1
+    },
+    "tags": ["static", "Mughal administration", "revenue_system"],
+    "notes": "Tests understanding of Mughal administrative institutions and land tenure systems. Crucial for understanding Mughal governance structure",
+    "linked_concepts": ["Jagir System", "Zamindar System", "Mughal Administration", "Revenue Collection", "Mansabdari System"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2019_002",
+    "year": 2019,
+    "subject": "Medieval India",
+    "topic": "Delhi Sultanate Administration",
+    "subtopic": "Revenue Collection and Institutions",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "Consider the following statements: 1. In the revenue administration of Delhi Sultanate, the in-charge of revenue collection was known as 'Amil'. 2. The Iqta system of Sultans of Delhi was an ancient indigenous institution. 3. The office of 'Mir Bakshi' came into existence during the reign of Khalji Sultans of Delhi.",
+    "options": [
+      "1 only",
+      "1 and 2 only",
+      "3 only",
+      "1, 2 and 3"
+    ],
+    "correct_option_index": 0,
+    "correct_option_label": "A",
+    "explanation": "Only statement 1 is correct. The Amil was the revenue official in charge of revenue collection (taxes and land revenue) in the Delhi Sultanate administrative system. Statement 2 is incorrect: The Iqta system was not an ancient indigenous institution but rather a feudal land-grant system introduced by the Turkish/Islamic rulers of the Delhi Sultanate. It was not part of traditional Indian administrative systems but was adapted from Central Asian and Persian administrative models. Statement 3 is incorrect: The office of Mir Bakshi (master of administration or chief administrator) did not originate during the Khalji Sultans but was a later Mughal administrative position that became prominent under the Mughal emperors (particularly Akbar onwards), not in the earlier Delhi Sultanate period.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2019,
+      "question_number": 2
+    },
+    "tags": ["static", "Delhi Sultanate", "administration"],
+    "notes": "Tests knowledge of Delhi Sultanate administrative offices and systems. Important for understanding medieval Indian governance",
+    "linked_concepts": ["Delhi Sultanate", "Revenue Administration", "Amil", "Iqta System", "Mir Bakshi"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2019_003",
+    "year": 2019,
+    "subject": "Medieval India",
+    "topic": "Bhakti and Sufi Saints",
+    "subtopic": "Saints and Chronology",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "Consider the following statements: 1. Saint Nimbarka was a contemporary of Akbar. 2. Saint Kabir was greatly influenced by Shaikh Ahmad Sirhindi.",
+    "options": [
+      "1 only",
+      "2 only",
+      "Both 1 and 2",
+      "Neither 1 nor 2"
+    ],
+    "correct_option_index": 3,
+    "correct_option_label": "D",
+    "explanation": "Neither statement is correct. Statement 1 is incorrect: Saint Nimbarka (also called Nimbaditya) lived in the 13th century CE, whereas Akbar reigned in the 16th century (1556-1605 CE). They were separated by approximately three centuries and could not be contemporaries. Statement 2 is incorrect: Kabir (1440-1518 CE) lived before Shaikh Ahmad Sirhindi (1564-1624 CE). Kabir died before Sirhindi was born, so Kabir could not have been influenced by Sirhindi. Rather, Sirhindi came later and was influenced by the earlier traditions. The chronology is crucial here—Kabir was a predecessor, not a follower of Sirhindi.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2019,
+      "question_number": 3
+    },
+    "tags": ["static", "Bhakti saints", "chronology"],
+    "notes": "Tests chronological knowledge of saints and their relationships. Requires careful attention to dates and historical sequences",
+    "linked_concepts": ["Nimbarka", "Saint Kabir", "Ahmad Sirhindi", "Bhakti Movement", "Medieval Saints"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2019_004",
+    "year": 2019,
+    "subject": "Medieval India",
+    "topic": "Mughal Art and Culture",
+    "subtopic": "Art Forms and Emperors",
+    "difficulty": "Easy",
+    "question_type": "MCQ_single",
+    "question_text": "Who among the following Mughal Emperors shifted emphasis from illustrated manuscripts to the album and individual portrait?",
+    "options": [
+      "Humayun",
+      "Akbar",
+      "Jahangir",
+      "Shah Jahan"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Jahangir (r. 1605-1627) was the Mughal Emperor who shifted emphasis from illustrated manuscripts to albums (muraqqa) and individual portraits. During Jahangir's reign, there was a marked transition in Mughal art where the focus moved away from the large-scale illustrated manuscripts like the Akbarnama and Dastan-i Amir Hamza (characteristic of Akbar's court) to more intimate individual portraits and portrait albums. Jahangir had a personal passion for naturalism and portrait painting, and his court produced some of the finest individual portraits in Indo-Persian art. His reign is noted for establishing portraiture as a major art form at the Mughal court. Humayun, Akbar, and Shah Jahan, while patrons of the arts, did not initiate this particular shift from manuscripts to portrait albums.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2019,
+      "question_number": 4
+    },
+    "tags": ["static", "Mughal art", "portraiture"],
+    "notes": "Tests knowledge of Mughal art history and the evolution of art forms under different emperors. Jahangir's passion for naturalism drove this change",
+    "linked_concepts": ["Mughal Art", "Jahangir", "Portrait Painting", "Mughal Miniatures", "Album Paintings"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2020_001",
+    "year": 2020,
+    "subject": "Medieval India",
+    "topic": "Medieval Dynasties and Chronology",
+    "subtopic": "Chronological Sequence of Events",
+    "difficulty": "Hard",
+    "question_type": "MCQ_single",
+    "question_text": "Consider the following events in the history of India: 1. Rise of Pratiharas under King Bhoja 2. Establishment of Pallava power under Mahendravarman – I 3. Establishment of Chola power by Parantaka – I 4. Pala dynasty founded by Gopala What is the correct chronological order of the above events, starting from the earliest time?",
+    "options": [
+      "2-1-4-3",
+      "3-1-4-2",
+      "2-4-1-3",
+      "3-4-1-2"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "The correct chronological order is 2-4-1-3. Event 2: Pallava power under Mahendravarman I was established in the early 6th century CE (approximately 600-630 CE). Event 4: Pala dynasty was founded by Gopala around 8th century CE (approximately 770-810 CE). Event 1: Pratiharas rose to power under King Bhoja during 9th-10th century CE (approximately 836-886 CE). Event 3: Chola power under Parantaka I was established in the 10th century CE (approximately 907-955 CE). Therefore, the correct sequence is Pallavas → Pala → Pratiharas → Cholas, or 2-4-1-3.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2020,
+      "question_number": 1
+    },
+    "tags": ["static", "dynasties", "chronology"],
+    "notes": "Tests chronological knowledge of major medieval dynasties. Requires understanding of the timeline of medieval Indian history",
+    "linked_concepts": ["Pallava Dynasty", "Pala Dynasty", "Pratihara Dynasty", "Chola Dynasty", "Medieval Chronology"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2020_002",
+    "year": 2020,
+    "subject": "Medieval India",
+    "topic": "Land Measurement",
+    "subtopic": "Medieval Terminology",
+    "difficulty": "Easy",
+    "question_type": "MCQ_single",
+    "question_text": "With reference to the history of India, the terms 'kulyavapa' and 'dronavapa' denote",
+    "options": [
+      "measurement of land",
+      "coins of different monetary value",
+      "classification of urban land",
+      "religious rituals"
+    ],
+    "correct_option_index": 0,
+    "correct_option_label": "A",
+    "explanation": "Kulyavapa and dronavapa are terms that denote measurement of land in medieval India. These were units used to measure agricultural land. Kulyavapa (from kula = family and vapa = plot) referred to a measure of land that could support a family, while dronavapa (from drona = a measure of grain) was a specific measurement of land. Both terms were used in ancient and medieval land revenue systems to standardize and classify agricultural land for taxation purposes. These terms appear in various medieval inscriptions and revenue documents. They were not monetary terms (B), urban classifications (C), or religious rituals (D).",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2020,
+      "question_number": 2
+    },
+    "tags": ["static", "land_measurement", "terminology"],
+    "notes": "Tests knowledge of medieval administrative terminology and land measurement systems. Important for understanding revenue administration",
+    "linked_concepts": ["Land Revenue", "Medieval Administration", "Land Measurement", "Medieval Terminology"],
+    "created_at": "2025-12-15"
+  },
+  
+  {
+    "id": "MEDIEVAL_2021_001",
+    "year": 2021,
+    "subject": "Medieval India",
+    "topic": "Early Medieval Dynasties",
+    "subtopic": "Dynasties of the Period",
+    "difficulty": "Hard",
+    "question_type": "MCQ_multiple",
+    "question_text": "Consider the following statements: 1. Temple towns in medieval India developed around Vishnu and Shiva temples but not around Jain temples. 2. Merchants and artisans settled in the temple towns because temples provided them with security. 3. Temple towns were the nerve centers of art and culture.",
+    "options": [
+      "1 and 2 only",
+      "2 and 3 only",
+      "1 and 3 only",
+      "1, 2 and 3"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "Statements 2 and 3 are correct. Statement 1 is incorrect: Temple towns developed not only around Vishnu and Shiva temples but also around Jain temples. Jain temples were significant in medieval South India, and temple towns developed around important Jain pilgrimage sites. Statement 2 is correct: Merchants and artisans were attracted to temple towns because temples provided security, patronage, and economic opportunities. Temples served as centers of economic activity with markets and trading networks. Statement 3 is correct: Temple towns were cultural centers where art, literature, dance, music, and architecture flourished under temple patronage. They became intellectual and artistic hubs in medieval India.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2021,
+      "question_number": 1
+    },
+    "tags": ["static", "temple_towns", "economic_history"],
+    "notes": "Tests understanding of temple towns' multifaceted role—economic, cultural, and social. Jain temples were equally important in this context",
+    "linked_concepts": ["Temple Towns", "Medieval Economy", "Religious Centers", "Art and Culture", "Merchant Communities"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2021_002",
+    "year": 2021,
+    "subject": "Medieval India",
+    "topic": "Mughal Administration",
+    "subtopic": "Administrative Officials",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "In medieval India, the office of 'Mir Bakshi' was concerned with",
+    "options": [
+      "Religious affairs",
+      "Military affairs",
+      "Revenue collection",
+      "Judicial matters"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "The office of Mir Bakshi (also spelled Mir Barchi) was primarily concerned with military affairs. The Mir Bakshi was the chief military officer and head of the military administration in the Mughal Empire. This official was responsible for recruitment, discipline, and organization of the imperial armies. The Mir Bakshi also maintained military records and supervised all military appointments. While this position later expanded to include some administrative functions during the Mughal period, its primary function was military in nature. Religious affairs were under the Qazi or Mufti, revenue collection was under the Dewan, and judicial matters were under the Qazi or Cadi.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2021,
+      "question_number": 2
+    },
+    "tags": ["static", "Mughal administration", "military"],
+    "notes": "Tests knowledge of specific Mughal administrative offices and their functions. Mir Bakshi was the chief military administrator",
+    "linked_concepts": ["Mir Bakshi", "Mughal Administration", "Military Organization", "Mansabdari System"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2021_003",
+    "year": 2021,
+    "subject": "Medieval India",
+    "topic": "Vijayanagar Administration",
+    "subtopic": "Revenue and Taxation",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_multiple",
+    "question_text": "With reference to medieval Indian history, consider the following statements: 1. Araghatta was a water-lifting device used in irrigation. 2. Narghul was an irrigation tax collected by the Vijayanagar rulers.",
+    "options": [
+      "1 only",
+      "2 only",
+      "Both 1 and 2",
+      "Neither 1 nor 2"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Both statements are correct. Statement 1: Araghatta (also spelled arghatta or arahatta) was indeed a water-lifting device used in medieval India, particularly in irrigation systems. It was an ingenious mechanical device that utilized water wheels or other mechanisms to lift water to higher levels for irrigation of fields. Statement 2: Narghul (also called nardol) was an irrigation tax collected by rulers, particularly in the Vijayanagar Empire and other medieval South Indian kingdoms. This tax was levied on lands that benefited from irrigation facilities. Both terms reflect the sophistication of medieval Indian irrigation technology and revenue systems.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2021,
+      "question_number": 3
+    },
+    "tags": ["static", "Vijayanagar", "irrigation_technology"],
+    "notes": "Tests knowledge of medieval irrigation technology and revenue terminology. Shows sophistication of medieval Indian water management",
+    "linked_concepts": ["Vijayanagar Empire", "Irrigation Technology", "Revenue Systems", "Medieval Economics"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2022_001",
+    "year": 2022,
+    "subject": "Medieval India",
+    "topic": "Medieval Culture",
+    "subtopic": "Terms and Practices",
+    "difficulty": "Easy",
+    "question_type": "MCQ_single",
+    "question_text": "With reference to Indian history, who of the following were known as 'Kulah-Daran'?",
+    "options": [
+      "Arab merchants",
+      "Qalandars",
+      "Persian calligraphists",
+      "Sayyids"
+    ],
+    "correct_option_index": 1,
+    "correct_option_label": "B",
+    "explanation": "Qalandars were known as 'Kulah-Daran' (meaning 'tall cap wearers' in Persian). Qalandars were wandering Sufi ascetics and mystics in medieval India and Central Asia. They were known for their distinctive dress and headgear, particularly the distinctive tall caps (kulah) they wore. Qalandars were often associated with heterodox Sufi practices and were wandering holy men who rejected conventional Islamic orthodoxy. They were distinct from organized Sufi orders and were known for their unconventional lifestyle and spiritual practices. Arab merchants (A) were traders, Persian calligraphists (C) were artisans, and Sayyids (D) were a social class claiming descent from Prophet Muhammad—none of these were called Kulah-Daran.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2022,
+      "question_number": 1
+    },
+    "tags": ["static", "Sufi traditions", "terminology"],
+    "notes": "Tests knowledge of Sufi traditions and the distinctive practices/appearance of different Sufi groups in medieval India",
+    "linked_concepts": ["Qalandars", "Sufi Saints", "Medieval Mysticism", "Islamic Traditions"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2023_001",
+    "year": 2023,
+    "subject": "Medieval India",
+    "topic": "Early Medieval Dynasties",
+    "subtopic": "Dynasty Chronology",
+    "difficulty": "Hard",
+    "question_type": "MCQ_multiple",
+    "question_text": "Consider the following dynasties: 1. Hoysala 2. Gahadavala 3. Kakatiya 4. Yadava How many of the above dynasties established their kingdoms in the early eighth century AD?",
+    "options": [
+      "Only one",
+      "Only two",
+      "Only three",
+      "None"
+    ],
+    "correct_option_index": 3,
+    "correct_option_label": "D",
+    "explanation": "None of these dynasties established their kingdoms in the early eighth century AD. The Hoysala dynasty emerged in the 10th century (around 940 CE) in the Deccan region. The Gahadavala dynasty rose to prominence in the 11th-12th centuries in North India. The Kakatiya dynasty became prominent in the 12th century in South India. The Yadava dynasty also emerged in the 12th-13th centuries. Therefore, none of these four dynasties were founded in the early eighth century. The early eighth century saw the rise of other dynasties like the Pallava decline and the early rise of the Cholas, but not the specific dynasties listed here.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2023,
+      "question_number": 1
+    },
+    "tags": ["static", "dynasties", "chronology"],
+    "notes": "Tests chronological knowledge of medieval dynasties. Requires precise dating of dynasty establishments",
+    "linked_concepts": ["Hoysala Dynasty", "Gahadavala Dynasty", "Kakatiya Dynasty", "Yadava Dynasty", "Medieval Chronology"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2023_002",
+    "year": 2023,
+    "subject": "Medieval India",
+    "topic": "Regional Kingdoms",
+    "subtopic": "Gujarat Sultanate",
+    "difficulty": "Easy",
+    "question_type": "MCQ_single",
+    "question_text": "Who among the following rulers of medieval Gujarat surrendered Diu to the Portuguese?",
+    "options": [
+      "Ahmad Shah",
+      "Mahmud Begarha",
+      "Bahadur Shah",
+      "Muhammad Shah"
+    ],
+    "correct_option_index": 2,
+    "correct_option_label": "C",
+    "explanation": "Bahadur Shah, the ruler of the Gujarat Sultanate, surrendered the fortress port of Diu to the Portuguese in 1535 CE. This was a significant event in medieval Indian history as it marked one of the early Portuguese acquisitions in India. The surrender was part of a peace treaty between Bahadur Shah and the Portuguese after naval conflicts. This event demonstrated the rising Portuguese power in the Indian Ocean and their ability to challenge regional kingdoms. Ahmad Shah, Mahmud Begarha, and Muhammad Shah were other rulers of Gujarat Sultanate but did not surrender Diu to the Portuguese. This loss of Diu to the Portuguese weakened the Gujarat Sultanate's control over maritime trade.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2023,
+      "question_number": 2
+    },
+    "tags": ["static", "Gujarat Sultanate", "Portuguese conquest"],
+    "notes": "Tests knowledge of regional medieval kingdoms and European colonial expansion in India. Diu was an important port",
+    "linked_concepts": ["Bahadur Shah", "Gujarat Sultanate", "Portuguese Expansion", "Diu", "Maritime History"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2023_003",
+    "year": 2023,
+    "subject": "Medieval India",
+    "topic": "Vijayanagar Empire",
+    "subtopic": "Rulers and Infrastructure",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_single",
+    "question_text": "Who among the following rulers of the Vijayanagar Empire constructed a large dam across Tungabhadra River and a canal-cum-aqueduct several kilometers long from the river to the capital city?",
+    "options": [
+      "Devaraya I",
+      "Mallikarjuna",
+      "Vira Vijaya",
+      "Virupaksha"
+    ],
+    "correct_option_index": 0,
+    "correct_option_label": "A",
+    "explanation": "Devaraya I (also known as Devaraya the Elder, r. 1406-1422 CE) constructed a large dam across the Tungabhadra River and a canal-cum-aqueduct system to bring water from the river to the capital city of Vijayanagar. This was a remarkable feat of engineering in medieval India. The dam and aqueduct system demonstrates the sophisticated water management and civil engineering capabilities of the Vijayanagar Empire. The infrastructure project was crucial for the city's development and agricultural productivity. Mallikarjuna, Vira Vijaya, and Virupaksha were other Vijayanagar rulers but were not known for this particular infrastructure project.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2023,
+      "question_number": 3
+    },
+    "tags": ["static", "Vijayanagar", "infrastructure"],
+    "notes": "Tests knowledge of Vijayanagar's infrastructure development. Shows engineering sophistication of medieval South India",
+    "linked_concepts": ["Devaraya I", "Vijayanagar Empire", "Water Management", "Civil Engineering", "Medieval Infrastructure"],
+    "created_at": "2025-12-15"
+  },
+  {
+    "id": "MEDIEVAL_2024_001",
+    "year": 2024,
+    "subject": "Medieval India",
+    "topic": "Vijayanagar Empire",
+    "subtopic": "Trade and Foreign Relations",
+    "difficulty": "Moderate",
+    "question_type": "MCQ_single",
+    "question_text": "Who of the following rulers of medieval India gave permission to the Portuguese to build a fort at Bhatkal?",
+    "options": [
+      "Krishnadevaraya",
+      "Narasimha Saluva",
+      "Muhammad Shah III",
+      "Yusuf Adil Shah"
+    ],
+    "correct_option_index": 0,
+    "correct_option_label": "A",
+    "explanation": "Krishnadevaraya, the celebrated ruler of the Vijayanagar Empire (r. 1509-1529 CE), gave permission to the Portuguese to build a fort at Bhatkal on the Malabar Coast. This was part of Krishnadevaraya's pragmatic diplomatic policy towards the rising European powers. Bhatkal was an important port town, and granting Portuguese access to build a fort reflected Krishnadevaraya's interest in maintaining trade relations and managing the new political realities of the Indian Ocean. This demonstrates the cosmopolitan nature of Vijayanagar's foreign policy during Krishnadevaraya's reign, one of the greatest periods of the empire. Narasimha Saluva, Muhammad Shah III, and Yusuf Adil Shah were other contemporary rulers but did not grant this specific permission at Bhatkal.",
+    "source": {
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2024,
+      "question_number": 1
+    },
+    "tags": ["static", "Vijayanagar", "Portuguese expansion"],
+    "notes": "Tests knowledge of Vijayanagar's foreign policy and Portuguese expansion in India. Reflects changing geopolitical dynamics",
+    "linked_concepts": ["Krishnadevaraya", "Vijayanagar Empire", "Portuguese Expansion", "Bhatkal", "Maritime Trade"],
+    "created_at": "2025-12-15"
+  }
+]
