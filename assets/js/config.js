@@ -1,26 +1,37 @@
-/**
+ /**
  * CONFIG.JS
- * Single Source of Truth for App Data & Settings.
- * No hardcoding allowed elsewhere.
+ * Single Source of Truth for Data, Settings, and Links.
  */
 
 const CONFIG = {
     // App Metadata
-    version: "3.0.0",
+    version: "3.5.0",
     name: "UPSC Pro",
     
-    // Default Settings
+    // Quiz Defaults
     defaults: {
-        mode: 'test',       // 'test' or 'learning'
-        qCount: 10,
-        randomize: true,
+        mode: 'test',       // Default mode
+        qCount: 10,         // Default question count
+        randomize: true,    // Always shuffle by default
         // Time per question in seconds
         timePerQ_GS: 72,    // 100 Qs in 120 mins
         timePerQ_CSAT: 90   // 80 Qs in 120 mins
     },
 
+    // External Resource Links (Manage your links here)
+    resources: {
+        psirDrive: "https://drive.google.com/drive/folders/1-2kk78IRyyhx3TFV2_87cm_iGgdWMwQH",
+        toppers: [
+            { name: 'Vision',   char: 'V',  color: 'slate',   url: 'http://www.visionias.in/resources/toppers_answers.php' },
+            { name: 'Forum',    char: 'F',  color: 'red',     url: 'https://forumias.com/blog/testimonials/' },
+            { name: 'Insights', char: 'I',  color: 'teal',    url: 'https://www.insightsonindia.com/upsc-toppers-answer-copies-download-ias-topper-mains-copies-by-insightsias/' },
+            { name: 'Next IAS', char: 'N',  color: 'emerald', url: 'https://www.nextias.com/toppers-answers-ias' },
+            { name: 'Drishti',  char: 'D',  color: 'amber',   url: 'https://www.drishtiias.com/free-downloads/toppers-copy/' },
+            { name: 'Vajiram',  char: 'VR', color: 'yellow',  url: 'https://vajiramandravi.com/upsc-ias-toppers-copy-and-answer-sheets/' }
+        ]
+    },
+
     // Subject Registry: GS Paper 1
-    // Icon names refer to FontAwesome classes (without 'fa-')
     subjectsGS1: [
         { id: 'ancient',    name: 'Ancient History',   icon: 'land-mine-on',      color: 'amber',  file: 'ancient_history.json' },
         { id: 'medieval',   name: 'Medieval History',  icon: 'chess-rook',        color: 'amber',  file: 'medieval_history.json' },
@@ -45,6 +56,7 @@ const CONFIG = {
     // Helper: Get File Path by Subject Name or ID
     getFileName: function(subjectName) {
         const all = [...this.subjectsGS1, ...this.subjectsCSAT];
+        // Normalize comparison (handle ID or Name)
         const match = all.find(s => s.name === subjectName || s.id === subjectName);
         return match ? match.file : 'mix_test.json';
     }
