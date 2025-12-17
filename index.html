@@ -19,7 +19,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class', // We control dark mode manually via JS
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -43,19 +43,23 @@
         <header id="app-header" class="flex-none px-6 pt-safe-top pb-2 transition-all duration-300 z-50">
             </header>
 
-        <main id="main-view" class="flex-1 overflow-y-auto overflow-x-hidden px-5 py-4 scroll-smooth no-scrollbar">
+        <main id="main-view" class="flex-1 overflow-y-auto overflow-x-hidden px-5 py-4 scroll-smooth no-scrollbar relative">
+            <div id="loader" class="hidden absolute inset-0 z-50 flex items-center justify-center bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl text-blue-600"></i>
+            </div>
             </main>
 
-        <nav id="app-nav" class="flex-none px-6 pb-safe-bottom pt-2 z-50 transition-transform duration-300">
+        <nav id="app-nav" class="flex-none px-6 pb-safe-bottom pt-2 z-50 transition-transform duration-300 hidden">
             </nav>
 
     </div>
 
-    <div id="modal-layer" class="fixed inset-0 z-[100] pointer-events-none">
-        </div>
+    <div id="modal-layer" class="fixed inset-0 z-[100] pointer-events-none"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script src="assets/js/config.js"></script>
     <script src="assets/js/app.js"></script>
 </body>
 </html>
-
+ 
