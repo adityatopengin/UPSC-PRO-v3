@@ -221,7 +221,10 @@ const UI = {
 
     // 6. MODALS
     modals: {
+     // Locate the 'setup' function inside the 'modals' object in ui.js and replace it with this:
+
         setup(subject) {
+            console.log("Opening setup modal for:", subject);
             UI.showModal(`
             <div class="p-8">
                 <div class="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-8"></div>
@@ -231,20 +234,39 @@ const UI = {
                     <div>
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Question Count</label>
                         <div class="grid grid-cols-4 gap-2" id="q-counts">
-                            ${[10, 20, 50, 100].map(n => `<button onclick="UI._selectToggle(this)" class="py-4 rounded-2xl ${n===10?'bg-slate-900 text-white dark:bg-white dark:text-slate-900':'bg-slate-100 dark:bg-slate-800 text-slate-500'} text-xs font-black transition-all">${n}</button>`).join('')}
+                            ${[10, 20, 50, 100].map(n => `
+                                <button type="button" 
+                                    onclick="UI._selectToggle(this)" 
+                                    class="py-4 rounded-2xl ${n===10?'bg-slate-900 text-white dark:bg-white dark:text-slate-900':'bg-slate-100 dark:bg-slate-800 text-slate-500'} text-xs font-black transition-all">
+                                    ${n}
+                                </button>`).join('')}
                         </div>
                     </div>
                     <div>
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Quiz Protocol</label>
                         <div class="grid grid-cols-2 gap-3" id="q-modes">
-                            <button onclick="UI._selectToggle(this)" class="py-5 rounded-3xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-[11px] font-black tracking-widest uppercase">Test Mode</button>
-                            <button onclick="UI._selectToggle(this)" class="py-5 rounded-3xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-[11px] font-black tracking-widest uppercase">Learn Mode</button>
+                            <button type="button" 
+                                onclick="UI._selectToggle(this)" 
+                                class="py-5 rounded-3xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-[11px] font-black tracking-widest uppercase">
+                                Test Mode
+                            </button>
+                            <button type="button" 
+                                onclick="UI._selectToggle(this)" 
+                                class="py-5 rounded-3xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-[11px] font-black tracking-widest uppercase">
+                                Learn Mode
+                            </button>
                         </div>
                     </div>
                 </div>
-                <button onclick="Main.triggerStart('${subject}')" class="w-full mt-10 py-5 bg-blue-600 text-white rounded-3xl font-black tracking-widest shadow-xl shadow-blue-500/20 active:scale-95 transition-all uppercase">Initialize Quiz</button>
+                <button id="start-quiz-btn" 
+                    type="button"
+                    onclick="window.Main.triggerStart('${subject}')" 
+                    class="w-full mt-10 py-5 bg-blue-600 text-white rounded-3xl font-black tracking-widest shadow-xl shadow-blue-500/20 active:scale-95 transition-all uppercase">
+                    Initialize Quiz
+                </button>
             </div>`);
         },
+
 
         coaching() {
             UI.showModal(`
