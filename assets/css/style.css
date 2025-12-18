@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ============================
-   1. THEME VARIABLESes
+   1. THEME VARIABLES
    ============================ */
 :root {
     --glass-bg: rgba(255, 255, 255, 0.75);
@@ -143,6 +143,5 @@ body {
     background-color: #ffffff !important; /* White */
     color: #0f172a !important; /* Slate-900 */
 }
-
 
 
