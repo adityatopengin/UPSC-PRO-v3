@@ -4,6 +4,93 @@
  * Features: Fog-Footer Navigation, JSON Normalization, UPSC Logic.
  */
 
+// === FIX #3: JSON VALIDATION ===
+function validateQuestionsSchema(questions) {
+    if (!Array.isArray(questions)) {
+        throw new Error('Questions must be an array');
+    }
+
+    const errors = [];
+
+    questions.slice(0, 50).forEach((q, idx) => {
+        if (!q.text && !q.question_text) {
+            errors.push(`Q${idx + 1}: Missing question text`);
+        }
+
+        if (!Array.isArray(q.options) || q.options.length < 2) {
+            errors.push(`Q${idx + 1}: Must have at least 2 options`);
+        }
+
+        // Check for correct answer property
+        if (q.correct === undefined &&
+            q.correct_option_index === undefined &&
+            !q.correct_option_label) {
+            errors.push(`Q${idx + 1}: Missing correct answer`);
+        }
+        
+        // validate index range
+        const correctIdx = parseInt(q.correct_option_index ?? q.correct ?? 0);
+        if (correctIdx < 0 || correctIdx >= (q.options?.length ?? 0)) {
+             errors.push(`Q${idx + 1}: Correct index ${correctIdx} out of range`);
+        }
+    });
+
+    if (errors.length > 0) {
+        const summary = errors.slice(0, 5).join('\n');
+        const remaining = errors.length > 5 ? `\n... and ${errors.length - 5} more errors` : '';
+        throw new Error(`JSON Validation Failed:\n${summary}${remaining}`);
+    }
+
+    return true;
+}
+
+// === FIX #4: NETWORK RETRY ===
+const NetworkUtils = {
+    async fetchWithRetry(url, maxRetries = 2, timeout = 5000) {
+        let lastError = null;
+
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+                console.log(`[Network] Attempt ${attempt + 1}/${maxRetries + 1}: ${url}`);
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+                const response = await fetch(url, {
+                    signal: controller.signal,
+                    cache: 'force-cache',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'max-age=3600'
+                    }
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log(`[Network] ✅ Success after ${attempt + 1} attempt(s)`);
+                return data;
+
+            } catch (error) {
+                lastError = error;
+                console.warn(`[Network] ⚠️ Attempt ${attempt + 1} failed:`, error.message);
+
+                if (attempt < maxRetries) {
+                    const waitMs = 500 * Math.pow(2, attempt);
+                    console.log(`[Network] ⏳ Retrying in ${waitMs}ms...`);
+                    await new Promise(resolve => setTimeout(resolve, waitMs));
+                }
+            }
+        }
+
+        throw new Error(`Failed to fetch ${url} after ${maxRetries + 1} attempts: ${lastError?.message}`);
+    }
+};
+
 const Main = {
     state: {
         view: 'home',
@@ -15,7 +102,7 @@ const Main = {
      * Entry point: Runs when index.html is loaded
      */
     init() {
-        console.log("UPSC Pro v4.0: Initializing Modular System...");
+        console.log("UPSC Pro v4.1: Initializing Modular System...");
         
         // 1. Load User Preferences from Store
         this.state.settings = Store.get('settings', { theme: 'light' });
@@ -23,7 +110,7 @@ const Main = {
             document.documentElement.classList.add('dark');
         }
 
-                 // 2. Initial Routing: Check if first-time user
+        // 2. Initial Routing: Check if first-time user
         const hasVisited = Store.get('visited', false);
         if (!hasVisited) {
             // Increased delay and added a safety check for the UI object
@@ -97,7 +184,6 @@ const Main = {
     },
 
     /**
-         /**
      * Logic to Fetch JSON and Start Quiz
      * Revised with robust button detection and error handling.
      */
@@ -111,21 +197,21 @@ const Main = {
             // 1. Resolve filename from Config file
             const fileName = CONFIG.getFileName(subjectName);
             
-            // 2. Fetch the JSON file from /data/
+            // 2. Fetch the JSON file from /data/ with retry logic (FIX #4)
             // Note: Ensure your folder is literally named 'data' and the file exists there.
-            const response = await fetch(`data/${fileName}`);
-            if (!response.ok) throw new Error(`Data file not found: data/${fileName}`);
-            
-            const rawData = await response.json();
+            const rawData = await NetworkUtils.fetchWithRetry(`data/${fileName}`, 2, 5000);
 
             // 3. Use ADAPTER to fix "undefined" fields and normalize structure
             const cleanQuestions = Adapter.normalize(rawData);
+            
+            // Validate schema before proceeding (FIX #3)
+            validateQuestionsSchema(cleanQuestions);
+
             if (!cleanQuestions || cleanQuestions.length === 0) {
                 throw new Error("Questions were found but could not be processed. Check your JSON format.");
             }
 
-            // 4. Capture User Config (Count & Mode) from the Setup Modal
-             // 4. Capture User Config (Count & Mode) - FIX #2 IMPLEMENTED
+            // 4. Capture User Config (Count & Mode) - FIX #2 IMPLEMENTED
             const countBtn = document.querySelector('#q-counts .count-btn.active');
             const modeBtn = document.querySelector('#q-modes .mode-btn.active');
             
@@ -247,4 +333,6 @@ const Main = {
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => Main.init());
+
+
 
