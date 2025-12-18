@@ -23,14 +23,21 @@ const Main = {
             document.documentElement.classList.add('dark');
         }
 
-        // 2. Initial Routing: Check if first-time user
+                 // 2. Initial Routing: Check if first-time user
         const hasVisited = Store.get('visited', false);
         if (!hasVisited) {
-            // Delay slightly to ensure UI object and DOM are fully ready
-            setTimeout(() => UI.modals.orientation(), 100);
+            // Increased delay and added a safety check for the UI object
+            setTimeout(() => {
+                if (typeof UI !== 'undefined' && UI.modals) {
+                    UI.modals.orientation();
+                } else {
+                    console.error("Main Init: UI system not ready. Check if ui.js loaded correctly.");
+                }
+            }, 300); // 300ms is safer for mobile browsers
         } else {
             this.navigate('home');
         }
+
 
         // 3. Listen for Global Time Up Event
         window.addEventListener('timeUp', () => {
