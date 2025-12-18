@@ -3,20 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="description" content="UPSC Pro Preparation App">
+    <meta name="description" content="UPSC Pro: Comprehensive Civil Services Prelims Preparation with Mock Tests, Smart Notes, and Performance Analysis.">
     
-    <title>UPSC Pro</title>
-    
+    <!-- PWA Primary Meta Tags -->
+    <title>UPSC Pro - Target 2026</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#3b82f6">
 
+    <!-- Manifest & Icons -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/images/icon-192.png">
+    <link rel="apple-touch-icon" href="assets/images/icon-192.png">
+    
+    <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Stylesheets -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -31,36 +37,72 @@
             }
         }
     </script>
+    <link href="style.css" rel="stylesheet">
 
-    <link href="assets/css/style.css" rel="stylesheet">
+    <style>
+        /* Loading Overlay Style */
+        #loader-overlay {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .dark #loader-overlay { background: #0f172a; }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(59, 130, 246, 0.1);
+            border-left-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 overflow-hidden selection:bg-blue-500 selection:text-white transition-colors duration-300">
 
+    <!-- Initial App Loader -->
+    <div id="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Animated Background Mesh -->
     <div id="bg-mesh" class="fixed inset-0 z-0 pointer-events-none opacity-60 dark:opacity-30"></div>
 
-    <div id="app" class="relative z-10 flex flex-col h-[100dvh] max-w-md mx-auto bg-white/0">
+    <div id="app" class="relative z-10 flex flex-col h-[100dvh] max-w-md mx-auto bg-transparent">
         
+        <!-- Dynamic Header -->
         <header id="app-header" class="flex-none px-6 pt-safe-top pb-2 z-50 transition-all duration-300">
-            </header>
+            <!-- Rendered by UI.js -->
+        </header>
 
+        <!-- Main Content Area -->
         <main id="main-view" class="flex-1 overflow-y-auto overflow-x-hidden px-5 py-4 scroll-smooth no-scrollbar relative">
             <div id="loader" class="hidden absolute inset-0 z-[60] flex items-center justify-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm transition-opacity">
                 <i class="fa-solid fa-circle-notch fa-spin text-4xl text-blue-600"></i>
             </div>
-            </main>
+            <!-- Dynamic content injected here -->
+        </main>
 
-        <nav id="app-nav" class="fixed bottom-6 left-6 right-6 z-50 hidden transition-transform duration-300">
-            </nav>
+        <!-- Fog Footer Navigation (Hidden by default) -->
+        <nav id="app-nav" class="fixed bottom-0 left-0 right-0 z-50 hidden transition-transform duration-300">
+            <!-- Rendered by UI.js -->
+        </nav>
 
     </div>
 
+    <!-- Modal Layer -->
     <div id="modal-layer"></div>
 
-    <!-- Chart JS for potential future use -->
+    <!-- Core Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Core Application Logic - Order is Important -->
+    <!-- Application Logic Layers -->
     <script src="assets/js/config.js" defer></script>
     <script src="assets/js/store.js" defer></script>
     <script src="assets/js/adapter.js" defer></script>
@@ -68,11 +110,29 @@
     <script src="assets/js/ui.js" defer></script>
     <script src="assets/js/main.js" defer></script>
 
-    <!-- Debugging Tools -->
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <!-- PWA Service Worker Registration -->
     <script>
-        eruda.init();
-        console.log("UPSC Pro: System Ready. Eruda Console Active.");
+        window.addEventListener('load', () => {
+            // Register Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('service-worker.js', { scope: './' })
+                    .then(reg => console.log('✅ Service Worker Registered. Scope:', reg.scope))
+                    .catch(err => console.error('❌ Service Worker Failed:', err));
+            }
+
+            // Remove initial loader overlay
+            const loader = document.getElementById('loader-overlay');
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 500);
+            }
+        });
+
+        // iOS PWA - Prevent elastic scroll bounce on main container
+        document.addEventListener('touchmove', (e) => {
+            if (e.target.closest('#main-view')) return;
+            e.preventDefault();
+        }, { passive: false });
     </script>
 
 </body>
