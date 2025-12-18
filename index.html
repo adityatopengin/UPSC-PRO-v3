@@ -64,15 +64,20 @@
     </style>
 </head>
 
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 overflow-hidden selection:bg-blue-500 selection:text-white transition-colors duration-300">
+<body class="overflow-hidden selection:bg-blue-500 selection:text-white transition-colors duration-300">
 
     <!-- Initial App Loader -->
     <div id="loader-overlay">
         <div class="spinner"></div>
     </div>
 
-    <!-- Animated Background Mesh -->
-    <div id="bg-mesh" class="fixed inset-0 z-0 pointer-events-none opacity-60 dark:opacity-30"></div>
+    <!-- NEW FUSION BACKGROUND SYSTEM -->
+    <div class="fusion-bg">
+        <div class="fusion-blob blob-1"></div>
+        <div class="fusion-blob blob-2"></div>
+        <div class="fusion-blob blob-3"></div>
+        <div class="fusion-blob blob-4"></div>
+    </div>
 
     <div id="app" class="relative z-10 flex flex-col h-[100dvh] max-w-md mx-auto bg-transparent">
         
@@ -82,9 +87,8 @@
         </header>
 
         <!-- Main Content Area -->
-        <!-- Added top padding (pt-24) to ensure content starts visibly below the floating header -->
         <main id="main-view" class="flex-1 overflow-y-auto overflow-x-hidden px-5 pt-24 pb-4 scroll-smooth no-scrollbar relative">
-            <div id="loader" class="hidden absolute inset-0 z-[60] flex items-center justify-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm transition-opacity">
+            <div id="loader" class="hidden absolute inset-0 z-[60] flex items-center justify-center bg-white/30 dark:bg-black/30 backdrop-blur-sm transition-opacity">
                 <i class="fa-solid fa-circle-notch fa-spin text-4xl text-blue-600"></i>
             </div>
             <!-- Dynamic content injected here -->
@@ -141,5 +145,6 @@
 
 </body>
 </html>
+
 
 
