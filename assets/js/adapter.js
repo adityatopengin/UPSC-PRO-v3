@@ -1,83 +1,85 @@
 /**
  * ADAPTER.JS - The Smart Translator
- * Normalizes rich UPSC JSON data into a standard App format.
- * * CRITICAL FIXES INCLUDED:
- * 1. Safe Integer Parsing (Prevents NaN)
- * 2. Robust Metadata Extraction
- * 3. Fallback for missing fields
+ * Version: 1.1.0 (Production Ready)
+ * Normalizes varied UPSC JSON formats into a strict Internal Schema.
  */
 
 const Adapter = {
     /**
-     * Main Normalization Function
-     * Converts raw JSON (array or object) into App-standard format
+     * Main Entry: Converts raw JSON into a standardized Array
      */
     normalize(rawData) {
-        // 1. Handle both single objects and arrays
-        // Some files might be wrapped in { questions: [...] } or just [...]
+        if (!rawData) return [];
+
+        // Handle various JSON wrapper formats (direct array vs {questions: []})
         let list = Array.isArray(rawData) ? rawData : (rawData.questions || [rawData]);
 
-        return list.map((q, index) => ({
-            // Generate a unique ID if missing
-            id: q.id || `upsc_${Date.now()}_${index}`,
-            
-            // 2. Text Normalization: Prioritize specific keys
-            text: q.question_text || q.text || "Question content missing",
-            
-            // 3. Options: Ensure it's an array
-            options: Array.isArray(q.options) ? q.options : [],
-            
-            // 4. Correct Answer Extraction (Critical Logic)
-            correct: this._extractCorrect(q),
-            
-            // 5. Explanation Fallback
-            explanation: q.explanation || "No explanation provided for this question.",
-            
-            // 6. Metadata: Rich Categorization for Analysis
-            metadata: {
-                // Ensure year is a string to prevent UI errors
-                year: String(q.year || (q.source ? q.source.year : 'N/A')),
-                exam: q.source ? q.source.exam.replace(/_/g, ' ') : 'UPSC Prelims',
-                difficulty: q.difficulty || 'Moderate',
-                topic: q.topic || 'General Studies',
-                subtopic: q.subtopic || '',
-                tags: q.tags || [],
-                concepts: q.linked_concepts || []
-            },
-            
-            // 7. Extra Notes
-            notes: q.notes || ""
-        }));
+        return list.map((q, index) => {
+            try {
+                return {
+                    // 1. Identification
+                    id: q.id || `q_${Date.now()}_${index}`,
+                    
+                    // 2. Content (Prioritize UPSC-standard keys)
+                    text: (q.question_text || q.text || "Question content missing").trim(),
+                    
+                    // 3. Options (Ensure valid array)
+                    options: Array.isArray(q.options) ? q.options.map(opt => String(opt).trim()) : [],
+                    
+                    // 4. Correct Answer (Smart Extraction)
+                    correct: this._extractCorrect(q),
+                    
+                    // 5. Educational Content
+                    explanation: q.explanation || "No detailed explanation available for this question.",
+                    
+                    // 6. Metadata (Structured for Filtering/Analysis)
+                    metadata: {
+                        year: String(q.year || (q.source ? q.source.year : 'N/A')),
+                        difficulty: q.difficulty || 'Moderate',
+                        topic: q.topic || 'General Studies',
+                        subtopic: q.subtopic || '',
+                        tags: Array.isArray(q.tags) ? q.tags : [],
+                        concepts: Array.isArray(q.linked_concepts) ? q.linked_concepts : []
+                    }
+                };
+            } catch (err) {
+                console.error("Adapter: Failed to normalize individual question:", q, err);
+                return null;
+            }
+        }).filter(item => item !== null); // Remove any failed objects
     },
 
     /**
-     * Helper: Extract Correct Index Safely
-     * Handles 0-based index, string index ("0"), or Label ("A"/"B")
+     * Helper: Safely determines the correct option index (0-3)
      */
     _extractCorrect(q) {
-        // Priority 1: 'correct_option_index' (Numeric/String)
-        if (q.correct_option_index !== undefined) {
-            const parsed = parseInt(q.correct_option_index);
-            // Safety Check: Is it a valid number?
-            if (!isNaN(parsed) && parsed >= 0) return parsed;
+        // Priority 1: Numeric Index (0-based)
+        if (q.correct_option_index !== undefined && q.correct_option_index !== null) {
+            const idx = parseInt(q.correct_option_index);
+            if (!isNaN(idx) && idx >= 0) return idx;
         }
-        
-        // Priority 2: 'correct' (Common alternate key)
-        if (q.correct !== undefined) {
-            const parsed = parseInt(q.correct);
-            if (!isNaN(parsed) && parsed >= 0) return parsed;
+
+        // Priority 2: Generic 'correct' key (common in standard formats)
+        if (q.correct !== undefined && q.correct !== null) {
+            const idx = parseInt(q.correct);
+            if (!isNaN(idx) && idx >= 0) return idx;
         }
+
+        // Priority 3: Label Translation (A -> 0, B -> 1, etc.)
+        const labelMap = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
+        const label = String(q.correct_option_label || q.answer || '').toUpperCase().trim();
         
-        // Priority 3: Label Fallback (A, B, C, D)
-        const map = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
-        const label = String(q.correct_option_label || '').toUpperCase().trim();
-        
-        if (label in map) return map[label];
-        
-        // Final Fallback: Log warning and default to 0 (First option)
-        console.warn(`[Adapter] Could not extract correct answer for question ID: ${q.id || 'Unknown'}`);
-        return 0; 
+        if (labelMap[label] !== undefined) {
+            return labelMap[label];
+        }
+
+        // Final Fallback: Log warning for bad data and default to 0
+        console.warn(`Adapter: Correct answer unresolvable for ID ${q.id}. Defaulting to index 0.`);
+        return 0;
     }
 };
+
+// Ensure Adapter is globally accessible
+window.Adapter = Adapter;
 
 
