@@ -4,21 +4,21 @@
  */
 const Adapter = {
     normalize(rawData) {
-        // 1. Handle both single objects and arrays
+        // Handle both single objects (Polity) and arrays (Ancient)
         let list = Array.isArray(rawData) ? rawData : (rawData.questions || [rawData]);
 
         return list.map((q, index) => ({
             id: q.id || `upsc_${Date.now()}_${index}`,
-            // 2. Prioritize 'question_text' from your JSON
+            // FIX: Prioritize 'question_text' from your JSON
             text: q.question_text || q.text || "Question content missing",
             options: Array.isArray(q.options) ? q.options : [],
-            // 3. Ensure correct index is an integer for Engine.js math
+            // FIX: Prioritize your 'correct_option_index'
             correct: this._extractCorrect(q),
             explanation: q.explanation || "No explanation provided.",
             
+            // RICH CATEGORIZATION
             metadata: {
-                // 4. Force year to String to prevent rendering errors in UI.js
-                year: String(q.year || (q.source ? q.source.year : 'N/A')),
+                year: q.year || (q.source ? q.source.year : 'N/A'),
                 exam: q.source ? q.source.exam.replace(/_/g, ' ') : 'UPSC Prelims',
                 difficulty: q.difficulty || 'Moderate',
                 topic: q.topic || 'General Studies',
@@ -31,14 +31,27 @@ const Adapter = {
     },
 
     _extractCorrect(q) {
-        // Explicitly parse as Int to ensure Engine.js can compare userAns === item.correct
-        if (q.correct_option_index !== undefined) return parseInt(q.correct_option_index);
-        if (q.correct !== undefined) return parseInt(q.correct);
+        // FIX #5: SAFE PARSEINT
+        // Try numeric index first
+        if (q.correct_option_index !== undefined) {
+            const parsed = parseInt(q.correct_option_index);
+            if (!isNaN(parsed) && parsed >= 0) return parsed;
+        }
         
-        // 5. Fallback to Label (A=0, B=1, etc.)
+        if (q.correct !== undefined) {
+            const parsed = parseInt(q.correct);
+            if (!isNaN(parsed) && parsed >= 0) return parsed;
+        }
+        
+        // Fallback to Label (A=0, B=1, etc.)
         const map = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
-        const label = String(q.correct_option_label || '').toUpperCase();
-        return map[label] !== undefined ? map[label] : 0;
+        const label = String(q.correct_option_label || '').toUpperCase().trim();
+        
+        if (label in map) return map[label];
+        
+        console.warn(`[Adapter] Could not extract correct answer for question:`, q);
+        return 0; // Default to first option if nothing works
     }
 };
+
 
