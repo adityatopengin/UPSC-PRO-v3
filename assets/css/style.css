@@ -127,3 +127,21 @@ body {
     50% { transform: translate(20px, -20px) scale(1.05); }
 }
 
+/* ============================
+   6. CRITICAL FIX: BUTTON STATES
+   =========================== */
+/* Ensure the active button is visible to the user */
+.count-btn.active, 
+.mode-btn.active {
+    background-color: #0f172a !important; /* Slate-900 */
+    color: #ffffff !important;
+}
+
+/* Dark Mode support */
+.dark .count-btn.active, 
+.dark .mode-btn.active {
+    background-color: #ffffff !important; /* White */
+    color: #0f172a !important; /* Slate-900 */
+}
+
+
