@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================
+   1. CORE THEME VARIABLES
+   ============================ */
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+    --text-primary: #0f172a;
+    
+    /* Eyecatcher Gradients for Notes Library */
+    --grad-gold: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    --grad-emerald: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --grad-royal: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    --grad-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+html.dark {
+    --glass-bg: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --text-primary: #f8fafc;
+}
+
+/* ============================
+   2. GLOBAL RESET & UTILITIES
+   ============================ */
+body {
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none; /* Prevents pull-to-refresh pull-back on mobile */
+    color: var(--text-primary);
+    background-color: transparent;
+}
+
+/* Scrollbar Hiding (Production Standard) */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Mobile Safe Areas (Prevents notch interference) */
+.pt-safe-top { padding-top: max(1.5rem, env(safe-area-inset-top)); }
+.pb-safe-bottom { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+
+/* ============================
+   3. DESIGN COMPONENTS
+   ============================ */
+
+/* The Glassmorphism Card System */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+}
+
+/* Eye-Cards (Subject/Notes Grid) */
+.eye-card {
+    @apply relative overflow-hidden transition-all duration-300 active:scale-95;
+}
+
+.bg-grad-gold { background: var(--grad-gold); }
+.bg-grad-emerald { background: var(--grad-emerald); }
+.bg-grad-royal { background: var(--grad-royal); }
+.bg-grad-purple { background: var(--grad-purple); }
+
+/* Navigation Button States */
+.nav-btn.active {
+    @apply text-blue-600 dark:text-blue-400 font-black;
+}
+
+/* ============================
+   4. ANIMATIONS (Production FX)
+   ============================ */
+
+/* View Transition: Slide and Fade */
+@keyframes viewEnter {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-view-enter { 
+    animation: viewEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+}
+
+/* Shimmer Effect for Placeholders */
+@keyframes shimmer {
+    0% { transform: translateX(-100%) skewX(-12deg); }
+    100% { transform: translateX(200%) skewX(-12deg); }
+}
+.shimmer { 
+    position: relative;
+    overflow: hidden;
+}
+.shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: shimmer 2s infinite linear;
+}
+
+/* Animated Mesh Background (The "Fog") */
+#bg-mesh::before, #bg-mesh::after {
+    content: ''; 
+    position: absolute; 
+    border-radius: 50%; 
+    filter: blur(80px);
+    animation: float-bg 20s infinite ease-in-out;
+    z-index: -1;
+}
+#bg-mesh::before {
+    top: -10%; left: -10%; width: 80vw; height: 80vw;
+    background: rgba(59, 130, 246, 0.1); /* Blue glow */
+}
+#bg-mesh::after {
+    bottom: -10%; right: -10%; width: 90vw; height: 90vw;
+    background: rgba(236, 72, 153, 0.08); /* Pink/Purple glow */
+    animation-delay: -10s;
+}
+
+@keyframes float-bg {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -20px) scale(1.1); }
+    66% { transform: translate(-20px, 40px) scale(0.9); }
+}
+
+/* ============================
+   5. BUTTON & INTERACTION FIXES
+   ============================ */
+
+/* Clearer Active States for Modal Buttons */
+.count-btn.active, .mode-btn.active {
+    @apply ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-slate-900 !important;
+}
+
+/* Prevent text selection during fast tapping (Quiz) */
+button, .glass-card {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
