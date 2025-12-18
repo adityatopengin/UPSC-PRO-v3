@@ -267,7 +267,7 @@ const UI = {
                 </div>
                 <button id="start-quiz-btn" 
                     type="button"
-                    onclick="window.Main.triggerStart('${subject}')" 
+                    onclick="Main.triggerStart('${subject}')" 
                     class="w-full mt-10 py-5 bg-blue-600 text-white rounded-3xl font-black tracking-widest shadow-xl shadow-blue-500/20 active:scale-95 transition-all uppercase">
                     Initialize Quiz
                 </button>
