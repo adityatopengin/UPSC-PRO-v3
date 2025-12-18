@@ -30,19 +30,32 @@ const Engine = {
         q.answers[q.currentIdx] = optionIndex;
     },
 
-    _runTimer() {
-        this._stopTimer();
-        this.state.timer = setInterval(() => {
-            const q = this.state.activeQuiz;
-            if (!q || q.timeLeft <= 0) {
-                this._stopTimer();
-                if (q && q.timeLeft <= 0) window.dispatchEvent(new CustomEvent('timeUp'));
-                return;
-            }
-            q.timeLeft--;
-            UI.updateTimerDisplay(q.timeLeft);
-        }, 1000);
-    },
+     _runTimer() {
+  this._stopTimer();
+  this.state.timer = setInterval(() => {
+    const q = this.state.activeQuiz;
+    
+    // Safety check: Ensure a quiz is active before proceeding
+    if (!q) {
+      this._stopTimer();
+      return;
+    }
+    
+    // Always decrement the time first
+    q.timeLeft--;
+    
+    // Update the UI display immediately
+    UI.updateTimerDisplay(q.timeLeft);
+    
+    // Then check if time's up
+    if (q.timeLeft <= 0) {
+      this._stopTimer();
+      // Fire the event to finish the quiz
+      window.dispatchEvent(new CustomEvent('timeUp'));
+    }
+  }, 1000);
+},
+
 
     _stopTimer() {
         if (this.state.timer) clearInterval(this.state.timer);
