@@ -109,11 +109,14 @@ const Main = {
             if (!cleanQuestions.length) throw new Error("No valid questions found.");
 
             // 4. Capture User Config (Count & Mode) from the Setup Modal
-            const countBtn = document.querySelector('#q-counts .bg-slate-900, #q-counts .dark\\:bg-white');
-            const count = parseInt(countBtn?.innerText || 10);
-            const modeBtn = document.querySelector('#q-modes .bg-slate-900, #q-modes .dark\\:bg-white');
-            const mode = modeBtn?.innerText.toLowerCase().includes('test') ? 'test' : 'learning';
-
+                        // Fixed: Find button by checking if it has the active class (works in both light and dark modes)
+            const countBtn = Array.from(document.querySelectorAll('#q-counts button'))
+                .find(b => b.classList.contains('bg-slate-900') || b.classList.contains('dark:bg-white'));
+            const count = countBtn ? parseInt(countBtn.innerText) : 10;
+            
+            const modeBtn = Array.from(document.querySelectorAll('#q-modes button'))
+                .find(b => b.classList.contains('bg-slate-900') || b.classList.contains('dark:bg-white'));
+            const mode = modeBtn && modeBtn.innerText.toLowerCase().includes('test') ? 'test' : 'learning';
             // 5. Start the Engine
             Engine.startSession({ 
                 subject: subjectName, 
@@ -141,12 +144,18 @@ const Main = {
         UI.drawQuiz(Engine.state.activeQuiz); 
     },
 
-    moveQ(dir) {
-        if (Engine.moveTo(Engine.state.activeQuiz.currentIdx + dir)) {
-            UI.drawQuiz(Engine.state.activeQuiz);
+         moveQ(dir) {
+        const q = Engine.state.activeQuiz;
+        if (!q) return;  // Safety check
+        
+        const target = q.currentIdx + dir;
+        
+        // Only move if within valid range
+        if (target >= 0 && target < q.questions.length) {
+            q.currentIdx = target;
+            UI.drawQuiz(q);
         }
     },
-
     finishQuiz() {
         if (this.state.view !== 'quiz') return;
         
