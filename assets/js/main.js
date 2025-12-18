@@ -1,6 +1,7 @@
+
 /**
  * MAIN.JS - The Master Controller
- * Version: 1.4.0 (Config Fix & Map Nav)
+ * Version: 2.1.0 (Fixes Blank Screen & Map)
  * Orchestrates Store, Adapter, Engine, and UI modules.
  */
 
@@ -13,7 +14,6 @@ function validateQuestionsSchema(questions) {
     }
 
     const errors = [];
-    // Sanity check first 10 questions to ensure file isn't corrupted
     questions.slice(0, 10).forEach((q, idx) => {
         if (!q.text) errors.push(`Q${idx + 1}: Text missing`);
         if (!Array.isArray(q.options) || q.options.length < 2) errors.push(`Q${idx + 1}: Options missing`);
@@ -27,7 +27,7 @@ function validateQuestionsSchema(questions) {
 }
 
 // ==========================================
-// 2. NETWORK RESILIENCE (Fetch with Retry)
+// 2. NETWORK RESILIENCE
 // ==========================================
 const Network = {
     async fetchWithRetry(url, retries = 3, backoff = 1000) {
@@ -51,59 +51,48 @@ const Network = {
 const Main = {
     state: {
         view: 'home',
-        paper: 'gs1', // 'gs1' or 'csat'
+        paper: 'gs1',
         settings: { theme: 'light' }
     },
 
-    /**
-     * Boot Sequence
-     */
     init() {
-        console.log("UPSC Pro: Initializing Production Core...");
+        console.log("UPSC Pro: Initializing Core...");
 
-        // 1. Theme Initialization
+        // 1. Theme
         this.state.settings = Store.get('settings', { theme: null });
-        
-        // Auto-detect system preference if no user setting exists
         if (!this.state.settings.theme) {
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             this.state.settings.theme = prefersDark ? 'dark' : 'light';
         }
+        if (this.state.settings.theme === 'dark') document.documentElement.classList.add('dark');
 
-        if (this.state.settings.theme === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-
-        // 2. RESUME CHECK
+        // 2. Resume Check
         const savedSession = Store.get('current_session');
         if (savedSession) {
-            console.log("Resuming interrupted session...");
+            console.log("Resuming session...");
             Engine.state.activeQuiz = savedSession;
-            
             const elapsedMS = (savedSession.totalDuration - savedSession.timeLeft) * 1000;
             Engine.state.activeQuiz.startTime = Date.now() - elapsedMS;
-            
             Engine._runTimer();
             this.navigate('quiz');
             return;
         }
 
-        // 3. First-Visit Logic
+        // 3. Render Home Background FIRST (Fixes Blank Screen)
+        this.navigate('home');
+
+        // 4. Orientation Check
         const hasVisited = Store.get('visited', false);
         if (!hasVisited) {
-            setTimeout(() => UI.modals.orientation(), 500);
-        } else {
-            this.navigate('home');
+            // Pass 'true' to tell UI this is the first visit
+            setTimeout(() => UI.modals.orientation(true), 500);
         }
 
-        // 4. Global Event Listeners
+        // 5. Events
         window.addEventListener('timeUp', () => {
-            if (this.state.view === 'quiz') {
-                this.finishQuiz();
-            }
+            if (this.state.view === 'quiz') this.finishQuiz();
         });
 
-        // 5. Handle Keyboard Navigation
         document.addEventListener('keydown', (e) => {
             if (this.state.view !== 'quiz') return;
             if (e.key === 'ArrowRight') this.moveQ(1);
@@ -112,9 +101,6 @@ const Main = {
         });
     },
 
-    /**
-     * THE ROUTER
-     */
     navigate(view, data = null) {
         if (this.state.view === 'quiz' && view !== 'quiz') {
             Engine._stopTimer();
@@ -159,11 +145,8 @@ const Main = {
         mainEl.scrollTo(0, 0);
     },
 
-    /**
-     * QUIZ INITIALIZATION
-     */
     async triggerStart(subjectName) {
-        // FIX: Capture configuration BEFORE hiding the modal
+        // Capture configs before closing modal
         const countBtn = document.querySelector('#q-counts .count-btn.active');
         const modeBtn = document.querySelector('#q-modes .mode-btn.active');
         
@@ -175,12 +158,11 @@ const Main = {
         };
 
         UI.loader(true);
-        UI.hideModal(); // Now it's safe to hide
+        UI.hideModal();
 
         try {
             const fileName = CONFIG.getFileName(subjectName);
             const rawData = await Network.fetchWithRetry(`data/${fileName}`);
-            
             const questions = Adapter.normalize(rawData);
             validateQuestionsSchema(questions);
 
@@ -189,15 +171,12 @@ const Main = {
 
         } catch (err) {
             console.error("Quiz Launch Failed:", err);
-            alert(`Error: Could not load quiz data. Please check your connection.`);
+            alert(`Error: Could not load quiz data.`);
         } finally {
             UI.loader(false);
         }
     },
 
-    /**
-     * QUIZ ACTIONS
-     */
     handleOption(idx) {
         Engine.saveAnswer(idx);
         UI.drawQuiz(Engine.state.activeQuiz); 
@@ -206,7 +185,6 @@ const Main = {
     moveQ(dir) {
         const q = Engine.state.activeQuiz;
         if (!q) return;
-        
         const nextIdx = q.currentIdx + dir;
         if (nextIdx >= 0 && nextIdx < q.questions.length) {
             q.currentIdx = nextIdx;
@@ -214,33 +192,25 @@ const Main = {
         }
     },
 
-    // NEW: Jump directly to a question (for Map)
     jumpToQ(idx) {
         const q = Engine.state.activeQuiz;
         if (!q) return;
-        
         if (idx >= 0 && idx < q.questions.length) {
             q.currentIdx = idx;
-            UI.hideModal(); // Close the map
+            UI.hideModal();
             UI.drawQuiz(q);
         }
     },
 
     finishQuiz() {
         if (this.state.view !== 'quiz') return;
-        
         const result = Engine.calculateFinal();
         Store.saveResult(result);
-        
         const mistakes = result.fullData.filter(q => q.attempted && !q.isCorrect);
         Store.saveMistakes(mistakes);
-
         this.navigate('analysis', result);
     },
 
-    /**
-     * GLOBAL UTILITIES
-     */
     togglePaper(type) {
         this.state.paper = type;
         this.navigate('home');
@@ -256,67 +226,21 @@ const Main = {
     completeOrientation() {
         Store.set('visited', true);
         UI.hideModal();
-        this.navigate('home');
+        // No need to navigate here as Home is already rendered in background
     },
 
     _renderSettings(container) {
-        container.innerHTML = `
-        <div class="px-2 pt-6 space-y-6 animate-view-enter">
-            <div class="glass-card p-6 rounded-[32px] flex items-center justify-between">
-                <div>
-                    <h3 class="text-sm font-black">Appearance</h3>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Dark Mode Toggle</p>
-                </div>
-                <button onclick="Main.toggleTheme()" class="w-12 h-7 bg-slate-200 dark:bg-blue-600 rounded-full relative transition-colors" aria-label="Toggle Dark Mode">
-                    <div class="w-5 h-5 bg-white rounded-full absolute top-1 left-1 dark:left-6 transition-all shadow-sm"></div>
-                </button>
-            </div>
-            <button onclick="Store.clearAll()" class="w-full glass-card p-6 rounded-[32px] flex items-center justify-between border-red-100 dark:border-red-900/30 text-red-500">
-                <div class="text-left">
-                    <h3 class="text-sm font-black">Reset Progress</h3>
-                    <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Clear History & Settings</p>
-                </div>
-                <i class="fa-solid fa-trash-can"></i>
-            </button>
-            <div class="text-center pt-10">
-                <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em]">UPSC Pro v${CONFIG.version}</p>
-            </div>
-        </div>`;
+        // ... (Logic moved to UI.js for consistency, but Main handles routing)
+        // This function is effectively replaced by UI._renderSettings call in navigate()
+        UI._renderSettings(container);
     },
 
     _renderStats(container) {
-        const history = Store.get('history', []);
-        container.innerHTML = `
-        <div class="px-2 pb-32 space-y-6 animate-view-enter">
-            <div class="glass-card p-8 rounded-[40px] text-center bg-blue-50/50 dark:bg-blue-900/10">
-                <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Quiz Performance</p>
-                <div class="text-5xl font-black text-slate-800 dark:text-white tracking-tighter">${history.length}</div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase mt-2">Attempts Recorded</p>
-            </div>
-            
-            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Recent History</h3>
-            <div class="space-y-3">
-                ${history.length > 0 ? history.slice(0, 10).map(h => `
-                    <div class="glass-card p-5 rounded-3xl flex justify-between items-center transition-all active:scale-[0.98]">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-blue-500 shadow-sm">
-                                <i class="fa-solid fa-graduation-cap"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-[13px] font-black">${h.subject}</h4>
-                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${new Date(h.savedAt).toLocaleDateString()}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-lg font-black text-blue-600">${h.score}</div>
-                            <div class="text-[8px] font-black text-slate-400 uppercase">Points</div>
-                        </div>
-                    </div>`).join('') : '<div class="text-center py-10 text-slate-400 text-sm">No attempts yet. Start a quiz to see stats!</div>'}
-            </div>
-        </div>`;
+        UI._renderStats(container);
     }
 };
 
-// Initialize on Load
 document.addEventListener('DOMContentLoaded', () => Main.init());
+
+
 
