@@ -167,15 +167,19 @@ const Main = {
         
         // Show the 3-button Fog Footer only on main tabs
         const nav = document.getElementById('app-nav');
-        if (['home', 'notes', 'stats', 'settings'].includes(view)) {
-            UI.renderFooter(view); // Home, Notes, Stats
-            nav.classList.remove('hidden');
-        } else {
-            nav.classList.add('hidden'); // Hide footer during Quiz or Analysis
+        if (nav) {
+            if (['home', 'notes', 'stats', 'settings'].includes(view)) {
+                UI.renderFooter(view); // Home, Notes, Stats
+                nav.classList.remove('hidden');
+            } else {
+                nav.classList.add('hidden'); // Hide footer during Quiz or Analysis
+            }
         }
 
         // B. Render View Specific Content
         const mainEl = document.getElementById('main-view');
+        if (!mainEl) return;
+
         switch(view) {
             case 'home':
                 const subjects = this.state.paper === 'gs1' ? CONFIG.subjectsGS1 : CONFIG.subjectsCSAT;
@@ -206,8 +210,9 @@ const Main = {
      * Completely rewritten for robustness and safety.
      */
     async triggerStart(subjectName) {
-        UI.loader(true);
-        UI.hideModal();
+        // Safe UI Loader Call
+        if (typeof UI !== 'undefined' && UI.loader) UI.loader(true);
+        if (typeof UI !== 'undefined' && UI.hideModal) UI.hideModal();
 
         try {
             console.log(`[Main] Attempting to start quiz: ${subjectName}`);
@@ -260,7 +265,7 @@ const Main = {
             
             alert(msg);
         } finally {
-            UI.loader(false);
+            if (typeof UI !== 'undefined' && UI.loader) UI.loader(false);
         }
     },
 
