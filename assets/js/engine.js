@@ -1,6 +1,6 @@
 /**
  * ENGINE.JS - The Logic Brain
- * Version: 1.1.0 (Production Ready)
+ * Version: 1.2.0 (Persisted State)
  * Handles State, Drift-Proof Timer, and UPSC Scoring.
  */
 
@@ -38,6 +38,9 @@ const Engine = {
         if (config.mode === 'test') {
             this._runTimer();
         }
+
+        // 5. Initial Save
+        Store.set('current_session', this.state.activeQuiz);
     },
 
     /**
@@ -45,7 +48,12 @@ const Engine = {
      */
     saveAnswer(optionIndex) {
         if (!this.state.activeQuiz) return;
+        
+        // Update Memory
         this.state.activeQuiz.answers[this.state.activeQuiz.currentIdx] = optionIndex;
+        
+        // NEW: Persist to Storage immediately (Autosave)
+        Store.set('current_session', this.state.activeQuiz);
     },
 
     /**
@@ -59,8 +67,11 @@ const Engine = {
         const quiz = this.state.activeQuiz;
         if (!quiz) return;
 
-        // Reset start time to exactly now when the timer actually begins
-        quiz.startTime = Date.now();
+        // Note: We don't reset startTime here blindly anymore, 
+        // because we might be resuming a session.
+        if (!quiz.startTime) {
+            quiz.startTime = Date.now();
+        }
 
         this.state.timer = setInterval(() => {
             const q = this.state.activeQuiz;
@@ -77,6 +88,10 @@ const Engine = {
             if (typeof UI !== 'undefined' && UI.updateTimerDisplay) {
                 UI.updateTimerDisplay(q.timeLeft);
             }
+
+            // Autosave timer progress occasionally (every ~5 seconds) or relies on answer save
+            // We don't save every tick to save IO, but we rely on the math (startTime) 
+            // to restore correct time even if we don't save 'timeLeft' constantly.
 
             // Termination condition
             if (q.timeLeft <= 0) {
@@ -139,6 +154,9 @@ const Engine = {
         // UPSC Formula: (Correct * MarkingWeight) - (Wrong * PenaltyWeight)
         const rawScore = (stats.correct * weights.correct) - (stats.wrong * weights.wrong);
         
+        // NEW: Clear the saved session on successful completion
+        Store.set('current_session', null);
+
         return {
             score: parseFloat(Math.max(0, rawScore).toFixed(2)),
             accuracy: stats.attempted > 0 ? Math.round((stats.correct / stats.attempted) * 100) : 0,
