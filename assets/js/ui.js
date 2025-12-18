@@ -243,21 +243,35 @@ const UI = {
                     <div>
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Question Count</label>
                         <div class="grid grid-cols-4 gap-2" id="q-counts">
-                            <button data-count="10" type="button" onclick="UI._selectToggle(this)" class="count-btn py-4 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-xs font-black transition-all active">10</button>
-                            <button data-count="20" type="button" onclick="UI._selectToggle(this)" class="count-btn py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs font-black transition-all">20</button>
-                            <button data-count="50" type="button" onclick="UI._selectToggle(this)" class="count-btn py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs font-black transition-all">50</button>
-                            <button data-count="100" type="button" onclick="UI._selectToggle(this)" class="count-btn py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs font-black transition-all">100</button>
+                            ${[10, 20, 50, 100].map(n => `
+                                <button type="button" 
+                                    data-count="${n}" 
+                                    onclick="UI._selectToggle(this)" 
+                                    class="count-btn py-4 rounded-2xl ${n===10?'active bg-slate-900 text-white dark:bg-white dark:text-slate-900':'bg-slate-100 dark:bg-slate-800 text-slate-500'} text-xs font-black transition-all">
+                                    ${n}
+                                </button>`).join('')}
                         </div>
                     </div>
                     <div>
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Quiz Protocol</label>
                         <div class="grid grid-cols-2 gap-3" id="q-modes">
-                            <button data-mode="test" type="button" onclick="UI._selectToggle(this)" class="mode-btn py-5 rounded-3xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-[11px] font-black tracking-widest uppercase active">Test Mode</button>
-                            <button data-mode="learning" type="button" onclick="UI._selectToggle(this)" class="mode-btn py-5 rounded-3xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-[11px] font-black tracking-widest uppercase">Learn Mode</button>
+                            <button type="button" 
+                                data-mode="test"
+                                onclick="UI._selectToggle(this)" 
+                                class="mode-btn py-5 rounded-3xl active bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-[11px] font-black tracking-widest uppercase">
+                                Test Mode
+                            </button>
+                            <button type="button" 
+                                data-mode="learning"
+                                onclick="UI._selectToggle(this)" 
+                                class="mode-btn py-5 rounded-3xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-[11px] font-black tracking-widest uppercase">
+                                Learn Mode
+                            </button>
                         </div>
                     </div>
                 </div>
-                <button type="button" onclick="Main.triggerStart('${subject}')" 
+                <button type="button"
+                    onclick="Main.triggerStart('${subject}')" 
                     class="w-full mt-10 py-5 bg-blue-600 text-white rounded-3xl font-black tracking-widest shadow-xl shadow-blue-500/20 active:scale-95 transition-all uppercase">
                     Initialize Quiz
                 </button>
@@ -373,7 +387,11 @@ const UI = {
 
     loader(show) { 
         const el = document.getElementById('loader');
-        if (el) el.classList[show ? 'remove' : 'add']('hidden');
+        if (el) {
+            el.classList[show ? 'remove' : 'add']('hidden');
+        } else {
+            console.warn("UI Loader: Element #loader not found.");
+        }
     },
 
     updateTimerDisplay(seconds) {
@@ -393,10 +411,10 @@ const UI = {
             b.className = b.className.replace('bg-slate-900 text-white dark:bg-white dark:text-slate-900', 'bg-slate-100 dark:bg-slate-800 text-slate-500');
         });
         btn.classList.add('active'); // RESTORED ACTIVE FLAG
-        btn.className = b.className.replace('bg-slate-100 dark:bg-slate-800 text-slate-500', 'bg-slate-900 text-white dark:bg-white dark:text-slate-900');
+        btn.className = btn.className.replace('bg-slate-100 dark:bg-slate-800 text-slate-500', 'bg-slate-900 text-white dark:bg-white dark:text-slate-900');
     },
 
-    // 8. ANALYSIS VIEW
+    // 8. ANALYSIS VIEW (Fixed Dynamic Colors & Paths)
     drawAnalysis(result) {
         const main = document.getElementById('main-view');
         if (!main) return;
@@ -425,6 +443,7 @@ const UI = {
             <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Question Review</h3>
             <div class="space-y-4">
                 ${result.fullData.map((q, i) => {
+                    // Explicit color strings for Tailwind detection
                     const borderCol = q.isCorrect ? 'border-l-emerald-500' : 'border-l-red-500';
                     const bgCol = q.isCorrect ? 'bg-emerald-50/20 dark:bg-emerald-900/10' : 'bg-red-50/20 dark:bg-red-900/10';
                     const textCol = q.isCorrect ? 'text-emerald-500' : 'text-red-500';
@@ -450,4 +469,5 @@ const UI = {
         </div>`;
     }
 };
+
 
