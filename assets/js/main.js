@@ -125,24 +125,12 @@ const Main = {
             }
 
             // 4. Capture User Config (Count & Mode) from the Setup Modal
-            // IMPROVED: Uses multiple class checks to find the "active" button
-            const countButtons = Array.from(document.querySelectorAll('#q-counts button'));
-            const countBtn = countButtons.find(b => 
-                b.classList.contains('bg-slate-900') || 
-                b.classList.contains('dark:bg-white') ||
-                b.classList.contains('text-white') // Failsafe for specific color themes
-            );
-            const count = countBtn ? parseInt(countBtn.innerText) : 10;
+             // 4. Capture User Config (Count & Mode) - FIX #2 IMPLEMENTED
+            const countBtn = document.querySelector('#q-counts .count-btn.active');
+            const modeBtn = document.querySelector('#q-modes .mode-btn.active');
             
-            const modeButtons = Array.from(document.querySelectorAll('#q-modes button'));
-            const modeBtn = modeButtons.find(b => 
-                b.classList.contains('bg-slate-900') || 
-                b.classList.contains('dark:bg-white') ||
-                b.classList.contains('text-white')
-            );
-            
-            // Default to 'test' if no button is found, otherwise check text
-            const mode = (modeBtn && modeBtn.innerText.toLowerCase().includes('learn')) ? 'learning' : 'test';
+            const count = countBtn ? parseInt(countBtn.dataset.count) : 10;
+            const mode = modeBtn ? modeBtn.dataset.mode : 'test';
             
             console.log(`Quiz Config: Count=${count}, Mode=${mode}, Paper=${this.state.paper}`);
 
