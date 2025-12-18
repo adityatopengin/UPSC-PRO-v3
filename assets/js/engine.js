@@ -1,337 +1,95 @@
 /**
- * MAIN.JS - The Master Controller
- * Final Integration: Coordinates Store, Adapter, Engine, and UI.
- * Features: Fog-Footer Navigation, JSON Normalization, UPSC Logic.
+ * ENGINE.JS - The Logic Brain
+ * Handles Timer, Randomization, and UPSC Marking Math.
  */
+const Engine = {
+    state: { activeQuiz: null, timer: null },
 
-// === FIX #3: JSON VALIDATION ===
-function validateQuestionsSchema(questions) {
-    if (!Array.isArray(questions)) {
-        throw new Error('Questions must be an array');
-    }
-
-    const errors = [];
-
-    questions.slice(0, 50).forEach((q, idx) => {
-        if (!q.text && !q.question_text) {
-            errors.push(`Q${idx + 1}: Missing question text`);
-        }
-
-        if (!Array.isArray(q.options) || q.options.length < 2) {
-            errors.push(`Q${idx + 1}: Must have at least 2 options`);
-        }
-
-        // Check for correct answer property
-        if (q.correct === undefined &&
-            q.correct_option_index === undefined &&
-            !q.correct_option_label) {
-            errors.push(`Q${idx + 1}: Missing correct answer`);
-        }
+    startSession(config, questions) {
+        // Shuffle and take required count
+        const shuffled = [...questions].sort(() => Math.random() - 0.5).slice(0, config.count);
         
-        // validate index range
-        const correctIdx = parseInt(q.correct_option_index ?? q.correct ?? 0);
-        if (correctIdx < 0 || correctIdx >= (q.options?.length ?? 0)) {
-             errors.push(`Q${idx + 1}: Correct index ${correctIdx} out of range`);
-        }
-    });
+        // UPSC Time: GS (72s) vs CSAT (90s)
+        const timePerQ = config.paper === 'csat' ? 90 : 72;
+        
+        this.state.activeQuiz = {
+            config: config,
+            questions: shuffled,
+            answers: {},
+            currentIdx: 0,
+            timeLeft: config.count * timePerQ,
+            startTime: Date.now()
+        };
 
-    if (errors.length > 0) {
-        const summary = errors.slice(0, 5).join('\n');
-        const remaining = errors.length > 5 ? `\n... and ${errors.length - 5} more errors` : '';
-        throw new Error(`JSON Validation Failed:\n${summary}${remaining}`);
-    }
-
-    return true;
-}
-
-// === FIX #4: NETWORK RETRY ===
-const NetworkUtils = {
-    async fetchWithRetry(url, maxRetries = 2, timeout = 5000) {
-        let lastError = null;
-
-        for (let attempt = 0; attempt <= maxRetries; attempt++) {
-            try {
-                console.log(`[Network] Attempt ${attempt + 1}/${maxRetries + 1}: ${url}`);
-
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-                const response = await fetch(url, {
-                    signal: controller.signal,
-                    cache: 'force-cache',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Cache-Control': 'max-age=3600'
-                    }
-                });
-
-                clearTimeout(timeoutId);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                console.log(`[Network] ✅ Success after ${attempt + 1} attempt(s)`);
-                return data;
-
-            } catch (error) {
-                lastError = error;
-                console.warn(`[Network] ⚠️ Attempt ${attempt + 1} failed:`, error.message);
-
-                if (attempt < maxRetries) {
-                    const waitMs = 500 * Math.pow(2, attempt);
-                    console.log(`[Network] ⏳ Retrying in ${waitMs}ms...`);
-                    await new Promise(resolve => setTimeout(resolve, waitMs));
-                }
-            }
-        }
-
-        throw new Error(`Failed to fetch ${url} after ${maxRetries + 1} attempts: ${lastError?.message}`);
-    }
-};
-
-const Main = {
-    state: {
-        view: 'home',
-        paper: 'gs1', // 'gs1' or 'csat'
-        settings: { theme: 'light' }
+        if (config.mode === 'test') this._runTimer();
     },
 
-    /**
-     * Entry point: Runs when index.html is loaded
-     */
-    init() {
-        console.log("UPSC Pro v4.1: Initializing Modular System...");
+    saveAnswer(optionIndex) {
+        if (!this.state.activeQuiz) return;
+        const q = this.state.activeQuiz;
+        q.answers[q.currentIdx] = optionIndex;
+    },
+
+    // FIX #1: TIMER LOGIC BUG
+    _runTimer() {
+        this._stopTimer();
+        this.state.timer = setInterval(() => {
+            const q = this.state.activeQuiz;
+            
+            // Safety check: Ensure a quiz is active before proceeding
+            if (!q) {
+                this._stopTimer();
+                return;
+            }
+            
+            // Always decrement the time first
+            q.timeLeft--;
+            
+            // Update the UI display immediately
+            UI.updateTimerDisplay(q.timeLeft);
+            
+            // Then check if time's up
+            if (q.timeLeft <= 0) {
+                this._stopTimer();
+                // Fire the event to finish the quiz
+                window.dispatchEvent(new CustomEvent('timeUp'));
+            }
+        }, 1000);
+    },
+
+    _stopTimer() {
+        if (this.state.timer) clearInterval(this.state.timer);
+    },
+
+    calculateFinal() {
+        const q = this.state.activeQuiz;
+        const isCsat = q.config.paper === 'csat';
+        // Correct UPSC Negative Marking
+        const weights = isCsat ? { p: 2.5, n: 0.833 } : { p: 2.0, n: 0.666 };
+
+        let correct = 0, wrong = 0, attempted = 0;
         
-        // 1. Load User Preferences from Store
-        this.state.settings = Store.get('settings', { theme: 'light' });
-        if (this.state.settings.theme === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-
-        // 2. Initial Routing: Check if first-time user
-        const hasVisited = Store.get('visited', false);
-        if (!hasVisited) {
-            // Increased delay and added a safety check for the UI object
-            setTimeout(() => {
-                if (typeof UI !== 'undefined' && UI.modals) {
-                    UI.modals.orientation();
-                } else {
-                    console.error("Main Init: UI system not ready. Check if ui.js loaded correctly.");
-                }
-            }, 300); // 300ms is safer for mobile browsers
-        } else {
-            this.navigate('home');
-        }
-
-
-        // 3. Listen for Global Time Up Event
-        window.addEventListener('timeUp', () => {
-            alert("Time's Up!");
-            this.finishQuiz();
+        const fullResults = q.questions.map((item, i) => {
+            const userAns = q.answers[i];
+            const isAttempted = userAns !== undefined; // Renamed to avoid shadowing
+            const isCorrect = userAns === item.correct;
+            
+            if (isAttempted) {
+                attempted++; // Increment the outer 'attempted' counter
+                if (isCorrect) correct++; else wrong++;
+            }
+            return { ...item, userAns, isCorrect, attempted: isAttempted };
         });
-    },
 
-    /**
-     * The Router: Switches views and cleans up logic
-     */
-    navigate(view, data = null) {
-        // Cleanup: Stop quiz timer if we are leaving the quiz screen
-        if (this.state.view === 'quiz' && view !== 'quiz') {
-            Engine._stopTimer();
-        }
-
-        this.state.view = view;
-
-        // A. Render Global UI Components
-        UI.renderHeader(view);
-        
-        // Show the 3-button Fog Footer only on main tabs
-        const nav = document.getElementById('app-nav');
-        if (['home', 'notes', 'stats', 'settings'].includes(view)) {
-            UI.renderFooter(view); // Home, Notes, Stats
-            nav.classList.remove('hidden');
-        } else {
-            nav.classList.add('hidden'); // Hide footer during Quiz or Analysis
-        }
-
-        // B. Render View Specific Content
-        const mainEl = document.getElementById('main-view');
-        switch(view) {
-            case 'home':
-                const subjects = this.state.paper === 'gs1' ? CONFIG.subjectsGS1 : CONFIG.subjectsCSAT;
-                UI.drawHome(this.state.paper, subjects);
-                break;
-            case 'notes':
-                UI.drawNotes();
-                break;
-            case 'stats':
-                this._renderStats(mainEl);
-                break;
-            case 'quiz':
-                UI.drawQuiz(Engine.state.activeQuiz);
-                break;
-            case 'analysis':
-                UI.drawAnalysis(data);
-                break;
-            case 'settings':
-                this._renderSettings(mainEl);
-                break;
-        }
-
-        mainEl.scrollTo(0, 0); // Reset scroll position
-    },
-
-    /**
-     * Logic to Fetch JSON and Start Quiz
-     * Revised with robust button detection and error handling.
-     */
-    async triggerStart(subjectName) {
-        UI.loader(true);
-        UI.hideModal();
-
-        try {
-            console.log(`Attempting to start quiz for: ${subjectName}`);
-
-            // 1. Resolve filename from Config file
-            const fileName = CONFIG.getFileName(subjectName);
-            
-            // 2. Fetch the JSON file from /data/ with retry logic (FIX #4)
-            // Note: Ensure your folder is literally named 'data' and the file exists there.
-            const rawData = await NetworkUtils.fetchWithRetry(`data/${fileName}`, 2, 5000);
-
-            // 3. Use ADAPTER to fix "undefined" fields and normalize structure
-            const cleanQuestions = Adapter.normalize(rawData);
-            
-            // Validate schema before proceeding (FIX #3)
-            validateQuestionsSchema(cleanQuestions);
-
-            if (!cleanQuestions || cleanQuestions.length === 0) {
-                throw new Error("Questions were found but could not be processed. Check your JSON format.");
-            }
-
-            // 4. Capture User Config (Count & Mode) - FIX #2 IMPLEMENTED
-            const countBtn = document.querySelector('#q-counts .count-btn.active');
-            const modeBtn = document.querySelector('#q-modes .mode-btn.active');
-            
-            const count = countBtn ? parseInt(countBtn.dataset.count) : 10;
-            const mode = modeBtn ? modeBtn.dataset.mode : 'test';
-            
-            console.log(`Quiz Config: Count=${count}, Mode=${mode}, Paper=${this.state.paper}`);
-
-            // 5. Start the Engine
-            Engine.startSession({ 
-                subject: subjectName, 
-                count: count, 
-                mode: mode, 
-                paper: this.state.paper 
-            }, cleanQuestions);
-
-            // 6. Navigate to Quiz View
-            this.navigate('quiz');
-
-        } catch (e) {
-            console.error("Critical Quiz Launch Failure:", e);
-            // Alert user with specific error to help troubleshooting
-            alert(`Quiz Failed to Start!\nError: ${e.message}\n\nCheck: Is the file in the /data folder?`);
-        } finally {
-            UI.loader(false);
-        }
-    },
-
-
-    /**
-     * Quiz Interactions
-     */
-    handleOption(idx) {
-        Engine.saveAnswer(idx);
-        UI.drawQuiz(Engine.state.activeQuiz); 
-    },
-
-    moveQ(dir) {
-        const q = Engine.state.activeQuiz;
-        if (!q) return;  // Safety check
-        
-        const target = q.currentIdx + dir;
-        
-        // Only move if within valid range
-        if (target >= 0 && target < q.questions.length) {
-            q.currentIdx = target;
-            UI.drawQuiz(q);
-        }
-    },
-
-    finishQuiz() {
-        if (this.state.view !== 'quiz') return;
-        
-        const result = Engine.calculateFinal();
-        
-        // Save to LocalStorage
-        Store.saveResult(result);
-        const hardQs = result.fullData.filter(q => q.attempted && !q.isCorrect);
-        Store.saveMistakes(hardQs);
-
-        this.navigate('analysis', result);
-    },
-
-    /**
-     * Global App Actions
-     */
-    togglePaper(type) {
-        this.state.paper = type;
-        this.navigate('home');
-    },
-
-    toggleTheme() {
-        const isDark = document.documentElement.classList.toggle('dark');
-        this.state.settings.theme = isDark ? 'dark' : 'light';
-        Store.set('settings', this.state.settings);
-        this.navigate('settings');
-    },
-
-    completeOrientation() {
-        Store.set('visited', true);
-        UI.hideModal();
-        this.navigate('home');
-    },
-
-    // Inline renderers for static pages
-    _renderSettings(container) {
-        container.innerHTML = `
-        <div class="px-2 pt-6 space-y-6 animate-view-enter">
-            <div class="glass-card p-6 rounded-[32px] flex items-center justify-between">
-                <div><h3 class="text-sm font-black">Dark Mode</h3><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Toggle Theme</p></div>
-                <button onclick="Main.toggleTheme()" class="w-12 h-7 bg-slate-200 dark:bg-blue-600 rounded-full relative transition-colors">
-                    <div class="w-5 h-5 bg-white rounded-full absolute top-1 left-1 dark:left-6 transition-all"></div>
-                </button>
-            </div>
-            <div onclick="UI.modals.orientation(true)" class="glass-card p-6 rounded-[32px] flex items-center justify-between cursor-pointer active:scale-95">
-                <div><h3 class="text-sm font-black text-blue-600">Replay Orientation</h3><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Listen to Instructions</p></div>
-                <i class="fa-solid fa-play text-blue-500"></i>
-            </div>
-        </div>`;
-    },
-
-    _renderStats(container) {
-        const history = Store.get('history', []);
-        container.innerHTML = `
-        <div class="px-2 pb-32 space-y-6 animate-view-enter">
-            <div class="glass-card p-8 rounded-[40px] text-center">
-                <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Quiz History</p>
-                <div class="text-5xl font-black text-slate-800 dark:text-white tracking-tighter">${history.length}</div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase mt-2">Tests Attempted</p>
-            </div>
-            ${history.length > 0 ? history.map(h => `
-                <div class="glass-card p-5 rounded-3xl flex justify-between items-center mb-3">
-                    <div><h4 class="text-sm font-black">${h.subject || 'Mixed Test'}</h4><p class="text-[9px] font-bold text-slate-400">${new Date().toLocaleDateString()}</p></div>
-                    <div class="text-right"><div class="text-lg font-black text-blue-600">${h.score}</div><div class="text-[8px] font-black text-slate-400 uppercase">Score</div></div>
-                </div>`).join('') : '<p class="text-center text-slate-400 text-sm">No history yet.</p>'}
-        </div>`;
+        return {
+            score: ((correct * weights.p) - (wrong * weights.n)).toFixed(2),
+            accuracy: attempted > 0 ? Math.round((correct / attempted) * 100) : 0,
+            correct, 
+            wrong, 
+            total: q.questions.length, 
+            fullData: fullResults
+        };
     }
 };
-
-// Initialize App
-document.addEventListener('DOMContentLoaded', () => Main.init());
 
 
