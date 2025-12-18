@@ -1,5 +1,5 @@
 /**
- * ENGINE.JS - The Logic Brain
+ * ENGINE.JS - The Leogic Brain
  * Handles Timer, Randomization, and UPSC Marking Math.
  * * CRITICAL FIXES INCLUDED:
  * 1. Timer Logic Bug (Sequential Decrement)
