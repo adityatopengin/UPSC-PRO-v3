@@ -1,5 +1,6 @@
 /**
- * UI.JS - The Architect
+ * UI.JS - THE ARCHITECT
+ * Version 4.1.0 - Full Feature Set
  * Handles all rendering, animations, and the "Fog Effect" UI components.
  */
 
@@ -142,7 +143,7 @@ const UI = {
             <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-2">Smart Notes Library</h3>
             <div id="notes-grid" class="grid grid-cols-1 gap-4">
                 ${CONFIG.notesLibrary.map(card => `
-                <div class="eye-card rounded-[32px] p-6 bg-grad-${card.gradient} text-white shadow-xl">
+                <div class="eye-card rounded-[32px] p-6 bg-grad-${card.gradient} text-white shadow-xl relative overflow-hidden">
                     <div class="flex justify-between items-start mb-10">
                         <div>
                             <h3 class="text-lg font-black leading-none mb-1">${card.title}</h3>
@@ -152,9 +153,12 @@ const UI = {
                             <i class="fa-solid fa-${card.icon}"></i>
                         </div>
                     </div>
-                    <div class="h-16 w-full bg-black/10 rounded-2xl border border-white/10 relative overflow-hidden flex items-center justify-center">
-                        <div class="shimmer absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                    <div class="flex gap-4 opacity-30">
+                        <div class="w-8 h-8 rounded-full border-2 border-white"></div>
+                        <div class="w-12 h-2 bg-white rounded-full mt-3"></div>
+                        <div class="w-6 h-2 bg-white rounded-full mt-3"></div>
                     </div>
+                    <div class="shimmer absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
                 </div>`).join('')}
             </div>
         </div>`;
@@ -239,32 +243,21 @@ const UI = {
                     <div>
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Question Count</label>
                         <div class="grid grid-cols-4 gap-2" id="q-counts">
-                            ${[10, 20, 50, 100].map(n => `
-                                <button type="button" 
-                                    onclick="UI._selectToggle(this)" 
-                                    class="py-4 rounded-2xl ${n===10?'bg-slate-900 text-white dark:bg-white dark:text-slate-900':'bg-slate-100 dark:bg-slate-800 text-slate-500'} text-xs font-black transition-all">
-                                    ${n}
-                                </button>`).join('')}
+                            <button data-count="10" type="button" onclick="UI._selectToggle(this)" class="count-btn py-4 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-xs font-black transition-all active">10</button>
+                            <button data-count="20" type="button" onclick="UI._selectToggle(this)" class="count-btn py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs font-black transition-all">20</button>
+                            <button data-count="50" type="button" onclick="UI._selectToggle(this)" class="count-btn py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs font-black transition-all">50</button>
+                            <button data-count="100" type="button" onclick="UI._selectToggle(this)" class="count-btn py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs font-black transition-all">100</button>
                         </div>
                     </div>
                     <div>
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Quiz Protocol</label>
                         <div class="grid grid-cols-2 gap-3" id="q-modes">
-                            <button type="button" 
-                                onclick="UI._selectToggle(this)" 
-                                class="py-5 rounded-3xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-[11px] font-black tracking-widest uppercase">
-                                Test Mode
-                            </button>
-                            <button type="button" 
-                                onclick="UI._selectToggle(this)" 
-                                class="py-5 rounded-3xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-[11px] font-black tracking-widest uppercase">
-                                Learn Mode
-                            </button>
+                            <button data-mode="test" type="button" onclick="UI._selectToggle(this)" class="mode-btn py-5 rounded-3xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-[11px] font-black tracking-widest uppercase active">Test Mode</button>
+                            <button data-mode="learning" type="button" onclick="UI._selectToggle(this)" class="mode-btn py-5 rounded-3xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-[11px] font-black tracking-widest uppercase">Learn Mode</button>
                         </div>
                     </div>
                 </div>
-                <button type="button"
-                    onclick="Main.triggerStart('${subject}')" 
+                <button type="button" onclick="Main.triggerStart('${subject}')" 
                     class="w-full mt-10 py-5 bg-blue-600 text-white rounded-3xl font-black tracking-widest shadow-xl shadow-blue-500/20 active:scale-95 transition-all uppercase">
                     Initialize Quiz
                 </button>
@@ -344,19 +337,22 @@ const UI = {
                 <div class="p-8">
                     <h3 class="text-lg font-black mb-6">Question Map</h3>
                     <div class="grid grid-cols-6 gap-2 mb-6">${qGrid}</div>
+                    <div class="space-y-2 text-sm mt-4">
+                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-blue-600 rounded"></div> Current</div>
+                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-emerald-500 rounded"></div> Correct</div>
+                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-red-500 rounded"></div> Wrong</div>
+                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-slate-100 dark:bg-slate-800 rounded"></div> Unanswered</div>
+                    </div>
                     <button onclick="UI.hideModal()" class="w-full mt-8 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl font-bold text-sm">Close</button>
                 </div>
             `);
         }
     },
     
-    // 7. CORE UI UTILITIES (With Safety Checks)
+    // 7. CORE UI UTILITIES
     showModal(html) {
         const layer = document.getElementById('modal-layer');
-        if (!layer) {
-            console.error("Critical: 'modal-layer' not found.");
-            return;
-        }
+        if (!layer) return;
 
         layer.innerHTML = `
         <div id="modal-overlay" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-end sm:items-center justify-center transition-opacity duration-300">
@@ -365,26 +361,19 @@ const UI = {
             </div>
         </div>`;
         
-        const overlay = document.getElementById('modal-overlay');
-        if (overlay) {
-            overlay.onclick = (e) => {
-                if (e.target.id === 'modal-overlay') this.hideModal();
-            };
-        }
+        document.getElementById('modal-overlay').onclick = (e) => {
+            if (e.target.id === 'modal-overlay') this.hideModal();
+        };
     },
 
     hideModal() { 
         const layer = document.getElementById('modal-layer');
-        if (layer) layer.innerHTML = '';
+        if (layer) layer.innerHTML = ''; 
     },
 
     loader(show) { 
         const el = document.getElementById('loader');
-        if (el) {
-            el.classList[show ? 'remove' : 'add']('hidden');
-        } else {
-            console.warn("UI Loader: Element #loader not found.");
-        }
+        if (el) el.classList[show ? 'remove' : 'add']('hidden');
     },
 
     updateTimerDisplay(seconds) {
@@ -400,12 +389,14 @@ const UI = {
         const parent = btn.parentElement;
         if (!parent) return;
         parent.querySelectorAll('button').forEach(b => {
+            b.classList.remove('active'); // RESTORED ACTIVE FLAG
             b.className = b.className.replace('bg-slate-900 text-white dark:bg-white dark:text-slate-900', 'bg-slate-100 dark:bg-slate-800 text-slate-500');
         });
-        btn.className = btn.className.replace('bg-slate-100 dark:bg-slate-800 text-slate-500', 'bg-slate-900 text-white dark:bg-white dark:text-slate-900');
+        btn.classList.add('active'); // RESTORED ACTIVE FLAG
+        btn.className = b.className.replace('bg-slate-100 dark:bg-slate-800 text-slate-500', 'bg-slate-900 text-white dark:bg-white dark:text-slate-900');
     },
 
-    // 8. ANALYSIS VIEW (Fixed Dynamic Colors & Paths)
+    // 8. ANALYSIS VIEW
     drawAnalysis(result) {
         const main = document.getElementById('main-view');
         if (!main) return;
@@ -434,7 +425,6 @@ const UI = {
             <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Question Review</h3>
             <div class="space-y-4">
                 ${result.fullData.map((q, i) => {
-                    // Explicit color strings for Tailwind detection
                     const borderCol = q.isCorrect ? 'border-l-emerald-500' : 'border-l-red-500';
                     const bgCol = q.isCorrect ? 'bg-emerald-50/20 dark:bg-emerald-900/10' : 'bg-red-50/20 dark:bg-red-900/10';
                     const textCol = q.isCorrect ? 'text-emerald-500' : 'text-red-500';
