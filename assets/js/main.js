@@ -2,9 +2,17 @@
  * MAIN.JS - The Master Controller
  * Final Integration: Coordinates Store, Adapter, Engine, and UI.
  * Features: Fog-Footer Navigation, JSON Normalization, UPSC Logic.
+ * * CRITICAL FIXES INCLUDED:
+ * 1. JSON Validation Schema
+ * 2. Network Retry Logic
+ * 3. Robust Button State Detection
+ * 4. Safety Initialization Checks
  */
 
-// === FIX #3: JSON VALIDATION ===
+// ==========================================
+// 1. UTILITY: JSON SCHEMA VALIDATION
+// Prevents "Silent Crashes" from bad data
+// ==========================================
 function validateQuestionsSchema(questions) {
     if (!Array.isArray(questions)) {
         throw new Error('Questions must be an array');
@@ -12,23 +20,26 @@ function validateQuestionsSchema(questions) {
 
     const errors = [];
 
+    // Validate first 50 items to save performance
     questions.slice(0, 50).forEach((q, idx) => {
+        // Rule 1: Must have text
         if (!q.text && !q.question_text) {
             errors.push(`Q${idx + 1}: Missing question text`);
         }
 
+        // Rule 2: Must have options
         if (!Array.isArray(q.options) || q.options.length < 2) {
             errors.push(`Q${idx + 1}: Must have at least 2 options`);
         }
 
-        // Check for correct answer property
+        // Rule 3: Must have a correct answer
         if (q.correct === undefined &&
             q.correct_option_index === undefined &&
             !q.correct_option_label) {
             errors.push(`Q${idx + 1}: Missing correct answer`);
         }
         
-        // validate index range
+        // Rule 4: Correct index must be within range
         const correctIdx = parseInt(q.correct_option_index ?? q.correct ?? 0);
         if (correctIdx < 0 || correctIdx >= (q.options?.length ?? 0)) {
              errors.push(`Q${idx + 1}: Correct index ${correctIdx} out of range`);
@@ -44,21 +55,24 @@ function validateQuestionsSchema(questions) {
     return true;
 }
 
-// === FIX #4: NETWORK RETRY ===
+// ==========================================
+// 2. UTILITY: NETWORK RESILIENCE
+// Retries fetches for users with bad internet
+// ==========================================
 const NetworkUtils = {
     async fetchWithRetry(url, maxRetries = 2, timeout = 5000) {
         let lastError = null;
 
         for (let attempt = 0; attempt <= maxRetries; attempt++) {
             try {
-                console.log(`[Network] Attempt ${attempt + 1}/${maxRetries + 1}: ${url}`);
+                if (attempt > 0) console.log(`[Network] Retry attempt ${attempt}/${maxRetries}: ${url}`);
 
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), timeout);
 
                 const response = await fetch(url, {
                     signal: controller.signal,
-                    cache: 'force-cache',
+                    cache: 'force-cache', // Important for offline usage
                     headers: {
                         'Accept': 'application/json',
                         'Cache-Control': 'max-age=3600'
@@ -72,25 +86,27 @@ const NetworkUtils = {
                 }
 
                 const data = await response.json();
-                console.log(`[Network] ✅ Success after ${attempt + 1} attempt(s)`);
                 return data;
 
             } catch (error) {
                 lastError = error;
-                console.warn(`[Network] ⚠️ Attempt ${attempt + 1} failed:`, error.message);
+                console.warn(`[Network] Attempt ${attempt + 1} failed:`, error.message);
 
                 if (attempt < maxRetries) {
+                    // Exponential backoff: 500ms, 1000ms
                     const waitMs = 500 * Math.pow(2, attempt);
-                    console.log(`[Network] ⏳ Retrying in ${waitMs}ms...`);
                     await new Promise(resolve => setTimeout(resolve, waitMs));
                 }
             }
         }
 
-        throw new Error(`Failed to fetch ${url} after ${maxRetries + 1} attempts: ${lastError?.message}`);
+        throw new Error(`Failed to fetch ${url}: ${lastError?.message}`);
     }
 };
 
+// ==========================================
+// 3. MAIN APPLICATION LOGIC
+// ==========================================
 const Main = {
     state: {
         view: 'home',
@@ -102,15 +118,15 @@ const Main = {
      * Entry point: Runs when index.html is loaded
      */
     init() {
-        console.log("UPSC Pro v4.1: Initializing Modular System...");
+        console.log("UPSC Pro v4.1: System Initializing...");
         
-        // 1. Load User Preferences from Store
+        // A. Load User Preferences from Store
         this.state.settings = Store.get('settings', { theme: 'light' });
         if (this.state.settings.theme === 'dark') {
             document.documentElement.classList.add('dark');
         }
 
-        // 2. Initial Routing: Check if first-time user
+        // B. Initial Routing: Check if first-time user
         const hasVisited = Store.get('visited', false);
         if (!hasVisited) {
             // Increased delay and added a safety check for the UI object
@@ -125,11 +141,13 @@ const Main = {
             this.navigate('home');
         }
 
-
-        // 3. Listen for Global Time Up Event
+        // C. Listen for Global Time Up Event
         window.addEventListener('timeUp', () => {
-            alert("Time's Up!");
-            this.finishQuiz();
+            // Only alert if we are actually in a quiz
+            if (this.state.view === 'quiz') {
+                alert("Time's Up! Submitting your answers.");
+                this.finishQuiz();
+            }
         });
     },
 
@@ -185,42 +203,43 @@ const Main = {
 
     /**
      * Logic to Fetch JSON and Start Quiz
-     * Revised with robust button detection and error handling.
+     * Completely rewritten for robustness and safety.
      */
     async triggerStart(subjectName) {
         UI.loader(true);
         UI.hideModal();
 
         try {
-            console.log(`Attempting to start quiz for: ${subjectName}`);
+            console.log(`[Main] Attempting to start quiz: ${subjectName}`);
 
             // 1. Resolve filename from Config file
             const fileName = CONFIG.getFileName(subjectName);
             
-            // 2. Fetch the JSON file from /data/ with retry logic (FIX #4)
-            // Note: Ensure your folder is literally named 'data' and the file exists there.
+            // 2. Fetch with Retry Logic (Critical Fix #4)
             const rawData = await NetworkUtils.fetchWithRetry(`data/${fileName}`, 2, 5000);
 
-            // 3. Use ADAPTER to fix "undefined" fields and normalize structure
+            // 3. Normalize Data via Adapter
             const cleanQuestions = Adapter.normalize(rawData);
             
-            // Validate schema before proceeding (FIX #3)
+            // 4. Validate Data Integrity (Critical Fix #3)
             validateQuestionsSchema(cleanQuestions);
 
             if (!cleanQuestions || cleanQuestions.length === 0) {
-                throw new Error("Questions were found but could not be processed. Check your JSON format.");
+                throw new Error("File loaded but contained no valid questions.");
             }
 
-            // 4. Capture User Config (Count & Mode) - FIX #2 IMPLEMENTED
+            // 5. Capture User Config (Critical Fix #2)
+            // Uses precise selector for the .active class added by ui.js
             const countBtn = document.querySelector('#q-counts .count-btn.active');
             const modeBtn = document.querySelector('#q-modes .mode-btn.active');
             
+            // Fallback defaults if selection fails
             const count = countBtn ? parseInt(countBtn.dataset.count) : 10;
             const mode = modeBtn ? modeBtn.dataset.mode : 'test';
             
-            console.log(`Quiz Config: Count=${count}, Mode=${mode}, Paper=${this.state.paper}`);
+            console.log(`[Main] Config: Count=${count}, Mode=${mode}, Paper=${this.state.paper}`);
 
-            // 5. Start the Engine
+            // 6. Start the Engine
             Engine.startSession({ 
                 subject: subjectName, 
                 count: count, 
@@ -228,18 +247,22 @@ const Main = {
                 paper: this.state.paper 
             }, cleanQuestions);
 
-            // 6. Navigate to Quiz View
+            // 7. Navigate to Quiz View
             this.navigate('quiz');
 
         } catch (e) {
             console.error("Critical Quiz Launch Failure:", e);
-            // Alert user with specific error to help troubleshooting
-            alert(`Quiz Failed to Start!\nError: ${e.message}\n\nCheck: Is the file in the /data folder?`);
+            let msg = `Quiz Failed to Start!\n\nError: ${e.message}`;
+            
+            if (e.message.includes('HTTP 404')) {
+                msg += `\n\nTip: Check if the file exists in the /data folder.`;
+            }
+            
+            alert(msg);
         } finally {
             UI.loader(false);
         }
     },
-
 
     /**
      * Quiz Interactions
@@ -267,8 +290,10 @@ const Main = {
         
         const result = Engine.calculateFinal();
         
-        // Save to LocalStorage
+        // Save to LocalStorage with Race Condition protection (in store.js)
         Store.saveResult(result);
+        
+        // Save Mistakes for review
         const hardQs = result.fullData.filter(q => q.attempted && !q.isCorrect);
         Store.saveMistakes(hardQs);
 
@@ -301,13 +326,19 @@ const Main = {
         container.innerHTML = `
         <div class="px-2 pt-6 space-y-6 animate-view-enter">
             <div class="glass-card p-6 rounded-[32px] flex items-center justify-between">
-                <div><h3 class="text-sm font-black">Dark Mode</h3><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Toggle Theme</p></div>
+                <div>
+                    <h3 class="text-sm font-black">Dark Mode</h3>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Toggle Theme</p>
+                </div>
                 <button onclick="Main.toggleTheme()" class="w-12 h-7 bg-slate-200 dark:bg-blue-600 rounded-full relative transition-colors">
                     <div class="w-5 h-5 bg-white rounded-full absolute top-1 left-1 dark:left-6 transition-all"></div>
                 </button>
             </div>
             <div onclick="UI.modals.orientation(true)" class="glass-card p-6 rounded-[32px] flex items-center justify-between cursor-pointer active:scale-95">
-                <div><h3 class="text-sm font-black text-blue-600">Replay Orientation</h3><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Listen to Instructions</p></div>
+                <div>
+                    <h3 class="text-sm font-black text-blue-600">Replay Orientation</h3>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Listen to Instructions</p>
+                </div>
                 <i class="fa-solid fa-play text-blue-500"></i>
             </div>
         </div>`;
@@ -324,8 +355,14 @@ const Main = {
             </div>
             ${history.length > 0 ? history.map(h => `
                 <div class="glass-card p-5 rounded-3xl flex justify-between items-center mb-3">
-                    <div><h4 class="text-sm font-black">${h.subject || 'Mixed Test'}</h4><p class="text-[9px] font-bold text-slate-400">${new Date().toLocaleDateString()}</p></div>
-                    <div class="text-right"><div class="text-lg font-black text-blue-600">${h.score}</div><div class="text-[8px] font-black text-slate-400 uppercase">Score</div></div>
+                    <div>
+                        <h4 class="text-sm font-black">${h.subject || 'Mixed Test'}</h4>
+                        <p class="text-[9px] font-bold text-slate-400">${new Date(h.savedAt || Date.now()).toLocaleDateString()}</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-black text-blue-600">${h.score}</div>
+                        <div class="text-[8px] font-black text-slate-400 uppercase">Score</div>
+                    </div>
                 </div>`).join('') : '<p class="text-center text-slate-400 text-sm">No history yet.</p>'}
         </div>`;
     }
