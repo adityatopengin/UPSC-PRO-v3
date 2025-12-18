@@ -23,7 +23,11 @@ const Engine = {
 
         if (config.mode === 'test') this._runTimer();
     },
-
+saveAnswer(optionIndex) {
+        if (!this.state.activeQuiz) return;
+        const q = this.state.activeQuiz;
+        q.answers[q.currentIdx] = optionIndex;
+    },
     _runTimer() {
         this._stopTimer();
         this.state.timer = setInterval(() => {
