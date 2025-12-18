@@ -1,0 +1,30 @@
+[
+  {
+    "id": "UNIQUE_ID_STRING",          // Optional: Unique identifier
+    "year": 2023,                      // Required: Year of question (Number or String)
+    "subject": "Subject Name",         // Optional: For categorization
+    "topic": "Topic Name",             // Recommended: Used in analysis
+    "subtopic": "Subtopic Name",       // Optional
+    "difficulty": "Easy/Moderate/Hard",// Recommended: Displayed in UI
+    "question_type": "MCQ_single",     // Optional: Metadata
+    "question_text": "The full text of the question?", // REQUIRED: The main question
+    "options": [                       // REQUIRED: Array of strings
+      "Option A text",
+      "Option B text",
+      "Option C text",
+      "Option D text"
+    ],
+    "correct_option_index": 1,         // REQUIRED: 0-based index of correct answer (0=A, 1=B, etc.)
+    "correct_option_label": "B",       // Optional: Fallback if index is missing
+    "explanation": "Detailed explanation...", // Recommended: Shown in Learn Mode/Analysis
+    "source": {                        // Optional: Source metadata
+      "exam": "UPSC_CSE_Prelims",
+      "paper": "GS1",
+      "year": 2023
+    },
+    "tags": ["tag1", "tag2"],          // Optional: For future filtering
+    "notes": "Extra notes...",         // Optional
+    "linked_concepts": ["Concept 1"]   // Optional
+  }
+]
+
