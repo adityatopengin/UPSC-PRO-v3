@@ -23,11 +23,13 @@ const Engine = {
 
         if (config.mode === 'test') this._runTimer();
     },
-saveAnswer(optionIndex) {
+
+    saveAnswer(optionIndex) {
         if (!this.state.activeQuiz) return;
         const q = this.state.activeQuiz;
         q.answers[q.currentIdx] = optionIndex;
     },
+
     _runTimer() {
         this._stopTimer();
         this.state.timer = setInterval(() => {
@@ -53,21 +55,26 @@ saveAnswer(optionIndex) {
         const weights = isCsat ? { p: 2.5, n: 0.833 } : { p: 2.0, n: 0.666 };
 
         let correct = 0, wrong = 0, attempted = 0;
+        
         const fullResults = q.questions.map((item, i) => {
             const userAns = q.answers[i];
-            const attempted = userAns !== undefined;
+            const isAttempted = userAns !== undefined; // Renamed to avoid shadowing
             const isCorrect = userAns === item.correct;
             
-            if (attempted) {
+            if (isAttempted) {
+                attempted++; // Increment the outer 'attempted' counter
                 if (isCorrect) correct++; else wrong++;
             }
-            return { ...item, userAns, isCorrect, attempted };
+            return { ...item, userAns, isCorrect, attempted: isAttempted };
         });
 
         return {
             score: ((correct * weights.p) - (wrong * weights.n)).toFixed(2),
             accuracy: attempted > 0 ? Math.round((correct / attempted) * 100) : 0,
-            correct, wrong, total: q.questions.length, fullData: fullResults
+            correct, 
+            wrong, 
+            total: q.questions.length, 
+            fullData: fullResults
         };
     }
 };
