@@ -1,6 +1,6 @@
 /**
  * MAIN.JS - The Master Controller
- * Version: 1.1.0 (Production Ready)
+ * Version: 1.2.0 (Resume Capable)
  * Orchestrates Store, Adapter, Engine, and UI modules.
  */
 
@@ -74,7 +74,27 @@ const Main = {
             document.documentElement.classList.add('dark');
         }
 
-        // 2. First-Visit Logic
+        // 2. RESUME CHECK (New in v1.2.0)
+        // Before deciding where to go, check if a session was interrupted
+        const savedSession = Store.get('current_session');
+        if (savedSession) {
+            console.log("Resuming interrupted session...");
+            
+            // Restore State
+            Engine.state.activeQuiz = savedSession;
+            
+            // Recalculate Timer Start
+            // Formula: StartTime = Now - (TotalDuration - RemainingTime)
+            const elapsedMS = (savedSession.totalDuration - savedSession.timeLeft) * 1000;
+            Engine.state.activeQuiz.startTime = Date.now() - elapsedMS;
+            
+            // Resume Timer & UI
+            Engine._runTimer();
+            this.navigate('quiz');
+            return; // STOP HERE. Do not proceed to home or orientation.
+        }
+
+        // 3. First-Visit Logic (Only if no resume)
         const hasVisited = Store.get('visited', false);
         if (!hasVisited) {
             setTimeout(() => UI.modals.orientation(), 500);
@@ -82,14 +102,14 @@ const Main = {
             this.navigate('home');
         }
 
-        // 3. Global Event Listeners
+        // 4. Global Event Listeners
         window.addEventListener('timeUp', () => {
             if (this.state.view === 'quiz') {
                 this.finishQuiz();
             }
         });
 
-        // 4. Handle Keyboard Navigation (Accessibility)
+        // 5. Handle Keyboard Navigation (Accessibility)
         document.addEventListener('keydown', (e) => {
             if (this.state.view !== 'quiz') return;
             if (e.key === 'ArrowRight') this.moveQ(1);
@@ -106,6 +126,8 @@ const Main = {
         // Exit early if Engine is running a timer but we are leaving the quiz
         if (this.state.view === 'quiz' && view !== 'quiz') {
             Engine._stopTimer();
+            // Note: We don't clear the session here. Users can click "Home"
+            // and come back later. Session is cleared only on finish.
         }
 
         this.state.view = view;
@@ -248,17 +270,17 @@ const Main = {
                     <h3 class="text-sm font-black">Appearance</h3>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Dark Mode Toggle</p>
                 </div>
-                <button onclick="Main.toggleTheme()" class="w-12 h-7 bg-slate-200 dark:bg-blue-600 rounded-full relative transition-colors">
+                <button onclick="Main.toggleTheme()" class="w-12 h-7 bg-slate-200 dark:bg-blue-600 rounded-full relative transition-colors" aria-label="Toggle Dark Mode">
                     <div class="w-5 h-5 bg-white rounded-full absolute top-1 left-1 dark:left-6 transition-all shadow-sm"></div>
                 </button>
             </div>
-            <div onclick="Store.clearAll()" class="glass-card p-6 rounded-[32px] flex items-center justify-between border-red-100 dark:border-red-900/30 text-red-500">
-                <div>
+            <button onclick="Store.clearAll()" class="w-full glass-card p-6 rounded-[32px] flex items-center justify-between border-red-100 dark:border-red-900/30 text-red-500">
+                <div class="text-left">
                     <h3 class="text-sm font-black">Reset Progress</h3>
                     <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Clear History & Settings</p>
                 </div>
                 <i class="fa-solid fa-trash-can"></i>
-            </div>
+            </button>
             <div class="text-center pt-10">
                 <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em]">UPSC Pro v${CONFIG.version}</p>
             </div>
@@ -300,4 +322,5 @@ const Main = {
 
 // Initialize on Load
 document.addEventListener('DOMContentLoaded', () => Main.init());
+
 
