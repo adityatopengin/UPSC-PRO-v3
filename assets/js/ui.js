@@ -1,10 +1,20 @@
 /**
  * UI.JS - THE ARCHITECT
- * Version: 1.1.0 (Production Ready)
+ * Version: 1.2.0 (Secure & Accessible)
  * Handles all rendering, view transitions, and the "Fog" design system.
  */
 
 const UI = {
+    /**
+     * SECURITY: Sanitize user content to prevent XSS
+     */
+    sanitize(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    },
+
     // 1. DYNAMIC HEADER
     renderHeader(view) {
         const header = document.getElementById('app-header');
@@ -97,18 +107,19 @@ const UI = {
                 <button onclick="Main.togglePaper('csat')" class="relative z-10 flex-1 py-2.5 text-[10px] font-black transition-colors ${paper === 'csat' ? 'text-slate-900 dark:text-white' : 'text-slate-500'}">CSAT PAPER</button>
             </div>
 
-            <!-- Subject Grid -->
+            <!-- Subject Grid - Now using BUTTONS for Accessibility -->
             <div class="grid grid-cols-2 gap-4">
                 ${subjects.map(s => {
                     const colorStyles = colorMap[s.color] || colorMap.blue;
                     return `
-                    <div onclick="UI.modals.setup('${s.name}')" 
-                         class="glass-card p-5 rounded-[32px] flex flex-col items-center gap-4 active:scale-95 transition-all cursor-pointer border-b-4 ${colorStyles} group">
+                    <button type="button" 
+                            onclick="UI.modals.setup('${s.name}')" 
+                            class="glass-card w-full p-5 rounded-[32px] flex flex-col items-center gap-4 active:scale-95 transition-all cursor-pointer border-b-4 ${colorStyles} group">
                         <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform ${colorStyles.split(' ').slice(0,1).join(' ')}">
                             <i class="fa-solid fa-${s.icon}"></i>
                         </div>
                         <span class="text-[11px] font-black text-center uppercase leading-tight text-slate-700 dark:text-slate-200 tracking-tighter">${s.name}</span>
-                    </div>`;
+                    </button>`;
                 }).join('')}
             </div>
         </div>`;
@@ -140,10 +151,10 @@ const UI = {
                 <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 text-[9px] font-bold uppercase">${currentQ.metadata.difficulty}</span>
             </div>
 
-            <!-- Question Text -->
-            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-10 leading-snug font-display">${currentQ.text}</h3>
+            <!-- Question Text - Sanitized -->
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-10 leading-snug font-display">${this.sanitize(currentQ.text)}</h3>
 
-            <!-- Options List -->
+            <!-- Options List - Accessible Buttons -->
             <div class="space-y-4">
                 ${currentQ.options.map((opt, i) => {
                     const isSelected = quizState.answers[quizState.currentIdx] === i;
@@ -169,34 +180,35 @@ const UI = {
                     }
 
                     return `
-                    <div onclick="Main.handleOption(${i})" 
-                         class="glass-card p-5 rounded-[24px] flex items-start gap-4 transition-all border-2 ${borderClass} ${bgClass} ${opacity} cursor-pointer active:scale-[0.98]">
+                    <button type="button" 
+                         onclick="Main.handleOption(${i})" 
+                         class="w-full text-left glass-card p-5 rounded-[24px] flex items-start gap-4 transition-all border-2 ${borderClass} ${bgClass} ${opacity} cursor-pointer active:scale-[0.98]">
                         <div class="w-7 h-7 rounded-full border-2 border-slate-200 flex-shrink-0 flex items-center justify-center text-[11px] font-black text-slate-400 mt-0.5">
                             ${String.fromCharCode(65 + i)}
                         </div>
-                        <span class="text-[15px] font-medium leading-relaxed">${opt}</span>
-                    </div>`;
+                        <span class="text-[15px] font-medium leading-relaxed">${this.sanitize(opt)}</span>
+                    </button>`;
                 }).join('')}
             </div>
 
-            <!-- Explanation (Learn Mode Only) -->
+            <!-- Explanation (Learn Mode Only) - Sanitized -->
             ${quizState.config.mode === 'learning' && hasAnswered ? `
             <div class="mt-8 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-[32px] border border-blue-100 dark:border-blue-800 animate-view-enter">
                 <h4 class="text-[10px] font-black text-blue-600 uppercase mb-3 tracking-widest">Logic & Explanation</h4>
-                <p class="text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed">${currentQ.explanation}</p>
+                <p class="text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed">${this.sanitize(currentQ.explanation)}</p>
             </div>` : ''}
         </div>
 
         <!-- Quiz Footer Controls -->
         <div class="fixed bottom-0 left-0 right-0 p-4 glass-card rounded-t-[40px] shadow-2xl z-50 flex items-center gap-3 max-w-md mx-auto border-t-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg">
-            <button onclick="UI.modals.map()" class="w-14 h-14 glass-card rounded-2xl flex items-center justify-center text-slate-400 hover:text-blue-500">
+            <button onclick="UI.modals.map()" class="w-14 h-14 glass-card rounded-2xl flex items-center justify-center text-slate-400 hover:text-blue-500" aria-label="Question Map">
                 <i class="fa-solid fa-grip-vertical"></i>
             </button>
             <div class="flex-1 flex gap-3">
                 <button onclick="Main.moveQ(-1)" class="flex-1 py-4 bg-slate-100 dark:bg-slate-800 rounded-2xl font-black text-[11px] uppercase tracking-widest text-slate-600">Prev</button>
                 <button onclick="Main.moveQ(1)" class="flex-1 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-lg">Next</button>
             </div>
-            <button onclick="Main.finishQuiz()" class="w-14 h-14 bg-emerald-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20 active:scale-95 transition-all">
+            <button onclick="Main.finishQuiz()" class="w-14 h-14 bg-emerald-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20 active:scale-95 transition-all" aria-label="Submit Quiz">
                 <i class="fa-solid fa-check text-xl"></i>
             </button>
         </div>`;
@@ -262,7 +274,7 @@ const UI = {
                 <p class="text-[13px] text-slate-500 mb-10 leading-relaxed">System orientation for the 2026 Batch by Pradeep Tripathi.</p>
                 
                 <div class="flex items-center justify-center gap-8 mb-10">
-                    <button id="play-btn" class="w-20 h-20 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-3xl shadow-xl flex items-center justify-center">
+                    <button id="play-btn" class="w-20 h-20 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-3xl shadow-xl flex items-center justify-center" aria-label="Play Orientation">
                         <i class="fa-solid fa-play ml-1" id="play-icon"></i>
                     </button>
                     <audio id="welcome-audio" src="assets/audio/disclaimer.mp3"></audio>
