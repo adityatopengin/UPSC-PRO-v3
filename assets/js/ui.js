@@ -7,6 +7,8 @@ const UI = {
     // 1. DYNAMIC HEADER
     renderHeader(view, paper = 'gs1') {
         const header = document.getElementById('app-header');
+        if (!header) return;
+
         if (view === 'home') {
             header.innerHTML = `
             <div class="flex items-center justify-between p-4 glass-card rounded-3xl mx-2 mt-4 animate-view-enter">
@@ -35,6 +37,7 @@ const UI = {
     // 2. THE FOG FOOTER (3 Stylish Buttons)
     renderFooter(activeView) {
         const nav = document.getElementById('app-nav');
+        if (!nav) return;
         nav.classList.remove('hidden');
 
         const buttons = [
@@ -61,7 +64,8 @@ const UI = {
     // 3. HOME VIEW (Dashboard)
     drawHome(paper, subjects) {
         const main = document.getElementById('main-view');
-        // Pre-defined color map to fix Tailwind JIT issue
+        if (!main) return;
+
         const colorMap = {
             amber: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 hover:border-b-amber-500',
             blue: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:border-b-blue-500',
@@ -103,6 +107,8 @@ const UI = {
     // 4. NOTES VIEW (Eyecatchers & Resources)
     drawNotes() {
         const main = document.getElementById('main-view');
+        if (!main) return;
+
         main.innerHTML = `
         <div class="space-y-8 pb-32 animate-view-enter">
             <div class="grid grid-cols-2 gap-3">
@@ -148,20 +154,16 @@ const UI = {
                     </div>
                     <div class="h-16 w-full bg-black/10 rounded-2xl border border-white/10 relative overflow-hidden flex items-center justify-center">
                         <div class="shimmer absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-                        <div class="flex gap-4 opacity-30">
-                            <div class="w-8 h-8 rounded-full border-2 border-white"></div>
-                            <div class="w-12 h-2 bg-white rounded-full mt-3"></div>
-                            <div class="w-6 h-2 bg-white rounded-full mt-3"></div>
-                        </div>
                     </div>
                 </div>`).join('')}
             </div>
         </div>`;
     },
 
-       // 5. QUIZ VIEW (Fixed Metadata Paths)
+    // 5. QUIZ VIEW (Fixed Metadata Paths)
     drawQuiz(q) {
         const main = document.getElementById('main-view');
+        if (!main) return;
         const current = q.questions[q.currentIdx];
 
         main.innerHTML = `
@@ -225,13 +227,9 @@ const UI = {
         </div>`;
     },
 
-
     // 6. MODALS
     modals: {
-     // Locate the 'setup' function inside the 'modals' object in ui.js and replace it with this:
-
         setup(subject) {
-            console.log("Opening setup modal for:", subject);
             UI.showModal(`
             <div class="p-8">
                 <div class="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-8"></div>
@@ -265,15 +263,13 @@ const UI = {
                         </div>
                     </div>
                 </div>
-                <button id="start-quiz-btn" 
-                    type="button"
+                <button type="button"
                     onclick="Main.triggerStart('${subject}')" 
                     class="w-full mt-10 py-5 bg-blue-600 text-white rounded-3xl font-black tracking-widest shadow-xl shadow-blue-500/20 active:scale-95 transition-all uppercase">
                     Initialize Quiz
                 </button>
             </div>`);
         },
-
 
         coaching() {
             UI.showModal(`
@@ -288,43 +284,41 @@ const UI = {
                         <span class="text-[9px] font-black text-slate-500 uppercase tracking-tighter text-center leading-none">${inst.name}</span>
                     </a>`).join('')}
                 </div>
-                <button onclick="UI.hideModal()" class="w-full mt-10 py-4 bg-slate-100 dark:bg-slate-800 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest">Close Library</button>
+                <button onclick="UI.hideModal()" class="w-full mt-10 py-4 bg-slate-100 dark:bg-slate-800 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest">Close</button>
             </div>`);
         },
 
-        orientation(force = false) {
+        orientation() {
             UI.showModal(`
             <div class="p-10 text-center">
-                <div class="w-24 h-24 bg-blue-600 text-white rounded-[40px] mx-auto flex items-center justify-center text-4xl mb-8 shadow-2xl shadow-blue-500/30 animate-pulse-ring">
+                <div class="w-24 h-24 bg-blue-600 text-white rounded-[40px] mx-auto flex items-center justify-center text-4xl mb-8 shadow-2xl animate-pulse">
                     <i class="fa-solid fa-microphone-lines"></i>
                 </div>
                 <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-3 tracking-tighter">Orientation</h2>
                 <p class="text-[13px] text-slate-500 mb-10 leading-relaxed">Instructions by Pradeep Tripathi for the 2026 Batch.</p>
-                
                 <div class="flex items-center justify-center gap-8 mb-10">
-                    <button id="play-btn" class="w-20 h-20 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-3xl shadow-xl active:scale-90 transition-all flex items-center justify-center">
+                    <button id="play-btn" class="w-20 h-20 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-3xl shadow-xl flex items-center justify-center">
                         <i class="fa-solid fa-play ml-1" id="play-icon"></i>
                     </button>
-                    <audio id="welcome-audio" src="assets/audio/disclaimer.mp3" preload="auto"></audio>
+                    <audio id="welcome-audio" src="assets/audio/disclaimer.mp3"></audio>
                 </div>
-
-                <button onclick="Main.completeOrientation()" class="w-full py-5 bg-blue-600 text-white rounded-full font-black tracking-widest shadow-lg uppercase text-[11px]">Begin Journey</button>
+                <button onclick="Main.completeOrientation()" class="w-full py-5 bg-blue-600 text-white rounded-full font-black uppercase text-[11px]">Begin Journey</button>
             </div>`);
 
             const audio = document.getElementById('welcome-audio');
             const btn = document.getElementById('play-btn');
             const icon = document.getElementById('play-icon');
-
-            btn.onclick = () => {
-                if (audio.paused) { 
-                    audio.play(); 
-                    icon.className = 'fa-solid fa-pause';
-                } else { 
-                    audio.pause(); 
-                    icon.className = 'fa-solid fa-play ml-1';
-                }
-            };
-            audio.onended = () => { icon.className = 'fa-solid fa-play ml-1'; };
+            if (btn && audio) {
+                btn.onclick = () => {
+                    if (audio.paused) { 
+                        audio.play(); 
+                        icon.className = 'fa-solid fa-pause';
+                    } else { 
+                        audio.pause(); 
+                        icon.className = 'fa-solid fa-play ml-1';
+                    }
+                };
+            }
         },
 
         map() {
@@ -349,38 +343,49 @@ const UI = {
             UI.showModal(`
                 <div class="p-8">
                     <h3 class="text-lg font-black mb-6">Question Map</h3>
-                    <div class="grid grid-cols-6 gap-2 mb-6">
-                        ${qGrid}
-                    </div>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-blue-600 rounded"></div> Current</div>
-                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-emerald-500 rounded"></div> Correct</div>
-                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-red-500 rounded"></div> Wrong</div>
-                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-slate-100 dark:bg-slate-800 rounded"></div> Unanswered</div>
-                    </div>
+                    <div class="grid grid-cols-6 gap-2 mb-6">${qGrid}</div>
                     <button onclick="UI.hideModal()" class="w-full mt-8 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl font-bold text-sm">Close</button>
                 </div>
             `);
         }
     },
     
-    // 7. CORE UI UTILITIES
+    // 7. CORE UI UTILITIES (With Safety Checks)
     showModal(html) {
         const layer = document.getElementById('modal-layer');
+        if (!layer) {
+            console.error("Critical: 'modal-layer' not found.");
+            return;
+        }
+
         layer.innerHTML = `
         <div id="modal-overlay" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-end sm:items-center justify-center transition-opacity duration-300">
             <div class="glass-card w-full max-w-sm bg-white dark:bg-slate-900 rounded-t-[40px] sm:rounded-[40px] animate-slide-up overflow-hidden border-0 shadow-2xl">
                 ${html}
             </div>
         </div>`;
-        document.getElementById('modal-overlay').onclick = (e) => {
-            if (e.target.id === 'modal-overlay') this.hideModal();
-        };
+        
+        const overlay = document.getElementById('modal-overlay');
+        if (overlay) {
+            overlay.onclick = (e) => {
+                if (e.target.id === 'modal-overlay') this.hideModal();
+            };
+        }
     },
 
-    hideModal() { document.getElementById('modal-layer').innerHTML = ''; },
+    hideModal() { 
+        const layer = document.getElementById('modal-layer');
+        if (layer) layer.innerHTML = '';
+    },
 
-    loader(show) { document.getElementById('loader').classList[show ? 'remove' : 'add']('hidden'); },
+    loader(show) { 
+        const el = document.getElementById('loader');
+        if (el) {
+            el.classList[show ? 'remove' : 'add']('hidden');
+        } else {
+            console.warn("UI Loader: Element #loader not found.");
+        }
+    },
 
     updateTimerDisplay(seconds) {
         const el = document.getElementById('quiz-timer');
@@ -393,15 +398,17 @@ const UI = {
 
     _selectToggle(btn) {
         const parent = btn.parentElement;
+        if (!parent) return;
         parent.querySelectorAll('button').forEach(b => {
             b.className = b.className.replace('bg-slate-900 text-white dark:bg-white dark:text-slate-900', 'bg-slate-100 dark:bg-slate-800 text-slate-500');
         });
         btn.className = btn.className.replace('bg-slate-100 dark:bg-slate-800 text-slate-500', 'bg-slate-900 text-white dark:bg-white dark:text-slate-900');
     },
 
-         // 8. ANALYSIS VIEW (Fixed Dynamic Colors)
+    // 8. ANALYSIS VIEW (Fixed Dynamic Colors & Paths)
     drawAnalysis(result) {
         const main = document.getElementById('main-view');
+        if (!main) return;
         const accuracy = result.accuracy || 0;
         
         main.innerHTML = `
@@ -424,10 +431,10 @@ const UI = {
                 </div>
             </div>
 
-            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-2">Question Review</h3>
+            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Question Review</h3>
             <div class="space-y-4">
                 ${result.fullData.map((q, i) => {
-                    // Using fixed strings so Tailwind CDN picks them up correctly
+                    // Explicit color strings for Tailwind detection
                     const borderCol = q.isCorrect ? 'border-l-emerald-500' : 'border-l-red-500';
                     const bgCol = q.isCorrect ? 'bg-emerald-50/20 dark:bg-emerald-900/10' : 'bg-red-50/20 dark:bg-red-900/10';
                     const textCol = q.isCorrect ? 'text-emerald-500' : 'text-red-500';
@@ -452,5 +459,5 @@ const UI = {
             </div>
         </div>`;
     }
-
 };
+
