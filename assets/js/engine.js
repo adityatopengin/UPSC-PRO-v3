@@ -1,6 +1,9 @@
 /**
  * ENGINE.JS - The Logic Brain
  * Handles Timer, Randomization, and UPSC Marking Math.
+ * * CRITICAL FIXES INCLUDED:
+ * 1. Timer Logic Bug (Sequential Decrement)
+ * 2. UPSC Scoring Math
  */
 const Engine = {
     state: { activeQuiz: null, timer: null },
