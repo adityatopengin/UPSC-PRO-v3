@@ -1,6 +1,6 @@
 /**
  * UI.JS - THE ARCHITECT
- * Version: 1.2.0 (Secure & Accessible)
+ * Version: 1.3.0 (Complete with Analysis & Notes)
  * Handles all rendering, view transitions, and the "Fog" design system.
  */
 
@@ -107,7 +107,7 @@ const UI = {
                 <button onclick="Main.togglePaper('csat')" class="relative z-10 flex-1 py-2.5 text-[10px] font-black transition-colors ${paper === 'csat' ? 'text-slate-900 dark:text-white' : 'text-slate-500'}">CSAT PAPER</button>
             </div>
 
-            <!-- Subject Grid - Now using BUTTONS for Accessibility -->
+            <!-- Subject Grid -->
             <div class="grid grid-cols-2 gap-4">
                 ${subjects.map(s => {
                     const colorStyles = colorMap[s.color] || colorMap.blue;
@@ -151,10 +151,10 @@ const UI = {
                 <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 text-[9px] font-bold uppercase">${currentQ.metadata.difficulty}</span>
             </div>
 
-            <!-- Question Text - Sanitized -->
+            <!-- Question Text -->
             <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-10 leading-snug font-display">${this.sanitize(currentQ.text)}</h3>
 
-            <!-- Options List - Accessible Buttons -->
+            <!-- Options List -->
             <div class="space-y-4">
                 ${currentQ.options.map((opt, i) => {
                     const isSelected = quizState.answers[quizState.currentIdx] === i;
@@ -191,7 +191,7 @@ const UI = {
                 }).join('')}
             </div>
 
-            <!-- Explanation (Learn Mode Only) - Sanitized -->
+            <!-- Explanation -->
             ${quizState.config.mode === 'learning' && hasAnswered ? `
             <div class="mt-8 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-[32px] border border-blue-100 dark:border-blue-800 animate-view-enter">
                 <h4 class="text-[10px] font-black text-blue-600 uppercase mb-3 tracking-widest">Logic & Explanation</h4>
@@ -199,7 +199,7 @@ const UI = {
             </div>` : ''}
         </div>
 
-        <!-- Quiz Footer Controls -->
+        <!-- Quiz Footer -->
         <div class="fixed bottom-0 left-0 right-0 p-4 glass-card rounded-t-[40px] shadow-2xl z-50 flex items-center gap-3 max-w-md mx-auto border-t-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg">
             <button onclick="UI.modals.map()" class="w-14 h-14 glass-card rounded-2xl flex items-center justify-center text-slate-400 hover:text-blue-500" aria-label="Question Map">
                 <i class="fa-solid fa-grip-vertical"></i>
@@ -213,11 +213,98 @@ const UI = {
             </button>
         </div>`;
 
-        // Immediately update timer display if current
         this.updateTimerDisplay(quizState.timeLeft);
     },
 
-    // 5. MODALS SYSTEM
+    // 5. ANALYSIS VIEW (Fix for "UI.drawAnalysis is not a function")
+    drawAnalysis(result) {
+        const main = document.getElementById('main-view');
+        if (!main || !result) return;
+
+        main.innerHTML = `
+        <div class="pb-32 animate-view-enter">
+            <!-- Score Card -->
+            <div class="glass-card p-8 rounded-[40px] text-center mb-8 bg-gradient-to-b from-blue-50 to-white dark:from-blue-900/20 dark:to-slate-900">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Assessment Complete</p>
+                <div class="text-6xl font-black text-blue-600 mb-2 tracking-tighter">${result.score}</div>
+                <div class="flex justify-center gap-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    <span>${result.correct} Correct</span>
+                    <span>${result.wrong} Wrong</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-2 gap-3 mb-8">
+                 <button onclick="Main.navigate('home')" class="py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-black text-[11px] uppercase tracking-widest">
+                    Home
+                 </button>
+                 <button onclick="Main.triggerStart('${result.subject}')" class="py-4 rounded-2xl bg-blue-600 text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-blue-500/30">
+                    Retry
+                 </button>
+            </div>
+
+            <!-- Detailed Review -->
+            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 pl-2">Detailed Analysis</h3>
+            <div class="space-y-4">
+                ${result.fullData.map((q, i) => {
+                    const statusColor = q.isCorrect ? 'text-emerald-500' : (q.attempted ? 'text-red-500' : 'text-slate-400');
+                    const statusIcon = q.isCorrect ? 'check' : (q.attempted ? 'xmark' : 'minus');
+                    
+                    return `
+                    <div class="glass-card p-5 rounded-[24px] border-l-4 ${q.isCorrect ? 'border-emerald-500' : 'border-red-500'}">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] font-black text-slate-400 uppercase">Q${i + 1}</span>
+                            <i class="fa-solid fa-${statusIcon} ${statusColor}"></i>
+                        </div>
+                        <p class="text-[13px] font-medium text-slate-800 dark:text-slate-200 mb-3 leading-relaxed">${this.sanitize(q.text)}</p>
+                        
+                        <div class="text-[11px] space-y-1">
+                            <div class="${q.isCorrect ? 'text-emerald-600 font-bold' : 'text-slate-500'}">
+                                <span class="opacity-50 uppercase text-[9px] mr-2">Answer:</span>
+                                ${this.sanitize(q.options[q.correct])}
+                            </div>
+                            ${!q.isCorrect && q.attempted ? `
+                            <div class="text-red-500">
+                                <span class="opacity-50 uppercase text-[9px] mr-2 text-slate-400">You selected:</span>
+                                ${this.sanitize(q.options[q.userAns])}
+                            </div>` : ''}
+                        </div>
+                        
+                        <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/50">
+                            <p class="text-[11px] text-slate-500 leading-relaxed">${this.sanitize(q.explanation)}</p>
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>`;
+    },
+
+    // 6. NOTES VIEW (Missing Function)
+    drawNotes() {
+        const main = document.getElementById('main-view');
+        if (!main) return;
+        
+        main.innerHTML = `
+        <div class="grid grid-cols-1 gap-4 pb-32 animate-view-enter">
+            ${CONFIG.notesLibrary.map(n => `
+            <div class="glass-card p-0 rounded-[32px] overflow-hidden relative min-h-[100px] flex items-center cursor-pointer active:scale-95 transition-transform">
+                <div class="absolute inset-0 bg-grad-${n.gradient} opacity-10 dark:opacity-20"></div>
+                <div class="absolute right-0 top-0 bottom-0 w-24 bg-grad-${n.gradient} opacity-20 -skew-x-12 translate-x-8"></div>
+                
+                <div class="relative z-10 p-6 flex items-center gap-5 w-full">
+                    <div class="w-12 h-12 rounded-2xl bg-white/80 dark:bg-slate-900/50 backdrop-blur-sm flex items-center justify-center text-xl shadow-sm">
+                        <i class="fa-solid fa-${n.icon} text-slate-700 dark:text-slate-200"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-[13px] font-black text-slate-800 dark:text-white uppercase tracking-tight">${n.title}</h3>
+                        <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-0.5">${n.subtitle}</p>
+                    </div>
+                </div>
+            </div>`).join('')}
+        </div>`;
+    },
+
+    // 7. MODALS SYSTEM
     modals: {
         setup(subject) {
             UI.showModal(`
@@ -297,10 +384,16 @@ const UI = {
                     }
                 };
             }
+        },
+
+        map() {
+             // Placeholder for Question Map feature if needed
+             // Can be implemented similarly to setup/orientation
+             console.log("Map not implemented yet");
         }
     },
 
-    // 6. UTILITY FUNCTIONS
+    // 8. UTILITY FUNCTIONS
     showModal(html) {
         const layer = document.getElementById('modal-layer');
         if (!layer) return;
@@ -362,4 +455,5 @@ const UI = {
 
 // Expose to window
 window.UI = UI;
+
 
