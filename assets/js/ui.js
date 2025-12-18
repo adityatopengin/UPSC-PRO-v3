@@ -278,9 +278,48 @@ const UI = {
                 }
             };
             audio.onended = () => { icon.className = 'fa-solid fa-play ml-1'; };
+            }
+        },
+
+        // ✅ NEW FUNCTION ADDED
+        map() {
+            const q = Engine.state.activeQuiz;
+            if (!q) return;
+
+            // Create question grid
+            const qGrid = q.questions.map((_, i) => {
+                const answered = q.answers[i] !== undefined;
+                const isCorrect = q.answers[i] === q.questions[i].correct;
+                const isCurrent = i === q.currentIdx;
+                
+                let className = 'w-8 h-8 rounded text-xs font-black cursor-pointer transition-all ';
+                if (isCurrent) className += 'bg-blue-600 text-white scale-110 shadow-lg';
+                else if (answered && isCorrect) className += 'bg-emerald-500 text-white';
+                else if (answered && !isCorrect) className += 'bg-red-500 text-white';
+                else if (answered) className += 'bg-slate-300 text-slate-700';
+                else className += 'bg-slate-100 dark:bg-slate-800 text-slate-400';
+                
+                return `<button onclick="Main.moveQ(${i - q.currentIdx})" class="${className}">${i + 1}</button>`;
+            }).join('');
+
+            UI.showModal(`
+                <div class="p-8">
+                    <h3 class="text-lg font-black mb-6">Question Map</h3>
+                    <div class="grid grid-cols-6 gap-2 mb-6">
+                        ${qGrid}
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-blue-600 rounded"></div> Current</div>
+                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-emerald-500 rounded"></div> Correct</div>
+                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-red-500 rounded"></div> Wrong</div>
+                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-slate-100 dark:bg-slate-800 rounded"></div> Unanswered</div>
+                    </div>
+                    <button onclick="UI.hideModal()" class="w-full mt-8 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl font-bold text-sm">Close</button>
+                </div>
+            `);
         }
     },
-
+    
     // 7. CORE UI UTILITIES
     showModal(html) {
         const layer = document.getElementById('modal-layer');
@@ -314,6 +353,82 @@ const UI = {
             b.className = b.className.replace('bg-slate-900 text-white dark:bg-white dark:text-slate-900', 'bg-slate-100 dark:bg-slate-800 text-slate-500');
         });
         btn.className = btn.className.replace('bg-slate-100 dark:bg-slate-800 text-slate-500', 'bg-slate-900 text-white dark:bg-white dark:text-slate-900');
+         },
+
+    // ✅ NEW FUNCTION ADDED
+    drawAnalysis(result) {
+        const main = document.getElementById('main-view');
+        
+        // Calculate accuracy percentage
+        const accuracy = result.accuracy || 0;
+        
+        // Determine score performance color
+        let scoreColor = 'blue';
+        if (parseFloat(result.score) < 60) scoreColor = 'red';
+        else if (parseFloat(result.score) < 100) scoreColor = 'yellow';
+        else if (parseFloat(result.score) >= 100) scoreColor = 'emerald';
+
+        main.innerHTML = `
+        <div class="space-y-8 pb-32 animate-view-enter">
+            <!-- Score Card -->
+            <div class="glass-card p-8 rounded-[40px] text-center bg-${scoreColor}-50 dark:bg-${scoreColor}-900/10">
+                <p class="text-[10px] font-black text-${scoreColor}-600 uppercase mb-3 tracking-widest">Total Score</p>
+                <div class="text-7xl font-black text-${scoreColor}-600 tracking-tighter">${result.score}</div>
+                
+                <div class="flex justify-center gap-8 mt-8">
+                    <div>
+                        <div class="text-3xl font-black text-emerald-500">${result.correct}</div>
+                        <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">Correct</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-black text-red-500">${result.wrong}</div>
+                        <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">Wrong</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-black text-slate-300">${result.total - result.correct - result.wrong}</div>
+                        <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">Skipped</div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 text-lg font-black text-slate-700 dark:text-slate-200">
+                    Accuracy: <span class="text-${scoreColor}-600">${accuracy}%</span>
+                </div>
+            </div>
+
+            <!-- Review Section Header -->
+            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-2">Question Review</h3>
+
+            <!-- Review Cards -->
+            <div class="space-y-4">
+                ${result.fullData.map((q, i) => {
+                    const isCorrect = q.isCorrect;
+                    const borderColor = isCorrect ? 'emerald' : 'red';
+                    const bgColor = isCorrect ? 'emerald' : 'red';
+                    const icon = isCorrect ? '✓' : '✗';
+                    
+                    return `
+                    <div class="glass-card p-5 rounded-[28px] border-l-4 border-l-${borderColor}-500 bg-${bgColor}-50/20 dark:bg-${bgColor}-900/10">
+                        <div class="flex items-start justify-between mb-3">
+                            <span class="text-[10px] font-black text-slate-400 uppercase">Q${i + 1}</span>
+                            <span class="text-lg font-black text-${borderColor}-500">${icon}</span>
+                        </div>
+                        <p class="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">${q.text}</p>
+                        <div class="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed bg-white/30 dark:bg-slate-800/30 p-3 rounded-lg">
+                            <p class="font-bold mb-2">Explanation:</p>
+                            ${q.explanation}
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>
+
+            <!-- Back to Home Button -->
+            <div class="pb-20">
+                <button onclick="Main.navigate('home')" class="w-full py-4 bg-blue-600 text-white rounded-3xl font-black tracking-widest uppercase">
+                    Return to Home
+                </button>
+            </div>
+        </div>`;
     }
 };
+// ⬆️ CLOSING BRACE FOR ENTIRE UI OBJECT
 
