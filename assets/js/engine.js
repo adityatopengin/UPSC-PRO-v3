@@ -1,84 +1,95 @@
 /**
- * ENGINE.JS - The Leogic Brain
- * Handles Timer, Randomization, and UPSC Marking Math.
- * * CRITICAL FIXES INCLUDED:
- * 1. Timer Logic Bug (Sequential Decrement)
- * 2. UPSC Scoring Math
- * 3. Null Safety Checks
+ * ENGINE.JS - The Logic Brain
+ * Version: 1.1.0 (Production Ready)
+ * Handles State, Drift-Proof Timer, and UPSC Scoring.
  */
+
 const Engine = {
-    state: { activeQuiz: null, timer: null },
+    state: {
+        activeQuiz: null,
+        timer: null
+    },
 
     /**
-     * Initializes a new quiz session
-     * @param {Object} config - { count, mode, paper }
-     * @param {Array} questions - Normalized question array
+     * Start a new quiz session
+     * @param {Object} config - { count, mode, paper, subject }
+     * @param {Array} questions - Normalized array from Adapter
      */
     startSession(config, questions) {
-        // 1. Randomization: Shuffle and slice to requested count
+        // 1. Randomization: Shuffle and slice
         const shuffled = [...questions].sort(() => Math.random() - 0.5).slice(0, config.count);
         
-        // 2. Timer Calculation: GS (72s) vs CSAT (90s)
-        const timePerQ = config.paper === 'csat' ? 90 : 72;
-        
-        // 3. Set Active State
+        // 2. Timing calculation using CONFIG defaults
+        const secondsPerQ = config.paper === 'csat' ? CONFIG.defaults.timer.csat : CONFIG.defaults.timer.gs1;
+        const totalDuration = config.count * secondsPerQ;
+
+        // 3. Initialize Session State
         this.state.activeQuiz = {
             config: config,
             questions: shuffled,
-            answers: {},        // Map of index -> selectedOptionIndex
+            answers: {},        // Map of { questionIndex: selectedOptionIndex }
             currentIdx: 0,
-            timeLeft: config.count * timePerQ,
+            totalDuration: totalDuration,
+            timeLeft: totalDuration,
             startTime: Date.now()
         };
 
-        // 4. Start Timer only in Test Mode
+        // 4. Start Timer only for Test Mode
         if (config.mode === 'test') {
             this._runTimer();
         }
     },
 
     /**
-     * Saves user answer for the current question
+     * Save user's answer for the current question
      */
     saveAnswer(optionIndex) {
         if (!this.state.activeQuiz) return;
-        const q = this.state.activeQuiz;
-        q.answers[q.currentIdx] = optionIndex;
+        this.state.activeQuiz.answers[this.state.activeQuiz.currentIdx] = optionIndex;
     },
 
     /**
-     * FIX #1: ROBUST TIMER LOGIC
-     * Prevents race conditions and ensures accurate "Time's Up" event
+     * DRIFT-PROOF TIMER
+     * Instead of decrementing a variable, it calculates the delta from 
+     * the start time. This ensures accuracy even if the browser tab 
+     * goes to sleep or the CPU throttles.
      */
     _runTimer() {
-        this._stopTimer(); // Clear any existing interval
-        
+        this._stopTimer();
+        const quiz = this.state.activeQuiz;
+        if (!quiz) return;
+
+        // Reset start time to exactly now when the timer actually begins
+        quiz.startTime = Date.now();
+
         this.state.timer = setInterval(() => {
             const q = this.state.activeQuiz;
-            
-            // Safety check: Ensure a quiz is active before proceeding
             if (!q) {
                 this._stopTimer();
                 return;
             }
-            
-            // 1. Decrement FIRST
-            q.timeLeft--;
-            
-            // 2. Update UI
+
+            // Calculate elapsed time precisely (in seconds)
+            const elapsed = Math.floor((Date.now() - q.startTime) / 1000);
+            q.timeLeft = Math.max(0, q.totalDuration - elapsed);
+
+            // Update UI via global UI object
             if (typeof UI !== 'undefined' && UI.updateTimerDisplay) {
                 UI.updateTimerDisplay(q.timeLeft);
             }
-            
-            // 3. Check for Expiry
+
+            // Termination condition
             if (q.timeLeft <= 0) {
                 this._stopTimer();
-                // Fire the event to finish the quiz
+                // Broadcast timeUp event for main.js to capture
                 window.dispatchEvent(new CustomEvent('timeUp'));
             }
-        }, 1000);
+        }, 500); // Check twice a second for higher UI precision
     },
 
+    /**
+     * Stop the current timer interval
+     */
     _stopTimer() {
         if (this.state.timer) {
             clearInterval(this.state.timer);
@@ -87,55 +98,62 @@ const Engine = {
     },
 
     /**
-     * Calculates Final Score using UPSC Logic
+     * UPSC SCORING ENGINE
+     * Implements precise negative marking based on the Paper Type.
      */
     calculateFinal() {
         const q = this.state.activeQuiz;
         if (!q) return null;
 
         const isCsat = q.config.paper === 'csat';
-        
-        // UPSC Negative Marking Scheme
-        // GS: +2 for correct, -0.666 for wrong (1/3rd penalty)
-        // CSAT: +2.5 for correct, -0.833 for wrong
-        const weights = isCsat ? { p: 2.5, n: 0.833 } : { p: 2.0, n: 0.666 };
+        const weights = isCsat ? CONFIG.defaults.scoring.csat : CONFIG.defaults.scoring.gs1;
 
-        let correct = 0, wrong = 0, attempted = 0;
-        
-        // Map results to preserve original data + user answer
-        const fullResults = q.questions.map((item, i) => {
+        let stats = {
+            correct: 0,
+            wrong: 0,
+            attempted: 0,
+            skipped: 0
+        };
+
+        // Process results and maintain original data integrity
+        const detailedResults = q.questions.map((item, i) => {
             const userAns = q.answers[i];
             const isAttempted = userAns !== undefined;
             const isCorrect = isAttempted && (userAns === item.correct);
-            
+
             if (isAttempted) {
-                attempted++;
-                if (isCorrect) correct++; else wrong++;
+                stats.attempted++;
+                if (isCorrect) stats.correct++; else stats.wrong++;
+            } else {
+                stats.skipped++;
             }
-            
-            return { 
-                ...item, 
-                userAns, 
-                isCorrect, 
-                attempted: isAttempted 
+
+            return {
+                ...item,
+                userAns,
+                isCorrect,
+                attempted: isAttempted
             };
         });
 
-        // Calculate Score (Fixed to 2 decimals)
-        const rawScore = (correct * weights.p) - (wrong * weights.n);
-        const score = Math.max(0, rawScore).toFixed(2); // Prevent negative total score display
-
+        // UPSC Formula: (Correct * MarkingWeight) - (Wrong * PenaltyWeight)
+        const rawScore = (stats.correct * weights.correct) - (stats.wrong * weights.wrong);
+        
         return {
-            score,
-            accuracy: attempted > 0 ? Math.round((correct / attempted) * 100) : 0,
-            correct, 
-            wrong, 
-            total: q.questions.length, 
-            fullData: fullResults,
-            subject: q.config.subject // Useful for history tracking
+            score: parseFloat(Math.max(0, rawScore).toFixed(2)),
+            accuracy: stats.attempted > 0 ? Math.round((stats.correct / stats.attempted) * 100) : 0,
+            correct: stats.correct,
+            wrong: stats.wrong,
+            skipped: stats.skipped,
+            total: q.questions.length,
+            subject: q.config.subject,
+            paper: q.config.paper,
+            fullData: detailedResults
         };
     }
 };
 
+// Ensure Engine is globally accessible
+window.Engine = Engine;
 
 
