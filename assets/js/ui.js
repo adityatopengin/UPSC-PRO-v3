@@ -1,4 +1,4 @@
-/**
+ /**
  * UI.JS - THE ARCHITECT
  * Version 4.1.0 - Full Feature Set
  * Handles all rendering, animations, and the "Fog Effect" UI components.
@@ -387,11 +387,7 @@ const UI = {
 
     loader(show) { 
         const el = document.getElementById('loader');
-        if (el) {
-            el.classList[show ? 'remove' : 'add']('hidden');
-        } else {
-            console.warn("UI Loader: Element #loader not found.");
-        }
+        if (el) el.classList[show ? 'remove' : 'add']('hidden');
     },
 
     updateTimerDisplay(seconds) {
@@ -414,7 +410,7 @@ const UI = {
         btn.className = btn.className.replace('bg-slate-100 dark:bg-slate-800 text-slate-500', 'bg-slate-900 text-white dark:bg-white dark:text-slate-900');
     },
 
-    // 8. ANALYSIS VIEW (Fixed Dynamic Colors & Paths)
+    // 8. ANALYSIS VIEW
     drawAnalysis(result) {
         const main = document.getElementById('main-view');
         if (!main) return;
@@ -443,7 +439,6 @@ const UI = {
             <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Question Review</h3>
             <div class="space-y-4">
                 ${result.fullData.map((q, i) => {
-                    // Explicit color strings for Tailwind detection
                     const borderCol = q.isCorrect ? 'border-l-emerald-500' : 'border-l-red-500';
                     const bgCol = q.isCorrect ? 'bg-emerald-50/20 dark:bg-emerald-900/10' : 'bg-red-50/20 dark:bg-red-900/10';
                     const textCol = q.isCorrect ? 'text-emerald-500' : 'text-red-500';
@@ -469,5 +464,6 @@ const UI = {
         </div>`;
     }
 };
+
 
 
