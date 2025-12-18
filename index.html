@@ -76,22 +76,23 @@
 
     <div id="app" class="relative z-10 flex flex-col h-[100dvh] max-w-md mx-auto bg-transparent">
         
-        <!-- Dynamic Header -->
-        <header id="app-header" class="flex-none px-6 pt-safe-top pb-2 z-50 transition-all duration-300">
-            <!-- Rendered by UI.js -->
+        <!-- Dynamic Header (Floating Island) -->
+        <header id="app-header">
+            <!-- Rendered by UI.js as fixed/absolute element -->
         </header>
 
         <!-- Main Content Area -->
-        <main id="main-view" class="flex-1 overflow-y-auto overflow-x-hidden px-5 py-4 scroll-smooth no-scrollbar relative">
+        <!-- Added top padding (pt-24) to ensure content starts visibly below the floating header -->
+        <main id="main-view" class="flex-1 overflow-y-auto overflow-x-hidden px-5 pt-24 pb-4 scroll-smooth no-scrollbar relative">
             <div id="loader" class="hidden absolute inset-0 z-[60] flex items-center justify-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm transition-opacity">
                 <i class="fa-solid fa-circle-notch fa-spin text-4xl text-blue-600"></i>
             </div>
             <!-- Dynamic content injected here -->
         </main>
 
-        <!-- Fog Footer Navigation (Hidden by default) -->
-        <nav id="app-nav" class="fixed bottom-0 left-0 right-0 z-50 hidden transition-transform duration-300">
-            <!-- Rendered by UI.js -->
+        <!-- Fog Footer Navigation (Floating Tabs) -->
+        <nav id="app-nav">
+            <!-- Rendered by UI.js as fixed/absolute element -->
         </nav>
 
     </div>
