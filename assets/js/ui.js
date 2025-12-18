@@ -61,6 +61,21 @@ const UI = {
     // 3. HOME VIEW (Dashboard)
     drawHome(paper, subjects) {
         const main = document.getElementById('main-view');
+        // Pre-defined color map to fix Tailwind JIT issue
+        const colorMap = {
+            amber: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 hover:border-b-amber-500',
+            blue: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:border-b-blue-500',
+            pink: 'text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-900/20 hover:border-b-pink-500',
+            cyan: 'text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-900/20 hover:border-b-cyan-500',
+            green: 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 hover:border-b-green-500',
+            emerald: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 hover:border-b-emerald-500',
+            indigo: 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 hover:border-b-indigo-500',
+            purple: 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 hover:border-b-purple-500',
+            slate: 'text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/20 hover:border-b-slate-500',
+            rose: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/20 hover:border-b-rose-500',
+            teal: 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20 hover:border-b-teal-500'
+        };
+
         main.innerHTML = `
         <div class="space-y-8 pb-32 animate-view-enter">
             <div class="relative flex bg-slate-200 dark:bg-slate-800 rounded-full p-1 mx-4 shadow-inner">
@@ -71,13 +86,16 @@ const UI = {
             </div>
 
             <div class="grid grid-cols-2 gap-4 px-1">
-                ${subjects.map(s => `
-                <div onclick="UI.modals.setup('${s.name}')" class="glass-card p-5 rounded-[32px] flex flex-col items-center gap-4 active:scale-95 transition-all cursor-pointer border-b-4 border-b-transparent hover:border-b-${s.color}-500 group">
-                    <div class="w-14 h-14 rounded-2xl bg-${s.color}-50 dark:bg-${s.color}-900/20 text-${s.color}-600 dark:text-${s.color}-400 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-${s.icon}"></i>
-                    </div>
-                    <span class="text-[11px] font-black text-center uppercase leading-tight text-slate-700 dark:text-slate-200 tracking-tighter">${s.name}</span>
-                </div>`).join('')}
+                ${subjects.map(s => {
+                    const colors = colorMap[s.color] || colorMap.blue;
+                    return `
+                    <div onclick="UI.modals.setup('${s.name}')" class="glass-card p-5 rounded-[32px] flex flex-col items-center gap-4 active:scale-95 transition-all cursor-pointer border-b-4 border-b-transparent ${colors.split(' ').pop()} group">
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform ${colors.split(' ').slice(0,3).join(' ')}">
+                            <i class="fa-solid fa-${s.icon}"></i>
+                        </div>
+                        <span class="text-[11px] font-black text-center uppercase leading-tight text-slate-700 dark:text-slate-200 tracking-tighter">${s.name}</span>
+                    </div>`;
+                }).join('')}
             </div>
         </div>`;
     },
@@ -235,7 +253,7 @@ const UI = {
                 <div class="grid grid-cols-3 gap-6">
                     ${CONFIG.resources.institutes.map(inst => `
                     <a href="${inst.url}" target="_blank" class="flex flex-col items-center gap-3 active:scale-90 transition-transform">
-                        <div class="w-14 h-14 rounded-[20px] bg-${inst.color}-100 dark:bg-${inst.color}-900/30 text-${inst.color}-600 dark:text-${inst.color}-400 flex items-center justify-center text-xl font-black shadow-sm">
+                        <div class="w-14 h-14 rounded-[20px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xl font-black shadow-sm">
                             ${inst.char}
                         </div>
                         <span class="text-[9px] font-black text-slate-500 uppercase tracking-tighter text-center leading-none">${inst.name}</span>
@@ -278,15 +296,12 @@ const UI = {
                 }
             };
             audio.onended = () => { icon.className = 'fa-solid fa-play ml-1'; };
-            }
         },
 
-        // ✅ NEW FUNCTION ADDED
         map() {
             const q = Engine.state.activeQuiz;
             if (!q) return;
 
-            // Create question grid
             const qGrid = q.questions.map((_, i) => {
                 const answered = q.answers[i] !== undefined;
                 const isCorrect = q.answers[i] === q.questions[i].correct;
@@ -353,28 +368,17 @@ const UI = {
             b.className = b.className.replace('bg-slate-900 text-white dark:bg-white dark:text-slate-900', 'bg-slate-100 dark:bg-slate-800 text-slate-500');
         });
         btn.className = btn.className.replace('bg-slate-100 dark:bg-slate-800 text-slate-500', 'bg-slate-900 text-white dark:bg-white dark:text-slate-900');
-         },
+    },
 
-    // ✅ NEW FUNCTION ADDED
     drawAnalysis(result) {
         const main = document.getElementById('main-view');
-        
-        // Calculate accuracy percentage
         const accuracy = result.accuracy || 0;
         
-        // Determine score performance color
-        let scoreColor = 'blue';
-        if (parseFloat(result.score) < 60) scoreColor = 'red';
-        else if (parseFloat(result.score) < 100) scoreColor = 'yellow';
-        else if (parseFloat(result.score) >= 100) scoreColor = 'emerald';
-
         main.innerHTML = `
         <div class="space-y-8 pb-32 animate-view-enter">
-            <!-- Score Card -->
-            <div class="glass-card p-8 rounded-[40px] text-center bg-${scoreColor}-50 dark:bg-${scoreColor}-900/10">
-                <p class="text-[10px] font-black text-${scoreColor}-600 uppercase mb-3 tracking-widest">Total Score</p>
-                <div class="text-7xl font-black text-${scoreColor}-600 tracking-tighter">${result.score}</div>
-                
+            <div class="glass-card p-8 rounded-[40px] text-center bg-blue-50 dark:bg-blue-900/10">
+                <p class="text-[10px] font-black text-blue-600 uppercase mb-3 tracking-widest">Total Score</p>
+                <div class="text-7xl font-black text-blue-600 tracking-tighter">${result.score}</div>
                 <div class="flex justify-center gap-8 mt-8">
                     <div>
                         <div class="text-3xl font-black text-emerald-500">${result.correct}</div>
@@ -384,33 +388,22 @@ const UI = {
                         <div class="text-3xl font-black text-red-500">${result.wrong}</div>
                         <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">Wrong</div>
                     </div>
-                    <div>
-                        <div class="text-3xl font-black text-slate-300">${result.total - result.correct - result.wrong}</div>
-                        <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">Skipped</div>
-                    </div>
                 </div>
-                
                 <div class="mt-6 text-lg font-black text-slate-700 dark:text-slate-200">
-                    Accuracy: <span class="text-${scoreColor}-600">${accuracy}%</span>
+                    Accuracy: <span class="text-blue-600">${accuracy}%</span>
                 </div>
             </div>
 
-            <!-- Review Section Header -->
             <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-2">Question Review</h3>
-
-            <!-- Review Cards -->
             <div class="space-y-4">
                 ${result.fullData.map((q, i) => {
                     const isCorrect = q.isCorrect;
-                    const borderColor = isCorrect ? 'emerald' : 'red';
-                    const bgColor = isCorrect ? 'emerald' : 'red';
-                    const icon = isCorrect ? '✓' : '✗';
-                    
+                    const color = isCorrect ? 'emerald' : 'red';
                     return `
-                    <div class="glass-card p-5 rounded-[28px] border-l-4 border-l-${borderColor}-500 bg-${bgColor}-50/20 dark:bg-${bgColor}-900/10">
+                    <div class="glass-card p-5 rounded-[28px] border-l-4 border-l-${color}-500 bg-${color}-50/20 dark:bg-${color}-900/10">
                         <div class="flex items-start justify-between mb-3">
                             <span class="text-[10px] font-black text-slate-400 uppercase">Q${i + 1}</span>
-                            <span class="text-lg font-black text-${borderColor}-500">${icon}</span>
+                            <span class="text-lg font-black text-${color}-500">${isCorrect ? '✓' : '✗'}</span>
                         </div>
                         <p class="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">${q.text}</p>
                         <div class="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed bg-white/30 dark:bg-slate-800/30 p-3 rounded-lg">
@@ -420,15 +413,10 @@ const UI = {
                     </div>`;
                 }).join('')}
             </div>
-
-            <!-- Back to Home Button -->
             <div class="pb-20">
-                <button onclick="Main.navigate('home')" class="w-full py-4 bg-blue-600 text-white rounded-3xl font-black tracking-widest uppercase">
-                    Return to Home
-                </button>
+                <button onclick="Main.navigate('home')" class="w-full py-4 bg-blue-600 text-white rounded-3xl font-black tracking-widest uppercase">Return to Home</button>
             </div>
         </div>`;
     }
 };
-// ⬆️ CLOSING BRACE FOR ENTIRE UI OBJECT
 
