@@ -1,6 +1,10 @@
 /**
  * STORE.JS
  * Manages Persistence (LocalStorage).
+ * * CRITICAL FIXES INCLUDED:
+ * 1. Race Condition Prevention (IDs & Timestamps)
+ * 2. Safe JSON Parsing
+ * 3. History Capping (Prevent Quota Exceeded)
  */
 
 const Store = {
@@ -31,17 +35,19 @@ const Store = {
             
             const enrichedResult = {
                 ...result,
+                // Add unique ID and timestamp to prevent overwrites
                 id: `result_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
                 savedAt: new Date().toISOString()
             };
             
+            // Add to beginning of array (newest first)
             history.unshift(enrichedResult);
             
             // Keep only last 50 attempts to save space
             const limited = history.slice(0, 50);
             
             this.set('history', limited);
-            console.log(`✅ Result saved [ID: ${enrichedResult.id}]. Total: ${limited.length}`);
+            console.log(`✅ Result saved [ID: ${enrichedResult.id}]. Total history: ${limited.length}`);
             return enrichedResult.id;
         } catch (e) {
             console.error('❌ Failed to save result:', e);
