@@ -90,35 +90,55 @@ const Main = {
     },
 
     /**
+         /**
      * Logic to Fetch JSON and Start Quiz
+     * Revised with robust button detection and error handling.
      */
     async triggerStart(subjectName) {
         UI.loader(true);
         UI.hideModal();
 
         try {
+            console.log(`Attempting to start quiz for: ${subjectName}`);
+
             // 1. Resolve filename from Config file
             const fileName = CONFIG.getFileName(subjectName);
             
             // 2. Fetch the JSON file from /data/
+            // Note: Ensure your folder is literally named 'data' and the file exists there.
             const response = await fetch(`data/${fileName}`);
-            if (!response.ok) throw new Error("JSON file not found: " + fileName);
+            if (!response.ok) throw new Error(`Data file not found: data/${fileName}`);
+            
             const rawData = await response.json();
 
             // 3. Use ADAPTER to fix "undefined" fields and normalize structure
             const cleanQuestions = Adapter.normalize(rawData);
-            if (!cleanQuestions.length) throw new Error("No valid questions found.");
+            if (!cleanQuestions || cleanQuestions.length === 0) {
+                throw new Error("Questions were found but could not be processed. Check your JSON format.");
+            }
 
             // 4. Capture User Config (Count & Mode) from the Setup Modal
-            // Match the active class used in UI._selectToggle
-            const countBtn = Array.from(document.querySelectorAll('#q-counts button'))
-                .find(b => b.classList.contains('bg-slate-900') || b.classList.contains('dark:bg-white'));
+            // IMPROVED: Uses multiple class checks to find the "active" button
+            const countButtons = Array.from(document.querySelectorAll('#q-counts button'));
+            const countBtn = countButtons.find(b => 
+                b.classList.contains('bg-slate-900') || 
+                b.classList.contains('dark:bg-white') ||
+                b.classList.contains('text-white') // Failsafe for specific color themes
+            );
             const count = countBtn ? parseInt(countBtn.innerText) : 10;
             
-            const modeBtn = Array.from(document.querySelectorAll('#q-modes button'))
-                .find(b => b.classList.contains('bg-slate-900') || b.classList.contains('dark:bg-white'));
-            const mode = modeBtn && modeBtn.innerText.toLowerCase().includes('learn') ? 'learning' : 'test';
+            const modeButtons = Array.from(document.querySelectorAll('#q-modes button'));
+            const modeBtn = modeButtons.find(b => 
+                b.classList.contains('bg-slate-900') || 
+                b.classList.contains('dark:bg-white') ||
+                b.classList.contains('text-white')
+            );
             
+            // Default to 'test' if no button is found, otherwise check text
+            const mode = (modeBtn && modeBtn.innerText.toLowerCase().includes('learn')) ? 'learning' : 'test';
+            
+            console.log(`Quiz Config: Count=${count}, Mode=${mode}, Paper=${this.state.paper}`);
+
             // 5. Start the Engine
             Engine.startSession({ 
                 subject: subjectName, 
@@ -131,12 +151,14 @@ const Main = {
             this.navigate('quiz');
 
         } catch (e) {
-            console.error("Quiz Launch Failed:", e);
-            alert("Error: " + e.message);
+            console.error("Critical Quiz Launch Failure:", e);
+            // Alert user with specific error to help troubleshooting
+            alert(`Quiz Failed to Start!\nError: ${e.message}\n\nCheck: Is the file in the /data folder?`);
         } finally {
             UI.loader(false);
         }
     },
+
 
     /**
      * Quiz Interactions
