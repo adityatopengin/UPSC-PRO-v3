@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ============================
-   1. THEME VARIABLES
+   1. THEME VARIABLESes
    ============================ */
 :root {
     --glass-bg: rgba(255, 255, 255, 0.75);
