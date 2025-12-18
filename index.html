@@ -115,8 +115,7 @@
     <script src="assets/js/ui.js" defer></script>
     <script src="assets/js/main.js" defer></script>
     
-    <!-- 🪲 MOBILE DEBUGGER (Remove in final production) -->
-    <script src="assets/js/debug-console.js" defer></script>
+    <!-- DEBUG CONSOLE REMOVED -->
 
     <!-- PWA Service Worker Registration -->
     <script>
@@ -129,11 +128,11 @@
             }
 
             // Remove initial loader overlay
-           // const loader = document.getElementById('loader-overlay');
-           // if (loader) {
-           //     loader.style.opacity = '0';
-          //      setTimeout(() => loader.remove(), 500);
-          //  }
+            const loader = document.getElementById('loader-overlay');
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 500);
+            }
         });
 
         // iOS PWA - Prevent elastic scroll bounce on main container
