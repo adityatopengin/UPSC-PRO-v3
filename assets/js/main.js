@@ -26,7 +26,8 @@ const Main = {
         // 2. Initial Routing: Check if first-time user
         const hasVisited = Store.get('visited', false);
         if (!hasVisited) {
-            UI.modals.orientation(); // Show orientation if never visited
+            // Delay slightly to ensure UI object and DOM are fully ready
+            setTimeout(() => UI.modals.orientation(), 100);
         } else {
             this.navigate('home');
         }
@@ -109,14 +110,14 @@ const Main = {
             if (!cleanQuestions.length) throw new Error("No valid questions found.");
 
             // 4. Capture User Config (Count & Mode) from the Setup Modal
-            // Fixed: Find button by checking if it has the active class (works in both light and dark modes)
+            // Match the active class used in UI._selectToggle
             const countBtn = Array.from(document.querySelectorAll('#q-counts button'))
                 .find(b => b.classList.contains('bg-slate-900') || b.classList.contains('dark:bg-white'));
             const count = countBtn ? parseInt(countBtn.innerText) : 10;
             
             const modeBtn = Array.from(document.querySelectorAll('#q-modes button'))
                 .find(b => b.classList.contains('bg-slate-900') || b.classList.contains('dark:bg-white'));
-            const mode = modeBtn && modeBtn.innerText.toLowerCase().includes('test') ? 'test' : 'learning';
+            const mode = modeBtn && modeBtn.innerText.toLowerCase().includes('learn') ? 'learning' : 'test';
             
             // 5. Start the Engine
             Engine.startSession({ 
@@ -218,14 +219,15 @@ const Main = {
                 <div class="text-5xl font-black text-slate-800 dark:text-white tracking-tighter">${history.length}</div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase mt-2">Tests Attempted</p>
             </div>
-            ${history.map(h => `
+            ${history.length > 0 ? history.map(h => `
                 <div class="glass-card p-5 rounded-3xl flex justify-between items-center mb-3">
-                    <div><h4 class="text-sm font-black">${h.subject}</h4><p class="text-[9px] font-bold text-slate-400">${new Date(h.date).toLocaleDateString()}</p></div>
+                    <div><h4 class="text-sm font-black">${h.subject || 'Mixed Test'}</h4><p class="text-[9px] font-bold text-slate-400">${new Date().toLocaleDateString()}</p></div>
                     <div class="text-right"><div class="text-lg font-black text-blue-600">${h.score}</div><div class="text-[8px] font-black text-slate-400 uppercase">Score</div></div>
-                </div>`).join('')}
+                </div>`).join('') : '<p class="text-center text-slate-400 text-sm">No history yet.</p>'}
         </div>`;
     }
 };
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => Main.init());
+
