@@ -83,7 +83,7 @@
         
         <!-- Dynamic Header (Floating Island) -->
         <header id="app-header">
-            <!-- Rendered by UI.js as fixed/absolute element -->
+            <!-- Rendered by UI.js -->
         </header>
 
         <!-- Main Content Area -->
@@ -91,12 +91,11 @@
             <div id="loader" class="hidden absolute inset-0 z-[60] flex items-center justify-center bg-white/30 dark:bg-black/30 backdrop-blur-sm transition-opacity">
                 <i class="fa-solid fa-circle-notch fa-spin text-4xl text-blue-600"></i>
             </div>
-            <!-- Dynamic content injected here -->
         </main>
 
         <!-- Fog Footer Navigation (Floating Tabs) -->
         <nav id="app-nav">
-            <!-- Rendered by UI.js as fixed/absolute element -->
+            <!-- Rendered by UI.js -->
         </nav>
 
     </div>
@@ -115,19 +114,31 @@
     <script src="assets/js/ui.js" defer></script>
     <script src="assets/js/main.js" defer></script>
     
-    <!-- DEBUG CONSOLE REMOVED -->
-
     <!-- PWA Service Worker Registration -->
     <script>
+        // Force remove loader after 4 seconds max (Safety Net)
+        setTimeout(() => {
+            const loader = document.getElementById('loader-overlay');
+            if (loader) {
+                console.warn("Loader forced removal");
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 500);
+            }
+        }, 4000);
+
         window.addEventListener('load', () => {
             // Register Service Worker
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('service-worker.js', { scope: './' })
-                    .then(reg => console.log('✅ Service Worker Registered. Scope:', reg.scope))
-                    .catch(err => console.error('❌ Service Worker Failed:', err));
+                    .then(reg => {
+                        console.log('✅ SW Registered');
+                        // Force update check
+                        reg.update();
+                    })
+                    .catch(err => console.error('❌ SW Failed:', err));
             }
 
-            // Remove initial loader overlay
+            // Normal remove loader
             const loader = document.getElementById('loader-overlay');
             if (loader) {
                 loader.style.opacity = '0';
@@ -135,7 +146,7 @@
             }
         });
 
-        // iOS PWA - Prevent elastic scroll bounce on main container
+        // iOS PWA - Prevent elastic scroll bounce
         document.addEventListener('touchmove', (e) => {
             if (e.target.closest('#main-view')) return;
             e.preventDefault();
