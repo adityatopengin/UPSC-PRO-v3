@@ -24,11 +24,29 @@ const Store = {
     },
 
     // Specialized Data Management
+    // FIX #6: RACE CONDITION PREVENTION
     saveResult(result) {
-        const history = this.get('history', []);
-        history.unshift(result);
-        // Keep only last 50 attempts to save space
-        this.set('history', history.slice(0, 50));
+        try {
+            const history = this.get('history', []) || [];
+            
+            const enrichedResult = {
+                ...result,
+                id: `result_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+                savedAt: new Date().toISOString()
+            };
+            
+            history.unshift(enrichedResult);
+            
+            // Keep only last 50 attempts to save space
+            const limited = history.slice(0, 50);
+            
+            this.set('history', limited);
+            console.log(`✅ Result saved [ID: ${enrichedResult.id}]. Total: ${limited.length}`);
+            return enrichedResult.id;
+        } catch (e) {
+            console.error('❌ Failed to save result:', e);
+            return null;
+        }
     },
 
     saveMistakes(newMistakes) {
@@ -46,3 +64,5 @@ const Store = {
         location.reload();
     }
 };
+
+
