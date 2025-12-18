@@ -1,6 +1,6 @@
 /**
  * UI.JS - THE ARCHITECT
- * Version: 1.3.0 (Complete with Analysis & Notes)
+ * Version: 1.4.0 (Question Map Implemented)
  * Handles all rendering, view transitions, and the "Fog" design system.
  */
 
@@ -216,7 +216,7 @@ const UI = {
         this.updateTimerDisplay(quizState.timeLeft);
     },
 
-    // 5. ANALYSIS VIEW (Fix for "UI.drawAnalysis is not a function")
+    // 5. ANALYSIS VIEW
     drawAnalysis(result) {
         const main = document.getElementById('main-view');
         if (!main || !result) return;
@@ -279,7 +279,7 @@ const UI = {
         </div>`;
     },
 
-    // 6. NOTES VIEW (Missing Function)
+    // 6. NOTES VIEW
     drawNotes() {
         const main = document.getElementById('main-view');
         if (!main) return;
@@ -386,10 +386,47 @@ const UI = {
             }
         },
 
+        // IMPLEMENTED: Question Map Grid
         map() {
-             // Placeholder for Question Map feature if needed
-             // Can be implemented similarly to setup/orientation
-             console.log("Map not implemented yet");
+            const q = Engine.state.activeQuiz;
+            if (!q) return;
+
+            const grid = q.questions.map((_, i) => {
+                const isCurrent = i === q.currentIdx;
+                const isAnswered = q.answers[i] !== undefined;
+                
+                let btnClass = "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"; // Default
+                
+                if (isCurrent) {
+                    btnClass = "bg-blue-600 text-white border-2 border-blue-600";
+                } else if (isAnswered) {
+                    btnClass = "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-500/30";
+                }
+
+                return `
+                <button onclick="Main.jumpToQ(${i})" 
+                        class="w-12 h-12 rounded-xl text-[11px] font-black flex items-center justify-center transition-all active:scale-95 ${btnClass}">
+                    ${i + 1}
+                </button>`;
+            }).join('');
+
+            UI.showModal(`
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">Question Map</h3>
+                    <div class="text-[10px] font-bold text-slate-400">
+                        ${Object.keys(q.answers).length} / ${q.questions.length} Attempted
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-5 gap-3 max-h-[50vh] overflow-y-auto no-scrollbar pb-4">
+                    ${grid}
+                </div>
+
+                <button onclick="UI.hideModal()" class="w-full mt-6 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest">
+                    Resume Quiz
+                </button>
+            </div>`);
         }
     },
 
@@ -455,5 +492,6 @@ const UI = {
 
 // Expose to window
 window.UI = UI;
+
 
 
