@@ -1,7 +1,12 @@
- /**
+/**
  * UI.JS - THE ARCHITECT
  * Version 4.1.0 - Full Feature Set
  * Handles all rendering, animations, and the "Fog Effect" UI components.
+ * * CRITICAL FIXES INCLUDED:
+ * 1. Button Selection Logic (Data Attributes)
+ * 2. Visual Feedback (.active class)
+ * 3. Tailwind Safe Color Strings
+ * 4. Safety Checks for DOM Elements
  */
 
 const UI = {
@@ -326,47 +331,16 @@ const UI = {
                     }
                 };
             }
-        },
-
-        map() {
-            const q = Engine.state.activeQuiz;
-            if (!q) return;
-
-            const qGrid = q.questions.map((_, i) => {
-                const answered = q.answers[i] !== undefined;
-                const isCorrect = q.answers[i] === q.questions[i].correct;
-                const isCurrent = i === q.currentIdx;
-                
-                let className = 'w-8 h-8 rounded text-xs font-black cursor-pointer transition-all ';
-                if (isCurrent) className += 'bg-blue-600 text-white scale-110 shadow-lg';
-                else if (answered && isCorrect) className += 'bg-emerald-500 text-white';
-                else if (answered && !isCorrect) className += 'bg-red-500 text-white';
-                else if (answered) className += 'bg-slate-300 text-slate-700';
-                else className += 'bg-slate-100 dark:bg-slate-800 text-slate-400';
-                
-                return `<button onclick="Main.moveQ(${i - q.currentIdx})" class="${className}">${i + 1}</button>`;
-            }).join('');
-
-            UI.showModal(`
-                <div class="p-8">
-                    <h3 class="text-lg font-black mb-6">Question Map</h3>
-                    <div class="grid grid-cols-6 gap-2 mb-6">${qGrid}</div>
-                    <div class="space-y-2 text-sm mt-4">
-                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-blue-600 rounded"></div> Current</div>
-                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-emerald-500 rounded"></div> Correct</div>
-                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-red-500 rounded"></div> Wrong</div>
-                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-slate-100 dark:bg-slate-800 rounded"></div> Unanswered</div>
-                    </div>
-                    <button onclick="UI.hideModal()" class="w-full mt-8 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl font-bold text-sm">Close</button>
-                </div>
-            `);
         }
     },
     
     // 7. CORE UI UTILITIES
     showModal(html) {
         const layer = document.getElementById('modal-layer');
-        if (!layer) return;
+        if (!layer) {
+            console.error("Critical: 'modal-layer' not found.");
+            return;
+        }
 
         layer.innerHTML = `
         <div id="modal-overlay" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-end sm:items-center justify-center transition-opacity duration-300">
@@ -387,7 +361,11 @@ const UI = {
 
     loader(show) { 
         const el = document.getElementById('loader');
-        if (el) el.classList[show ? 'remove' : 'add']('hidden');
+        if (el) {
+            el.classList[show ? 'remove' : 'add']('hidden');
+        } else {
+            console.warn("UI Loader: Element #loader not found.");
+        }
     },
 
     updateTimerDisplay(seconds) {
