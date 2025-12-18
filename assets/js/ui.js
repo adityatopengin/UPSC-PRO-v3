@@ -1,6 +1,6 @@
 /**
  * UI.JS - THE ARCHITECT
- * Version 4.1.0 - Full Feature Set
+ * Version 4.1.0 - Full Featuire Set
  * Handles all rendering, animations, and the "Fog Effect" UI components.
  * * CRITICAL FIXES INCLUDED:
  * 1. Button Selection Logic (Data Attributes)
