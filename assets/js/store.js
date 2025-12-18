@@ -1,6 +1,6 @@
 /**
  * STORE.JS
- * Manages Persistence (LocalStorage).
+ * Manages Persistencce (LocalStorage).
  * * CRITICAL FIXES INCLUDED:
  * 1. Race Condition Prevention (IDs & Timestamps)
  * 2. Safe JSON Parsing
