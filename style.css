@@ -6,12 +6,13 @@
    1. CORE THEME VARIABLES
    ============================ */
 :root {
-    --glass-bg: rgba(255, 255, 255, 0.75);
-    --glass-border: rgba(255, 255, 255, 0.5);
+    /* iOS-like Ultra Glass */
+    --glass-bg: rgba(255, 255, 255, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.4);
     --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
     --text-primary: #0f172a;
     
-    /* Eyecatcher Gradients for Notes Library */
+    /* Notes Gradients */
     --grad-gold: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     --grad-emerald: linear-gradient(135deg, #10b981 0%, #059669 100%);
     --grad-royal: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
@@ -19,126 +20,109 @@
 }
 
 html.dark {
-    --glass-bg: rgba(15, 23, 42, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    --text-primary: #f8fafc;
+    /* Dark Mode Glass */
+    --glass-bg: rgba(15, 23, 42, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.05);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --text-primary: #f1f5f9;
 }
 
-/* ============================
-   2. GLOBAL RESET & UTILITIES
-   ============================ */
 body {
     font-family: 'Inter', sans-serif;
-    -webkit-tap-highlight-color: transparent;
-    overscroll-behavior-y: none; /* Prevents pull-to-refresh pull-back on mobile */
     color: var(--text-primary);
-    background-color: transparent;
+    -webkit-tap-highlight-color: transparent;
+    overflow: hidden; /* Prevent body scroll, handle in #main-view */
 }
 
-/* Scrollbar Hiding (Production Standard) */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* Mobile Safe Areas (Prevents notch interference) */
-.pt-safe-top { padding-top: max(1.5rem, env(safe-area-inset-top)); }
-.pb-safe-bottom { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+h1, h2, h3, .font-display {
+    font-family: 'Space Grotesk', sans-serif;
+}
 
 /* ============================
-   3. DESIGN COMPONENTS
+   2. FUSION BACKGROUND ANIMATION
    ============================ */
+/* This replaces the static background with moving blobs of color */
+.fusion-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-color: #f8fafc; /* Fallback Light */
+    overflow: hidden;
+}
 
-/* The Glassmorphism Card System */
+html.dark .fusion-bg {
+    background-color: #020617; /* Fallback Dark */
+}
+
+.fusion-blob {
+    position: absolute;
+    filter: blur(80px);
+    opacity: 0.6;
+    animation: drift 20s infinite alternate ease-in-out;
+    border-radius: 50%;
+}
+
+/* Light Mode Blobs (Pastels) */
+.blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #bfdbfe; animation-delay: 0s; } /* Blue */
+.blob-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: #fbcfe8; animation-delay: -5s; } /* Pink */
+.blob-3 { top: 40%; left: 40%; width: 40vw; height: 40vw; background: #ddd6fe; animation-delay: -10s; } /* Purple */
+.blob-4 { bottom: 10%; left: -10%; width: 45vw; height: 45vw; background: #fde68a; animation-delay: -15s; } /* Amber */
+
+/* Dark Mode Blobs (Deep Neon) */
+html.dark .blob-1 { background: #1e3a8a; opacity: 0.4; } /* Navy */
+html.dark .blob-2 { background: #831843; opacity: 0.3; } /* Pink/Red */
+html.dark .blob-3 { background: #4c1d95; opacity: 0.4; } /* Violet */
+html.dark .blob-4 { background: #064e3b; opacity: 0.3; } /* Emerald */
+
+@keyframes drift {
+    0% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0, 0) scale(1); }
+}
+
+/* ============================
+   3. ULTRA GLASS UTILITIES
+   ============================ */
 .glass-card {
     background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     box-shadow: var(--glass-shadow);
 }
 
-/* Eye-Cards (Subject/Notes Grid) */
-.eye-card {
-    @apply relative overflow-hidden transition-all duration-300 active:scale-95;
+/* Active State for Cards (Press effect) */
+.glass-card:active {
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.5);
+    transition: all 0.1s ease;
+}
+html.dark .glass-card:active {
+    background: rgba(30, 41, 59, 0.6);
 }
 
-.bg-grad-gold { background: var(--grad-gold); }
-.bg-grad-emerald { background: var(--grad-emerald); }
-.bg-grad-royal { background: var(--grad-royal); }
-.bg-grad-purple { background: var(--grad-purple); }
-
-/* Navigation Button States */
-.nav-btn.active {
-    @apply text-blue-600 dark:text-blue-400 font-black;
+/* Scrollbar Hiding */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 /* ============================
-   4. ANIMATIONS (Production FX)
+   4. ANIMATIONS
    ============================ */
-
-/* View Transition: Slide and Fade */
 @keyframes viewEnter {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(15px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
-.animate-view-enter { 
-    animation: viewEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
-}
-
-/* Shimmer Effect for Placeholders */
-@keyframes shimmer {
-    0% { transform: translateX(-100%) skewX(-12deg); }
-    100% { transform: translateX(200%) skewX(-12deg); }
-}
-.shimmer { 
-    position: relative;
-    overflow: hidden;
-}
-.shimmer::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    animation: shimmer 2s infinite linear;
+.animate-view-enter {
+    animation: viewEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Animated Mesh Background (The "Fog") */
-#bg-mesh::before, #bg-mesh::after {
-    content: ''; 
-    position: absolute; 
-    border-radius: 50%; 
-    filter: blur(80px);
-    animation: float-bg 20s infinite ease-in-out;
-    z-index: -1;
-}
-#bg-mesh::before {
-    top: -10%; left: -10%; width: 80vw; height: 80vw;
-    background: rgba(59, 130, 246, 0.1); /* Blue glow */
-}
-#bg-mesh::after {
-    bottom: -10%; right: -10%; width: 90vw; height: 90vw;
-    background: rgba(236, 72, 153, 0.08); /* Pink/Purple glow */
-    animation-delay: -10s;
-}
-
-@keyframes float-bg {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(30px, -20px) scale(1.1); }
-    66% { transform: translate(-20px, 40px) scale(0.9); }
-}
-
-/* ============================
-   5. BUTTON & INTERACTION FIXES
-   ============================ */
-
-/* Clearer Active States for Modal Buttons */
-.count-btn.active, .mode-btn.active {
-    @apply ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-slate-900 !important;
-}
-
-/* Prevent text selection during fast tapping (Quiz) */
-button, .glass-card {
-    user-select: none;
-    -webkit-user-select: none;
-}
+/* Safe Area Padding for iPhone X+ */
+.pt-safe-top { padding-top: env(safe-area-inset-top, 20px); }
+.pb-safe-bottom { padding-bottom: env(safe-area-inset-bottom, 20px); }
 
