@@ -1,6 +1,6 @@
 /**
  * MAIN.JS - The Master Controller
- * Version: 1.2.0 (Resume Capable)
+ * Version: 1.4.0 (Config Fix & Map Nav)
  * Orchestrates Store, Adapter, Engine, and UI modules.
  */
 
@@ -74,27 +74,21 @@ const Main = {
             document.documentElement.classList.add('dark');
         }
 
-        // 2. RESUME CHECK (New in v1.2.0)
-        // Before deciding where to go, check if a session was interrupted
+        // 2. RESUME CHECK
         const savedSession = Store.get('current_session');
         if (savedSession) {
             console.log("Resuming interrupted session...");
-            
-            // Restore State
             Engine.state.activeQuiz = savedSession;
             
-            // Recalculate Timer Start
-            // Formula: StartTime = Now - (TotalDuration - RemainingTime)
             const elapsedMS = (savedSession.totalDuration - savedSession.timeLeft) * 1000;
             Engine.state.activeQuiz.startTime = Date.now() - elapsedMS;
             
-            // Resume Timer & UI
             Engine._runTimer();
             this.navigate('quiz');
-            return; // STOP HERE. Do not proceed to home or orientation.
+            return;
         }
 
-        // 3. First-Visit Logic (Only if no resume)
+        // 3. First-Visit Logic
         const hasVisited = Store.get('visited', false);
         if (!hasVisited) {
             setTimeout(() => UI.modals.orientation(), 500);
@@ -109,7 +103,7 @@ const Main = {
             }
         });
 
-        // 5. Handle Keyboard Navigation (Accessibility)
+        // 5. Handle Keyboard Navigation
         document.addEventListener('keydown', (e) => {
             if (this.state.view !== 'quiz') return;
             if (e.key === 'ArrowRight') this.moveQ(1);
@@ -120,22 +114,15 @@ const Main = {
 
     /**
      * THE ROUTER
-     * Handles view switching and UI cleanup
      */
     navigate(view, data = null) {
-        // Exit early if Engine is running a timer but we are leaving the quiz
         if (this.state.view === 'quiz' && view !== 'quiz') {
             Engine._stopTimer();
-            // Note: We don't clear the session here. Users can click "Home"
-            // and come back later. Session is cleared only on finish.
         }
 
         this.state.view = view;
-
-        // Render Global Components
         UI.renderHeader(view);
         
-        // Show/Hide Fog Footer based on view
         const isMainTab = ['home', 'notes', 'stats', 'settings'].includes(view);
         if (isMainTab) {
             UI.renderFooter(view);
@@ -144,7 +131,6 @@ const Main = {
             if (nav) nav.classList.add('hidden');
         }
 
-        // Render specific view
         const mainEl = document.getElementById('main-view');
         if (!mainEl) return;
 
@@ -177,8 +163,19 @@ const Main = {
      * QUIZ INITIALIZATION
      */
     async triggerStart(subjectName) {
+        // FIX: Capture configuration BEFORE hiding the modal
+        const countBtn = document.querySelector('#q-counts .count-btn.active');
+        const modeBtn = document.querySelector('#q-modes .mode-btn.active');
+        
+        const config = {
+            subject: subjectName,
+            count: countBtn ? parseInt(countBtn.dataset.count) : 10,
+            mode: modeBtn ? modeBtn.dataset.mode : 'test',
+            paper: this.state.paper
+        };
+
         UI.loader(true);
-        UI.hideModal();
+        UI.hideModal(); // Now it's safe to hide
 
         try {
             const fileName = CONFIG.getFileName(subjectName);
@@ -186,17 +183,6 @@ const Main = {
             
             const questions = Adapter.normalize(rawData);
             validateQuestionsSchema(questions);
-
-            // Capture user selection from Modal
-            const countBtn = document.querySelector('#q-counts .count-btn.active');
-            const modeBtn = document.querySelector('#q-modes .mode-btn.active');
-            
-            const config = {
-                subject: subjectName,
-                count: countBtn ? parseInt(countBtn.dataset.count) : 10,
-                mode: modeBtn ? modeBtn.dataset.mode : 'test',
-                paper: this.state.paper
-            };
 
             Engine.startSession(config, questions);
             this.navigate('quiz');
@@ -228,13 +214,24 @@ const Main = {
         }
     },
 
+    // NEW: Jump directly to a question (for Map)
+    jumpToQ(idx) {
+        const q = Engine.state.activeQuiz;
+        if (!q) return;
+        
+        if (idx >= 0 && idx < q.questions.length) {
+            q.currentIdx = idx;
+            UI.hideModal(); // Close the map
+            UI.drawQuiz(q);
+        }
+    },
+
     finishQuiz() {
         if (this.state.view !== 'quiz') return;
         
         const result = Engine.calculateFinal();
         Store.saveResult(result);
         
-        // Extract mistakes for future Revision Mode
         const mistakes = result.fullData.filter(q => q.attempted && !q.isCorrect);
         Store.saveMistakes(mistakes);
 
@@ -322,5 +319,4 @@ const Main = {
 
 // Initialize on Load
 document.addEventListener('DOMContentLoaded', () => Main.init());
-
 
