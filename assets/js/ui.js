@@ -159,7 +159,7 @@ const UI = {
         </div>`;
     },
 
-    // 5. QUIZ VIEW
+       // 5. QUIZ VIEW (Fixed Metadata Paths)
     drawQuiz(q) {
         const main = document.getElementById('main-view');
         const current = q.questions[q.currentIdx];
@@ -167,13 +167,19 @@ const UI = {
         main.innerHTML = `
         <div class="pb-40 animate-view-enter">
             <div class="flex justify-between items-center mb-8">
-                <div class="px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 text-[10px] font-black uppercase">Question ${q.currentIdx + 1} / ${q.questions.length}</div>
+                <div class="px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 text-[10px] font-black uppercase">
+                    Question ${q.currentIdx + 1} / ${q.questions.length}
+                </div>
                 <div id="quiz-timer" class="font-mono font-black text-lg tracking-tighter text-slate-800 dark:text-white">--:--</div>
             </div>
 
             <div class="flex gap-2 mb-4">
-                <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 text-[9px] font-bold uppercase">${current.year}</span>
-                <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 text-[9px] font-bold uppercase">${current.difficulty}</span>
+                <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 text-[9px] font-bold uppercase">
+                    ${current.metadata.year}
+                </span>
+                <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 text-[9px] font-bold uppercase">
+                    ${current.metadata.difficulty}
+                </span>
             </div>
 
             <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-10 leading-snug font-display">${current.text}</h3>
@@ -218,6 +224,7 @@ const UI = {
             <button onclick="Main.finishQuiz()" class="w-14 h-14 bg-emerald-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20"><i class="fa-solid fa-check text-xl"></i></button>
         </div>`;
     },
+
 
     // 6. MODALS
     modals: {
@@ -392,6 +399,7 @@ const UI = {
         btn.className = btn.className.replace('bg-slate-100 dark:bg-slate-800 text-slate-500', 'bg-slate-900 text-white dark:bg-white dark:text-slate-900');
     },
 
+         // 8. ANALYSIS VIEW (Fixed Dynamic Colors)
     drawAnalysis(result) {
         const main = document.getElementById('main-view');
         const accuracy = result.accuracy || 0;
@@ -419,13 +427,17 @@ const UI = {
             <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-2">Question Review</h3>
             <div class="space-y-4">
                 ${result.fullData.map((q, i) => {
-                    const isCorrect = q.isCorrect;
-                    const color = isCorrect ? 'emerald' : 'red';
+                    // Using fixed strings so Tailwind CDN picks them up correctly
+                    const borderCol = q.isCorrect ? 'border-l-emerald-500' : 'border-l-red-500';
+                    const bgCol = q.isCorrect ? 'bg-emerald-50/20 dark:bg-emerald-900/10' : 'bg-red-50/20 dark:bg-red-900/10';
+                    const textCol = q.isCorrect ? 'text-emerald-500' : 'text-red-500';
+                    const icon = q.isCorrect ? '✓' : '✗';
+
                     return `
-                    <div class="glass-card p-5 rounded-[28px] border-l-4 border-l-${color}-500 bg-${color}-50/20 dark:bg-${color}-900/10">
+                    <div class="glass-card p-5 rounded-[28px] ${borderCol} ${bgCol}">
                         <div class="flex items-start justify-between mb-3">
                             <span class="text-[10px] font-black text-slate-400 uppercase">Q${i + 1}</span>
-                            <span class="text-lg font-black text-${color}-500">${isCorrect ? '✓' : '✗'}</span>
+                            <span class="text-lg font-black ${textCol}">${icon}</span>
                         </div>
                         <p class="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">${q.text}</p>
                         <div class="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed bg-white/30 dark:bg-slate-800/30 p-3 rounded-lg">
@@ -440,5 +452,4 @@ const UI = {
             </div>
         </div>`;
     }
-};
 
